@@ -1,0 +1,162 @@
+using UnityEngine;
+using System.Collections;
+
+/// <summary>
+/// @author Rob Giusti
+/// Touch data class, so that we can keep track of certain aspects of touch
+/// </summary>
+public class AOC2TouchData 
+{
+	#region Members
+	
+	#region Enumerations
+	
+	/// <summary>
+	/// Phases for touches, TAP for short term, HOLD for long term
+	/// </summary>
+	public enum Phase{TAP, HOLD};
+	
+	#endregion
+	
+	#region Public
+	
+	/// <summary>
+	/// Constant for the amount of time it takes for a tap to become a hold
+	/// </summary>
+	public float HOLD_TIME = .2f;
+	
+	/// <summary>
+	/// Whether or not this touch is stationary
+	/// </summary>
+	public bool stationary;
+	
+	/// <summary>
+	/// The phase of this touch instance.
+	/// </summary>
+	public Phase phase;
+	
+	/// <summary>
+	/// The initial position.
+	/// </summary>
+	public Vector2 _initialPos;
+	
+	/// <summary>
+	/// The current position.
+	/// </summary>
+	public Vector2 pos;
+	
+	/// <summary>
+	/// The change in position since the last frame
+	/// </summary>
+	public Vector3 delta;
+	
+	#endregion
+	
+	#region Private
+	
+	/// <summary>
+	/// The lifetime.
+	/// </summary>
+	private float _lifetime;
+	
+	#endregion
+	
+	#region Constant
+	
+	/// <summary>
+	/// Constant for the square of the distance which a tap must move to become a drag
+	/// Kept as a square so that we don't have to sqrt the distance
+	/// </summary>
+	private const float SQR_DRAG_DIST = 225f;
+	
+	#endregion
+	
+	#region Properties
+	
+	/// <summary>
+	/// Gets the raw movement from original to current positions.
+	/// </summary>
+	/// <value>
+	/// The movement.
+	/// </value>
+	public Vector2 Movement
+	{
+		get
+		{
+			return pos - _initialPos;
+		}
+	}
+	
+	/// <summary>
+	/// Gets the square distance between the initial
+	/// touch and the current position.
+	/// </summary>
+	public float SqrDist
+	{
+		get
+		{
+			float dy = _initialPos.y - pos.y;
+			float dx = _initialPos.x - pos.x;
+			return dx * dx + dy * dy;
+		}
+	}
+	
+	#endregion
+	
+	#endregion
+	
+	#region Functions
+	
+	#region Initialization
+	
+	/// <summary>
+	/// Initializes a new instance of the <see cref="AOC2TouchData"/> class.
+	/// </summary>
+	/// <param name='_pos'>
+	/// Position.
+	/// </param>
+	public AOC2TouchData(Vector2 _pos)
+	{
+		init(_pos);
+	}
+	
+	public void init(Vector2 _pos)
+	{
+		_initialPos = _pos;
+		pos = _pos;
+		phase = Phase.TAP;
+		_lifetime = 0;
+		stationary = true;
+	}
+	
+	#endregion
+	
+	public void Update(float time)
+	{
+		_lifetime += time;
+		
+		//Hold check
+		if (phase == Phase.TAP && _lifetime > HOLD_TIME)
+		{
+			phase = Phase.HOLD;
+		}
+		
+		//Stationary check
+		if (stationary && SqrDist > SQR_DRAG_DIST)
+		{
+			stationary = !stationary;
+			//If nothing is detecting flicks, turn this into a hold
+			//so that a drag will be detected immediately
+			if (AOC2EventManager.Controls.OnFlick == null)
+			{
+				phase = Phase.HOLD;
+				if (AOC2EventManager.Controls.OnStartDrag != null)
+				{
+					AOC2EventManager.Controls.OnStartDrag(this);
+				}
+			}
+		}
+	}
+	
+	#endregion
+}
