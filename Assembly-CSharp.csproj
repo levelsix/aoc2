@@ -50,15 +50,21 @@
      <Compile Include="Assets\Code\Gameplay\Combat\AOC2PlayerController.cs" />
      <Compile Include="Assets\Code\Gameplay\Combat\AOC2Unit.cs" />
      <Compile Include="Assets\Code\Gameplay\Common\AOC2Camera.cs" />
+     <Compile Include="Assets\Code\Gameplay\Common\AOC2Ground.cs" />
      <Compile Include="Assets\Code\Gameplay\Common\AOC2Placeable.cs" />
      <Compile Include="Assets\Code\Gameplay\Common\AOC2Position.cs" />
+     <Compile Include="Assets\Code\Gameplay\Common\AOC2Solid.cs" />
+     <Compile Include="Assets\Code\Gameplay\Common\AOC2Sprite.cs" />
      <Compile Include="Assets\Code\Gameplay\Town\AOC2Building.cs" />
      <Compile Include="Assets\Code\Managers\AOC2BuildingManager.cs" />
      <Compile Include="Assets\Code\Managers\AOC2ControlManager.cs" />
      <Compile Include="Assets\Code\Managers\AOC2EventManager.cs" />
      <Compile Include="Assets\Code\Managers\AOC2GridManager.cs" />
+     <Compile Include="Assets\Code\Managers\Pooling\AOC2PoolManager.cs" />
+     <Compile Include="Assets\Code\Managers\Pooling\AOC2Poolable.cs" />
      <Compile Include="Assets\Code\Static\AOC2ManagerReferences.cs" />
      <Compile Include="Assets\Code\Util\AOC2Math.cs" />
+     <Compile Include="Assets\Code\Util\AOC2Values.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

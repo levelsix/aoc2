@@ -66,15 +66,16 @@ public class AOC2Unit : MonoBehaviour {
 			colorArr[i] = color;
 		}
 		mesh.colors = colorArr;
-		
-		foreach (Color item in mesh.colors){
-			Debug.Log(item);
-		}
 	}
 	
 	#endregion
 	
 	#region Death Logic
+	
+	public void TakeDamage(AOC2Delivery deliv)
+	{
+		_health -= deliv.damage;
+	}
 	
 	#endregion
 	
