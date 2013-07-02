@@ -9,6 +9,10 @@ using System.Collections;
 [System.Serializable]
 public class AOC2Attack {
 	
+	#region Members
+	
+	#region Public
+	
 	/// <summary>
 	/// Prefab for the base delivery of this
 	/// attack
@@ -43,6 +47,16 @@ public class AOC2Attack {
 	/// </summary>
 	public float speed = 5f;
 	
+	#endregion
+	
+	#region Private
+	
+	private bool _onCool = false;
+	
+	#endregion
+	
+	#region Properties
+	
 	/// <summary>
 	/// Gets the range of the spell
 	/// </summary>
@@ -52,14 +66,40 @@ public class AOC2Attack {
 		}
 	}
 	
+	#endregion
+	
+	#endregion
+	
+	#region Functions
+	
+	public IEnumerator Cool()
+	{
+		_onCool = true;
+		yield return new WaitForSeconds(coolDown);
+		_onCool = false;
+	}
+	
+	/// <summary>
+	/// Use this attack
+	/// </summary>
+	/// <param name='origin'>
+	/// Origin of the attack
+	/// </param>
+	/// <param name='dir'>
+	/// Direction to send the delivery
+	/// </param>
 	public AOC2Delivery Use(Vector3 origin, Vector3 dir)
 	{
-		Debug.Log("Using attack");
-		//TODO: USE POOL MANAGER TO CREATE!
-		AOC2Delivery deliv = AOC2ManagerReferences.poolManager.Get(baseDelivery, origin) as AOC2Delivery;
+		if (!_onCool)
+		{
+			AOC2Delivery deliv = AOC2ManagerReferences.poolManager.Get(baseDelivery, origin) as AOC2Delivery;
 		
-		deliv.Init(damage,speed,life,dir);
-		
-		return deliv;
+			deliv.Init(damage,speed,life,dir);
+			
+			return deliv;
+		}
+		return null;
 	}
+	
+	#endregion
 }

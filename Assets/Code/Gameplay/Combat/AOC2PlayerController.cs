@@ -78,7 +78,11 @@ public class AOC2PlayerController : MonoBehaviour {
 		if (enemyTarget != null)
 		{
 			AOC2Delivery deliv = baseAttack.Use(_trans.position, (enemyTarget.transform.position - _trans.position).normalized);
-			deliv.gameObject.layer = AOC2Values.Layers.TARGET_ENEMY;
+			if (deliv != null)
+			{
+				StartCoroutine(baseAttack.Cool());
+				deliv.gameObject.layer = AOC2Values.Layers.TARGET_ENEMY;
+			}
 		}
 		else
 		{
