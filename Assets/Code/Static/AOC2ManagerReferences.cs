@@ -14,5 +14,6 @@ public static class AOC2ManagerReferences {
 	public static AOC2GridManager gridManager;
 	public static AOC2BuildingManager buildingManager;
 	public static AOC2PoolManager poolManager;
+	public static AOC2CombatManager combatManager;
 	
 }

@@ -39,9 +39,18 @@ public static class AOC2EventManager
 		/// <summary>
 		/// The place building event, which gives the signal to the
 		/// selected building to place itself on the grid.
-		/// In the future, will be sent by a UI element trigger.
-		/// Currently, activated by cheats.
 		/// </summary>
 		public static Action PlaceBuilding;
+	}
+	
+	public static class Combat
+	{
+		public static Action<AOC2Unit> OnSpawnPlayer;
+		public static Action<AOC2Unit> OnSpawnEnemy;
+		public static Action<AOC2Unit> OnEnemyDeath;
+		public static Action<AOC2Unit> OnPlayerDeath;
+		
+		public static Action OnEnemiesClear;
+		public static Action OnPlayerVictory;
 	}
 }

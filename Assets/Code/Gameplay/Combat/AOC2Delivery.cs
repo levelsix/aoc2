@@ -3,17 +3,29 @@ using System.Collections;
 
 public class AOC2Delivery : MonoBehaviour, AOC2Poolable {
 	
+	/// <summary>
+	/// The damage.
+	/// </summary>
 	[HideInInspector]
 	public float damage;
 	
+	/// <summary>
+	/// The speed.
+	/// </summary>
 	[HideInInspector]
 	public float speed;
 	
-	[HideInInspector]
-	public float lifetime;
-	
+	/// <summary>
+	/// The direction.
+	/// </summary>
 	[HideInInspector]
 	public Vector3 direction;
+	
+	/// <summary>
+	/// The size of the delivery
+	/// Must be hand-set.
+	/// </summary>
+	public float size;
 	
 	/// <summary>
 	/// The pointer to this delivery's own prefab.
@@ -49,9 +61,21 @@ public class AOC2Delivery : MonoBehaviour, AOC2Poolable {
 		
 		damage = dam;
 		speed = spd;
-		lifetime = life;
 		direction = dir;
 		
+		StartCoroutine(DieAfterLifetime(life));
+	}
+	
+	/// <summary>
+	/// Dies the after lifetime.
+	/// Uses instances to make sure that we don't
+	/// accidentally kill a delivery because a previous cycle
+	/// of the gameobject died
+	/// </summary>
+	IEnumerator DieAfterLifetime(float life)
+	{
+		yield return new WaitForSeconds(life);
+		Pool();
 	}
 	
 	void Update()
@@ -64,7 +88,7 @@ public class AOC2Delivery : MonoBehaviour, AOC2Poolable {
 		AOC2Unit unit = other.GetComponent<AOC2Unit>();
 		if (unit != null)
 		{
-			Debug.Log("Hit!");
+			unit.TakeDamage(this);
 			Pool();
 		}
 	}

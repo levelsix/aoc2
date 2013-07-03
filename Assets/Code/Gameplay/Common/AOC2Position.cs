@@ -8,12 +8,51 @@ using System.Collections;
 /// allows us to manipulate Vector3's in a simplier
 /// fashion
 /// </summary>
+[System.Serializable]
 public class AOC2Position{
 	
 	/// <summary>
 	/// The position that this is a wrapper around
 	/// </summary>
-	public Vector3 position;
+	private Vector3 _position;
+	
+	/// <summary>
+	/// This pointer can follow a tranform.
+	/// We use the public getter and setter for position
+	/// to intercept and update the position, allowing us
+	/// to follow a moving target by holding a reference 
+	/// </summary>
+	public Transform transform;
+	
+	#region Properties
+		
+	/// <summary>
+	/// Gets or sets the position.
+	/// If there's a transform, updates from it on
+	/// get, and manipulates it on set.
+	/// </summary>
+	/// <value>
+	/// The position.
+	/// </value>
+	public Vector3 position
+	{
+		get
+		{
+			if (transform != null)
+			{
+				_position = transform.position;
+			}
+			return _position;
+		}
+		set
+		{
+			_position = value;
+			if (transform != null)
+			{
+				transform.position = _position;
+			}
+		}
+	}
 	
 	//We can't modify a Vector3's values directly,
 	//however these properties will allow us to 
@@ -73,6 +112,15 @@ public class AOC2Position{
 		}
 	}
 	
+	#endregion
+	
+	#region Constructors
+	
+	public AOC2Position(Transform trans)
+	{
+		transform = trans;
+	}
+	
 	/// <summary>
 	/// Initializes a new instance of the <see cref="AOC2Position"/> class.
 	/// </summary>
@@ -108,4 +156,6 @@ public class AOC2Position{
 	{
 		position = Vector3.zero;
 	}
+	
+	#endregion
 }
