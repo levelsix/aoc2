@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class AOC2Delivery : MonoBehaviour, AOC2Poolable {
 	
@@ -22,15 +23,42 @@ public class AOC2Delivery : MonoBehaviour, AOC2Poolable {
 	public Vector3 direction;
 	
 	/// <summary>
+	/// Whether this delivery persists past the first hit
+	/// </summary>
+	public bool persist;
+	
+	/// <summary>
 	/// The size of the delivery
 	/// Must be hand-set.
 	/// </summary>
 	public float size;
 	
 	/// <summary>
+	/// The retarget timer. Same as Lifetime if this isn't
+	/// a DoT attack.
+	/// </summary>
+	public float retarget;
+	
+	/// <summary>
 	/// The pointer to this delivery's own prefab.
 	/// </summary>
 	private AOC2Delivery _prefab;
+	
+	/// <summary>
+	/// The collision list.
+	/// Holds recently hit units. Don't hit them again
+	/// until outside of the collList.
+	/// </summary>
+	private List<AOC2Unit> collList;
+	
+	/// <summary>
+	/// Awake this instance.
+	/// Instantiate the collision list
+	/// </summary>
+	void Awake()
+	{
+		collList = new List<AOC2Unit>();
+	}
 	
 	/// <summary>
 	/// A public getter and setter, so that we can
@@ -47,6 +75,12 @@ public class AOC2Delivery : MonoBehaviour, AOC2Poolable {
 		}
 	}
 	
+	/// <summary>
+	/// Make the poolable object, setting its prefab
+	/// </summary>
+	/// <param name='origin'>
+	/// The point at which to make the object
+	/// </param>
 	public AOC2Poolable Make(Vector3 origin)
 	{
 		AOC2Delivery deliv = Instantiate(this, origin, Quaternion.identity) as AOC2Delivery;
@@ -55,13 +89,18 @@ public class AOC2Delivery : MonoBehaviour, AOC2Poolable {
 	}
 	
 	// Use this for initialization
-	public void Init (float dam, float spd, float life, Vector3 dir) 
+	public void Init (float dam, float spd, float life, Vector3 dir, bool pers, float ret) 
 	{
 		gameObject.SetActive(true);
 		
 		damage = dam;
 		speed = spd;
 		direction = dir;
+		retarget = ret;
+		persist = pers;
+		
+		//Clear the collision list
+		collList.RemoveRange(0, collList.Count);
 		
 		StartCoroutine(DieAfterLifetime(life));
 	}
@@ -83,13 +122,39 @@ public class AOC2Delivery : MonoBehaviour, AOC2Poolable {
 		transform.position += direction * speed * Time.deltaTime;
 	}
 	
+	/// <summary>
+	/// Raises the trigger enter event.
+	/// Passes on to TriggerStay, to keep consistent log
+	/// </summary>
+	/// <param name='other'>
+	/// Other collider
+	/// </param>
 	void OnTriggerEnter (Collider other)
 	{
+		OnTriggerStay(other);
+	}
+	
+	IEnumerator AddToCollList(AOC2Unit unit)
+	{
+		collList.Add(unit);
+		yield return new WaitForSeconds(retarget);
+		collList.Remove(unit);
+	}
+	
+	void OnTriggerStay (Collider other)
+	{
 		AOC2Unit unit = other.GetComponent<AOC2Unit>();
-		if (unit != null)
+		if (unit != null && !collList.Contains(unit))
 		{
 			unit.TakeDamage(this);
-			Pool();
+			if (!persist)
+			{
+				Pool();
+			}
+			else
+			{
+				StartCoroutine(AddToCollList(unit));
+			}
 		}
 	}
 	

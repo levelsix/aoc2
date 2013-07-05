@@ -24,7 +24,7 @@ public class AOC2Camera : MonoBehaviour, AOC2Placeable
 	public float X_DRAG_FUDGE = 1.1f;
 	
     /// <summary>
-    /// This building's transform, 
+    /// This camera's transform, 
     /// </summary>
     private Transform _transform;
 	

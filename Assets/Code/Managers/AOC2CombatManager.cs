@@ -12,7 +12,7 @@ public class AOC2CombatManager : MonoBehaviour {
 	/// <summary>
 	/// The players.
 	/// </summary>
-	public List<AOC2Unit> _players;
+	public List<AOC2Unit> _allies;
 	
 	/// <summary>
 	/// The enemies.
@@ -35,7 +35,7 @@ public class AOC2CombatManager : MonoBehaviour {
 	void Awake()
 	{
 		AOC2ManagerReferences.combatManager = this;
-		_players = new List<AOC2Unit>();
+		_allies = new List<AOC2Unit>();
 		_enemies = new List<AOC2Unit>();
 	}
 	
@@ -75,6 +75,7 @@ public class AOC2CombatManager : MonoBehaviour {
 		AOC2EventManager.Combat.OnEnemyDeath += OnEnemyDeath;
 		AOC2EventManager.Combat.OnEnemiesClear += OnEnemiesCleared;
 		AOC2EventManager.Combat.OnPlayerVictory += OnPlayerVictory;
+		AOC2EventManager.Combat.OnPlayerDeath += OnPlayerDeath;
 	}
 	
 	/// <summary>
@@ -87,6 +88,7 @@ public class AOC2CombatManager : MonoBehaviour {
 		AOC2EventManager.Combat.OnEnemyDeath -= OnEnemyDeath;
 		AOC2EventManager.Combat.OnEnemiesClear -= OnEnemiesCleared;
 		AOC2EventManager.Combat.OnPlayerVictory -= OnPlayerVictory;
+		AOC2EventManager.Combat.OnPlayerDeath -= OnPlayerDeath;
 	}
 	
 	#region Delegates
@@ -112,7 +114,7 @@ public class AOC2CombatManager : MonoBehaviour {
 	/// </param>
 	void OnSpawnPlayer(AOC2Unit unit)
 	{
-		_players.Add(unit);
+		_allies.Add(unit);
 	}
 	
 	/// <summary>
@@ -188,19 +190,19 @@ public class AOC2CombatManager : MonoBehaviour {
 	{
 		AOC2Unit closest = null;
 		float dist = float.NaN;
-		for (int i = 0; i < _players.Count; i++) 
+		for (int i = 0; i < _allies.Count; i++) 
 		{
 			if (closest == null)
 			{
-				closest = _players[i];
+				closest = _allies[i];
 				dist = AOC2Math.GroundDistanceSqr(toThis.aPos.position, closest.aPos.position);
 			}
 			else
 			{
-				float checkDist = AOC2Math.GroundDistanceSqr(toThis.aPos.position, _players[i].aPos.position);
+				float checkDist = AOC2Math.GroundDistanceSqr(toThis.aPos.position, _allies[i].aPos.position);
 				if (checkDist < dist)
 				{
-					closest = _players[i];
+					closest = _allies[i];
 					dist = checkDist;
 				}
 			}

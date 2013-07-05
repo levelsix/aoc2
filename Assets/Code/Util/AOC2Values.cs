@@ -8,7 +8,6 @@ using System.Collections;
 /// </summary>
 public static class AOC2Values 
 {
-
 	public static class Layers
 	{
 		public static int DEFAULT = 0;
@@ -23,5 +22,8 @@ public static class AOC2Values
 		public static int TARGET_PLAYER = 13;
 		public static int TARGET_ENEMY = 14;
 		public static int TARGET_ALL = 15;
+		
+		public static int TOUCH_PLAYER = 18;
+		public static int TOUCH_ENEMY = 19;
 	}
 }

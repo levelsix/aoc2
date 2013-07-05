@@ -54,6 +54,19 @@ public class AOC2Attack {
 	/// </summary>
 	public float offset = .5f;
 	
+	/// <summary>
+	/// Whether the delivery for this attack should persist.
+	/// If false, the delivery will pool after the first hit.
+	/// </summary>
+	public bool persist = false;
+	
+	/// <summary>
+	/// How often this delivery can hit the same target.
+	/// If this shouldn't happen, make sure retarget == life.
+	/// Meaningless if !persist
+	/// </summary>
+	public float retarget = 1f;
+	
 	#endregion
 	
 	#region Private
@@ -124,7 +137,7 @@ public class AOC2Attack {
 		{
 			AOC2Delivery deliv = AOC2ManagerReferences.poolManager.Get(delivery, origin + dir * offset) as AOC2Delivery;
 		
-			deliv.Init(damage,speed,life,dir);
+			deliv.Init(damage,speed,life,dir,persist,retarget);
 			
 			AOC2ManagerReferences.combatManager.CoolAttack(this);
 			return deliv;

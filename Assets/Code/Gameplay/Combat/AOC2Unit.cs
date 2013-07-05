@@ -31,6 +31,11 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 	public float mass = 1;
 	
 	/// <summary>
+	/// The sprint mod.
+	/// </summary>
+	public float sprintMod = 2;
+	
+	/// <summary>
 	/// Whether or not this Unit is an enemy
 	/// </summary>
 	public bool isEnemy = true;
@@ -262,6 +267,13 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 	/// </param>
 	public void Move(Vector3 direction)
 	{		
+		direction.Normalize();
+		
+		aPos.position += direction * moveSpeed * Time.deltaTime;
+	}
+	
+	public void Sprint(Vector3 direction)
+	{
 		direction.Normalize();
 		
 		aPos.position += direction * moveSpeed * Time.deltaTime;

@@ -10,7 +10,6 @@ using System.Collections.Generic;
 /// </summary>
 public class AOC2ControlManager : MonoBehaviour 
 {
-
     /// <summary>
     /// Constant that Unity uses for left-click
     /// </summary>
@@ -32,11 +31,11 @@ public class AOC2ControlManager : MonoBehaviour
 	/// The touch data for a mouse.
 	/// </summary>
 	private AOC2TouchData mouseData;
-
-    /// <summary>
-    /// Building we currently have selected.
-    /// </summary>
-    public AOC2Building _selectedBuilding;
+	
+	/// <summary>
+	/// The touch data for following a gesture involving multiple touches
+	/// </summary>
+	private AOC2TouchData multiData;
 	
 	/// <summary>
 	/// The last mouse position.
@@ -57,6 +56,14 @@ public class AOC2ControlManager : MonoBehaviour
 		}
 	}
 	
+	private AOC2TouchData recentTap;
+	
+	const float MULTITOUCH_LIFT_TIME = .2f;
+	
+	const float DOUBLE_TAP_TIME = .3f;
+	
+	const float DOULBE_TAP_DIST_SQR = 125f;
+	
 	/// <summary>
 	/// Awake this instance.
 	/// Set up the touch dictionary
@@ -74,8 +81,8 @@ public class AOC2ControlManager : MonoBehaviour
 	/// </summary>
 	void Update () 
 	{
+		ProcessMouse();
 		//ProcessTouches();
-        ProcessMouse();
 	}
 	
 	/// <summary>
@@ -105,6 +112,10 @@ public class AOC2ControlManager : MonoBehaviour
 				touches[touch.fingerId].delta = touch.deltaPosition;
 				UpdateTouch(touches[touch.fingerId]);
 			}
+		}
+		if (touches.Count > 0)
+		{
+			UpdateMultiTouch();
 		}
 	}
 
@@ -172,9 +183,17 @@ public class AOC2ControlManager : MonoBehaviour
 			}
 			else
 			{
-				if (AOC2EventManager.Controls.OnTap != null){
+				//Try to double-tap
+				if (CheckDoubleTap(touch) && AOC2EventManager.Controls.OnDoubleTap != null)
+				{
+					AOC2EventManager.Controls.OnDoubleTap(touch);
+				}
+				//Tap
+				else if (AOC2EventManager.Controls.OnTap != null)
+				{
 					AOC2EventManager.Controls.OnTap(touch);
 				}
+				recentTap = touch;
 			}
 		}
 		else
@@ -222,6 +241,37 @@ public class AOC2ControlManager : MonoBehaviour
 		{
 			touch.Update(Time.deltaTime);
 			ProcessHold(touch);	
+		}
+	}
+	
+	IEnumerator HoldTap(AOC2TouchData data)
+	{
+		recentTap = data;
+		yield return new WaitForSeconds(DOUBLE_TAP_TIME);
+		if (recentTap == data)
+		{
+			recentTap = null;
+		}
+	}
+	
+	private bool CheckDoubleTap(AOC2TouchData data)
+	{
+		return recentTap != null && (data.pos - recentTap.pos).sqrMagnitude < DOULBE_TAP_DIST_SQR;
+	}
+	
+	/// <summary>
+	/// If we have multiple touches on the screen, process
+	/// them differently
+	/// </summary>
+	private void UpdateMultiTouch()
+	{
+		if (multiData == null)
+		{
+			
+		}
+		else
+		{
+			
 		}
 	}
 }

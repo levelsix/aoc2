@@ -12,6 +12,8 @@ public class AOC2PlayerController : AOC2UnitLogic {
 	
 	public AOC2Attack baseAttack;
 	
+	public AOC2Attack meleeAttack;
+	
 	private AOC2Position target;
 	
 	AOC2Unit _unit;
@@ -37,13 +39,13 @@ public class AOC2PlayerController : AOC2UnitLogic {
 		moveLogic = new AOC2LogicChargeAtTarget(_unit);
 		moveLogic.AddExit(new AOC2ExitTargetInRange(doNothing, _unit, MIN_MOVE_DIST));
 		
-		baseAttackLogic = new AOC2LogicChargeAtTarget(_unit);
-		
 		AOC2LogicState chaseState = new AOC2LogicChargeAtTarget(_unit);
 		AOC2LogicState attackState = new AOC2LogicUseAttack(_unit, baseAttack, false);
 		
+		chaseState.AddExit(new AOC2ExitTargetInRange(attackState, _unit, baseAttack.range));
 		attackState.AddExit(new AOC2ExitAttackOnCooldown(baseAttack, doNothing));
-		baseAttackLogic.AddExit(new AOC2ExitTargetInRange(attackState, _unit, baseAttack.range));
+		
+		baseAttackLogic = chaseState;
 		
 		_baseState = doNothing;
 	}
@@ -98,10 +100,14 @@ public class AOC2PlayerController : AOC2UnitLogic {
 	{
 		Ray ray = Camera.main.ScreenPointToRay(screenPos);
 		RaycastHit hit;
-		LayerMask mask = (int)Mathf.Pow(2,AOC2Values.Layers.ENEMY);
+		LayerMask mask = (int)Mathf.Pow(2,AOC2Values.Layers.TOUCH_ENEMY);
         if (Physics.Raycast(ray, out hit, mask))
 		{
-			return hit.collider.GetComponent<AOC2Unit>();
+			///Collider coll = hit.collider;
+			///AOC2ClickBox box = coll.GetComponent<AOC2ClickBox>();
+			///AOC2Unit unit = box.parent;
+			Debug.Log(hit.collider.name);
+			return hit.collider.GetComponent<AOC2ClickBox>().parent;
 		}
 		return null;
 	}

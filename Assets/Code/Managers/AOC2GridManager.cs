@@ -314,4 +314,61 @@ public class AOC2GridManager : MonoBehaviour {
 			Gizmos.DrawLine(transform.position + zOff, frontRight + zOff);
 		}	
 	}
+	
+	public bool IsOpen(Vector2 pos)
+	{
+		return IsOpen((int)pos.x, (int)pos.y);
+	}
+	
+	public bool IsOpen(int x, int y)
+	{
+		return _grid[x,y] != null;
+	}
+	
+	public bool CanMoveInDir(AOC2GridNode start, Vector2 dir)
+	{
+		if (start.x + dir.x > GRID_SIZE || start.x + dir.x < 0)
+		{
+			return false;
+		}
+		if (start.y + dir.y > GRID_SIZE || start.y + dir.y < 0)
+		{
+			return false;
+		}
+		
+		if (!IsOpen(start.pos + dir))
+		{
+			return false;
+		}
+		
+		if (dir.x * dir.y != 0)
+		{
+			return (IsOpen((int)(start.x + dir.x), (int)(start.y)) && IsOpen((int)start.x, (int)(start.y + dir.y)));
+		}
+		return true;
+	}
+	
+	public bool CanMoveToNeighbor(AOC2GridNode start, AOC2GridNode end)
+	{
+		//Get dx and dy
+		int dx = end.x - start.x;
+		int dy = end.y - start.y;
+		
+		if (Mathf.Abs (dx) > 1 || Mathf.Abs (dy) > 1)
+		{
+			Debug.LogError("Bad neighbor check!");
+		}
+		
+		if (!IsOpen (end.x, end.y))
+		{
+			return false;
+		}
+		
+		//Diagonal needs all three open
+		if (dx * dy != 0)
+		{
+			return (IsOpen(start.x,end.y) && IsOpen(end.x,start.y));
+		}
+		return true;
+	}
 }

@@ -26,6 +26,7 @@ public static class AOC2EventManager
 		public static Action<AOC2TouchData> OnKeepDrag;
 		public static Action<AOC2TouchData> OnReleaseDrag;
 		public static Action<AOC2TouchData> OnFlick;
+		public static Action<AOC2TouchData> OnDoubleTap;
 	}
 	
 	public static class Town
