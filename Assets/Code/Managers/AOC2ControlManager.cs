@@ -62,7 +62,7 @@ public class AOC2ControlManager : MonoBehaviour
 	
 	const float DOUBLE_TAP_TIME = .3f;
 	
-	const float DOULBE_TAP_DIST_SQR = 125f;
+	const float DOULBE_TAP_DIST_SQR = 25f;
 	
 	/// <summary>
 	/// Awake this instance.
@@ -186,6 +186,7 @@ public class AOC2ControlManager : MonoBehaviour
 				//Try to double-tap
 				if (CheckDoubleTap(touch) && AOC2EventManager.Controls.OnDoubleTap != null)
 				{
+					Debug.Log("Double-Tap");
 					AOC2EventManager.Controls.OnDoubleTap(touch);
 				}
 				//Tap
@@ -193,7 +194,7 @@ public class AOC2ControlManager : MonoBehaviour
 				{
 					AOC2EventManager.Controls.OnTap(touch);
 				}
-				recentTap = touch;
+				StartCoroutine(HoldTap(touch));
 			}
 		}
 		else

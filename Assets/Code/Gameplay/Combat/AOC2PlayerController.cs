@@ -20,7 +20,15 @@ public class AOC2PlayerController : AOC2UnitLogic {
 	
 	private AOC2LogicState moveLogic;
 	
+	private AOC2LogicState blinkLogic;
+	
 	private AOC2LogicState baseAttackLogic;
+	
+	private AOC2LogicState meleeAttackLogic;
+	
+	public float BLINK_DELAY = .5f;
+	
+	public float BLINK_AFTER_DELAY = .5F;
 	
 	// Use this for initialization
 	void Awake () 
@@ -39,6 +47,9 @@ public class AOC2PlayerController : AOC2UnitLogic {
 		moveLogic = new AOC2LogicChargeAtTarget(_unit);
 		moveLogic.AddExit(new AOC2ExitTargetInRange(doNothing, _unit, MIN_MOVE_DIST));
 		
+		blinkLogic = new AOC2LogicBlinkToTarget(_unit, BLINK_DELAY, BLINK_AFTER_DELAY);
+		blinkLogic.AddExit(new AOC2ExitTargetInRange(doNothing, _unit, MIN_MOVE_DIST));
+		
 		AOC2LogicState chaseState = new AOC2LogicChargeAtTarget(_unit);
 		AOC2LogicState attackState = new AOC2LogicUseAttack(_unit, baseAttack, false);
 		
@@ -47,17 +58,46 @@ public class AOC2PlayerController : AOC2UnitLogic {
 		
 		baseAttackLogic = chaseState;
 		
+		AOC2LogicState meleeChase = new AOC2LogicChargeAtTarget(_unit);
+		AOC2LogicState meleeState = new AOC2LogicUseAttack(_unit, meleeAttack, false);
+		
+		meleeChase.AddExit(new AOC2ExitTargetInRange(meleeState, _unit, meleeAttack.range));
+		meleeState.AddExit(new AOC2ExitAttackOnCooldown(meleeAttack, doNothing));
+		
+		meleeAttackLogic = meleeChase;
+		
 		_baseState = doNothing;
 	}
 	
 	void OnEnable()
 	{
 		AOC2EventManager.Controls.OnTap += OnTap;
+		AOC2EventManager.Controls.OnDoubleTap += OnDoubleTap;
 	}
 	
 	void OnDisable()
 	{
 		AOC2EventManager.Controls.OnTap -= OnTap;
+		AOC2EventManager.Controls.OnDoubleTap -= OnDoubleTap;
+	}
+	
+	void OnDoubleTap(AOC2TouchData data)
+	{
+		AOC2Unit enemyTarget = TryTargetEnemy(data.pos);
+		if (enemyTarget != null)
+		{
+			if (baseAttack.onCool)
+			{
+				return;
+			}
+			_unit.targetPos = enemyTarget.aPos;
+			_current = meleeAttackLogic;
+		}
+		else
+		{
+			_unit.targetPos = new AOC2Position(AOC2ManagerReferences.gridManager.ScreenToGround(data.pos));
+			_current = blinkLogic;
+		}
 	}
 	
 	/// <summary>
