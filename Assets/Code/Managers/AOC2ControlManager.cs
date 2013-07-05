@@ -186,7 +186,6 @@ public class AOC2ControlManager : MonoBehaviour
 				//Try to double-tap
 				if (CheckDoubleTap(touch) && AOC2EventManager.Controls.OnDoubleTap != null)
 				{
-					Debug.Log("Double-Tap");
 					AOC2EventManager.Controls.OnDoubleTap(touch);
 				}
 				//Tap

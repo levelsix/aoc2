@@ -143,10 +143,6 @@ public class AOC2PlayerController : AOC2UnitLogic {
 		LayerMask mask = (int)Mathf.Pow(2,AOC2Values.Layers.TOUCH_ENEMY);
         if (Physics.Raycast(ray, out hit, mask))
 		{
-			///Collider coll = hit.collider;
-			///AOC2ClickBox box = coll.GetComponent<AOC2ClickBox>();
-			///AOC2Unit unit = box.parent;
-			Debug.Log(hit.collider.name);
 			return hit.collider.GetComponent<AOC2ClickBox>().parent;
 		}
 		return null;
