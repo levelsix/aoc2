@@ -56,13 +56,46 @@ public class AOC2ControlManager : MonoBehaviour
 		}
 	}
 	
+	/// <summary>
+	/// The most recent tap.
+	/// Set to null after DOUBLE_TAP_TIME
+	/// </summary>
 	private AOC2TouchData recentTap;
 	
+	/// <summary>
+	/// Constant for time between touches being lifted from
+	/// a multitouch in order for them to be counted
+	/// as a removal of a single touch
+	/// </summary>
 	const float MULTITOUCH_LIFT_TIME = .2f;
 	
+	/// <summary>
+	/// Max time between taps for it to count as a double-tap
+	/// </summary>
 	const float DOUBLE_TAP_TIME = .3f;
 	
+	/// <summary>
+	/// Max distance between taps for it to count as a double-tap
+	/// </summary>
 	const float DOULBE_TAP_DIST_SQR = 25f;
+		
+	/// <summary>
+	/// Gets the avgerage of all current touches
+	/// </summary>
+	/// <value>
+	/// The avgerage touch point
+	/// </value>
+	private Vector2 avgTouchPoint{
+		get{
+			Vector2 av = Vector2.zero;
+			foreach (AOC2TouchData item in touches.Values) 
+			{
+				av += item.pos;
+			}
+			av = av / touches.Count;
+			return av;
+		}
+	}
 	
 	/// <summary>
 	/// Awake this instance.
@@ -72,6 +105,7 @@ public class AOC2ControlManager : MonoBehaviour
 	{
 		touches = new Dictionary<int, AOC2TouchData>();
 		mouseData = new AOC2TouchData(Vector2.zero);
+		touchPile = new List<AOC2TouchData>();
 		
 		AOC2ManagerReferences.controlManager = this;
 	}
@@ -81,8 +115,47 @@ public class AOC2ControlManager : MonoBehaviour
 	/// </summary>
 	void Update () 
 	{
+#if UNITY_EDITOR
 		ProcessMouse();
-		//ProcessTouches();
+#else
+		ProcessTouches();
+#endif
+	}
+	
+	/// <summary>
+	/// Gets a touch data from the pool or new if necessary
+	/// Inits with pos
+	/// </summary>
+	/// <returns>
+	/// The touch data ref
+	/// </returns>
+	/// <param name='pos'>
+	/// Position to initialize with
+	/// </param>
+	private AOC2TouchData GetTouch(Vector2 pos)
+	{
+		if (touchPile.Count > 0)
+		{
+			AOC2TouchData temp = touchPile[0];
+			touchPile.RemoveAt(0);
+			temp.init(pos);
+			return temp;
+		}
+		else
+		{
+			return new AOC2TouchData(pos);
+		}
+	}
+	
+	/// <summary>
+	/// Pools the touch data
+	/// </summary>
+	/// <param name='data'>
+	/// Data ref
+	/// </param>
+	private void PoolTouch(AOC2TouchData data)
+	{
+		touchPile.Add(data);
 	}
 	
 	/// <summary>
@@ -95,7 +168,7 @@ public class AOC2ControlManager : MonoBehaviour
 			//Add new touches to the dictionary
 			if (touch.phase == TouchPhase.Began)
 			{
-				touches[touch.fingerId] = new AOC2TouchData(touch.position);
+				touches[touch.fingerId] = GetTouch(touch.position);
 			}
 			
 			//Remove all ended touches in the dictionary
@@ -103,6 +176,7 @@ public class AOC2ControlManager : MonoBehaviour
 			{
 				//Process tap/flick
 				ProcessRelease(touches[touch.fingerId]);
+				PoolTouch (touches[touch.fingerId]);
 				touches.Remove(touch.fingerId);
 			}
 			//If it's not an ending touch, update it and possibly process it as a hold
@@ -113,9 +187,15 @@ public class AOC2ControlManager : MonoBehaviour
 				UpdateTouch(touches[touch.fingerId]);
 			}
 		}
-		if (touches.Count > 0)
+		if (touches.Count > 1)
 		{
 			UpdateMultiTouch();
+		}
+		else if (multiData != null)
+		{
+			//Maybe we do some release stuff here for the multidata?
+			PoolTouch(multiData);
+			multiData = null;
 		}
 	}
 
@@ -244,6 +324,13 @@ public class AOC2ControlManager : MonoBehaviour
 		}
 	}
 	
+	/// <summary>
+	/// After a tap is released, holds onto that tap
+	/// for DOUBLE_TAP_TIME
+	/// </summary>
+	/// <param name='data'>
+	/// Data for the tap
+	/// </param>
 	IEnumerator HoldTap(AOC2TouchData data)
 	{
 		recentTap = data;
@@ -254,6 +341,15 @@ public class AOC2ControlManager : MonoBehaviour
 		}
 	}
 	
+	/// <summary>
+	/// Checks whether a given tap is a double tap.
+	/// </summary>
+	/// <returns>
+	/// True if it is a double tap.
+	/// </returns>
+	/// <param name='data'>
+	/// Touch to check
+	/// </param>
 	private bool CheckDoubleTap(AOC2TouchData data)
 	{
 		return recentTap != null && (data.pos - recentTap.pos).sqrMagnitude < DOULBE_TAP_DIST_SQR;
@@ -267,11 +363,64 @@ public class AOC2ControlManager : MonoBehaviour
 	{
 		if (multiData == null)
 		{
-			
+			multiData = GetTouch(avgTouchPoint);
+			multiData.size = GetSize();
 		}
 		else
 		{
+			Vector3 sum = Vector3.zero;
+			foreach (AOC2TouchData item in touches.Values) 
+			{
+				sum += item.delta;
+			}
+			multiData.delta = sum;
+			multiData.pos = avgTouchPoint;
+			multiData.Update(Time.deltaTime);
 			
+			//Use delta size for pinch magnitude
+			float size = GetSize();
+			AOC2EventManager.Controls.OnPinch(multiData.size - size);
+			multiData.size = size;
 		}
 	}
+	
+	/// <summary>
+	/// Gets the manhattan size of the smallest rectangle that contains
+	/// all current touches
+	/// </summary>
+	/// <returns>
+	/// The size.
+	/// </returns>
+	private float GetSize()
+	{
+		//Set all this values to inf to make sure they get set
+		//on first iteration
+		float minX = float.PositiveInfinity;
+		float minY = float.PositiveInfinity;
+		float maxX = float.NegativeInfinity;
+		float maxY = float.NegativeInfinity;
+		
+		foreach (AOC2TouchData item in touches.Values) 
+		{
+			if (item.pos.x < minX)
+			{
+				minX = item.pos.x;
+			}
+			if (item.pos.x > maxX)
+			{
+				maxX = item.pos.x;
+			}
+			if (item.pos.y < minY)
+			{
+				minY = item.pos.y;
+			}
+			if (item.pos.y > maxY)
+			{
+				maxY = item.pos.y;
+			}
+		}
+		
+		return maxX - minX + maxY - minY;
+	}
+
 }

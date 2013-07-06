@@ -135,7 +135,7 @@ public class AOC2Position{
 	/// </param>
 	public AOC2Position(float x, float y, float z)
 	{
-		position = new Vector3(x,y,z);
+		_position = new Vector3(x,y,z);
 	}
 	
 	/// <summary>
@@ -146,7 +146,7 @@ public class AOC2Position{
 	/// </param>
 	public AOC2Position(Vector3 pos)
 	{
-		position = pos;
+		_position = pos;
 	}
 	
 	/// <summary>
@@ -154,7 +154,7 @@ public class AOC2Position{
 	/// </summary>
 	public AOC2Position()
 	{
-		position = Vector3.zero;
+		_position = Vector3.zero;
 	}
 	
 	#endregion

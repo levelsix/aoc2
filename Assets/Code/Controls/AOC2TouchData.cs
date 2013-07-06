@@ -50,6 +50,12 @@ public class AOC2TouchData
 	/// </summary>
 	public Vector3 delta;
 	
+	/// <summary>
+	/// The size between all points in this touch.
+	/// Value ignored unless multitouch.
+	/// </summary>
+	public float size = 0;
+	
 	#endregion
 	
 	#region Private

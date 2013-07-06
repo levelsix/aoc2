@@ -27,6 +27,12 @@ public static class AOC2EventManager
 		public static Action<AOC2TouchData> OnReleaseDrag;
 		public static Action<AOC2TouchData> OnFlick;
 		public static Action<AOC2TouchData> OnDoubleTap;
+		
+		/// <summary>
+		/// The on pinch event. The float passed along with it
+		/// reflects the change in pinch distance in this frame.
+		/// </summary>
+		public static Action<float> OnPinch;
 	}
 	
 	public static class Town

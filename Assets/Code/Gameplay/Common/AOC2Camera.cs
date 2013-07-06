@@ -23,6 +23,8 @@ public class AOC2Camera : MonoBehaviour, AOC2Placeable
 	
 	public float X_DRAG_FUDGE = 1.1f;
 	
+	const float CAMERA_ZOOM_SCALE = .2f;
+	
     /// <summary>
     /// This camera's transform, 
     /// </summary>
@@ -41,6 +43,16 @@ public class AOC2Camera : MonoBehaviour, AOC2Placeable
 	{
 		_transform = transform;
 		_cam = camera;
+	}
+	
+	void OnEnable()
+	{
+		AOC2EventManager.Controls.OnPinch += Zoom;
+	}
+	
+	void OnDiable()
+	{
+		AOC2EventManager.Controls.OnPinch -= Zoom;
 	}
 	
 	/// <summary>
@@ -78,7 +90,7 @@ public class AOC2Camera : MonoBehaviour, AOC2Placeable
 	/// </param>
 	public void Zoom(float amount)
 	{
-		_cam.orthographicSize += amount * Time.deltaTime;
+		_cam.orthographicSize += amount * Time.deltaTime * CAMERA_ZOOM_SCALE;
 		if (_cam.orthographicSize > MAX_SIZE)
 		{
 			_cam.orthographicSize = MAX_SIZE;
