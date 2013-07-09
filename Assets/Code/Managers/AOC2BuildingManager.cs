@@ -37,7 +37,7 @@ public class AOC2BuildingManager : MonoBehaviour
 	/// The scene's camera, which this needs to pass
 	/// along drag events when the camera is the target
 	/// </summary>
-	public AOC2Camera cam;
+	public AOC2BuildingCamera cam;
 
     #endregion
 
@@ -262,9 +262,6 @@ public class AOC2BuildingManager : MonoBehaviour
 	#endregion
 	
 	#region Grid/Building Control (Adding/Removing)
-
-
-
 	
 	/// <summary>
 	/// Selects the building from a touch or click

@@ -8,29 +8,61 @@ using System.Collections;
 [RequireComponent (typeof(AOC2Unit))]
 public class AOC2PlayerController : AOC2UnitLogic {
 	
+	/// <summary>
+	/// The minimum move distance.
+	/// If the character is within this distance from its target,
+	/// it should not move.
+	/// </summary>
 	public float MIN_MOVE_DIST = .2f;
 	
+	/// <summary>
+	/// DEBUG: the player character's ranged attack.
+	/// </summary>
 	public AOC2Attack baseAttack;
 	
+	/// <summary>
+	/// DEBUG: The melee attack.
+	/// </summary>
 	public AOC2Attack meleeAttack;
 	
-	private AOC2Position target;
-	
+	/// <summary>
+	/// The unit component
+	/// </summary>
 	AOC2Unit _unit;
 	
+	/// <summary>
+	/// The move logic.
+	/// </summary>
 	private AOC2LogicState moveLogic;
 	
+	/// <summary>
+	/// The blink logic.
+	/// </summary>
 	private AOC2LogicState blinkLogic;
 	
+	/// <summary>
+	/// The base attack logic.
+	/// </summary>
 	private AOC2LogicState baseAttackLogic;
 	
+	/// <summary>
+	/// The melee attack logic.
+	/// </summary>
 	private AOC2LogicState meleeAttackLogic;
 	
+	/// <summary>
+	/// The delay before a blink begins; the casting time
+	/// </summary>
 	public float BLINK_DELAY = .5f;
 	
+	/// <summary>
+	/// The delay after a blink ends; the vulnerability period
+	/// </summary>
 	public float BLINK_AFTER_DELAY = .5F;
 	
-	// Use this for initialization
+	/// <summary>
+	/// Awake this instance.
+	/// </summary>
 	void Awake () 
 	{
 		_unit = GetComponent<AOC2Unit>();
@@ -69,18 +101,33 @@ public class AOC2PlayerController : AOC2UnitLogic {
 		_baseState = doNothing;
 	}
 	
+	/// <summary>
+	/// Raises the enable event.
+	/// Sets up event delegates
+	/// </summary>
 	void OnEnable()
 	{
 		AOC2EventManager.Controls.OnTap += OnTap;
 		AOC2EventManager.Controls.OnDoubleTap += OnDoubleTap;
 	}
 	
+	/// <summary>
+	/// Raises the disable event.
+	/// Removes event delegates
+	/// </summary>
 	void OnDisable()
 	{
 		AOC2EventManager.Controls.OnTap -= OnTap;
 		AOC2EventManager.Controls.OnDoubleTap -= OnDoubleTap;
 	}
 	
+	/// <summary>
+	/// DEBUG: Determines whether a double-tap should start a blink or melee attack
+	/// TODO: Make a more abstractable movement system and less-hardcoded melee attack
+	/// </summary>
+	/// <param name='data'>
+	/// Touch data.
+	/// </param>
 	void OnDoubleTap(AOC2TouchData data)
 	{
 		AOC2Unit enemyTarget = TryTargetEnemy(data.pos);

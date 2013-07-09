@@ -1,6 +1,9 @@
 using UnityEngine;
 using System.Collections;
 
+/// <summary>
+/// Exit state that tests true when a particular attack is on cooldown
+/// </summary>
 public class AOC2ExitAttackOffCooldown : AOC2ExitLogicState {
 	
 	/// <summary>

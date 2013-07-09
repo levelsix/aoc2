@@ -339,6 +339,15 @@ public class AOC2ControlManager : MonoBehaviour
 		{
 			recentTap = null;
 		}
+		if (multiData != null)
+		{
+			multiData.count = touches.Count;
+			if (multiData.count <= 1)
+			{
+				PoolTouch(multiData);
+				multiData = null;
+			}
+		}
 	}
 	
 	/// <summary>

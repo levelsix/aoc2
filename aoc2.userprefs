@@ -1,15 +1,15 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Code/Gameplay/Combat/AOC2PlayerController.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Code/Managers/AOC2PopupManager.cs">
     <Files>
-      <File FileName="Assets/Code/Managers/AOC2ControlManager.cs" Line="197" Column="33" />
-      <File FileName="Assets/Code/Managers/AOC2EventManager.cs" Line="1" Column="1" />
+      <File FileName="Assets/Code/Managers/AOC2ControlManager.cs" Line="1" Column="1" />
+      <File FileName="Assets/Code/Managers/AOC2BuildingManager.cs" Line="1" Column="1" />
+      <File FileName="Assets/Code/Managers/AOC2EventManager.cs" Line="67" Column="45" />
+      <File FileName="Assets/Code/Gameplay/Town/AOC2BuildingCamera.cs" Line="44" Column="31" />
+      <File FileName="Assets/Code/Gameplay/Combat/AOC2CombatCamera.cs" Line="52" Column="19" />
       <File FileName="Assets/Code/Gameplay/Combat/AOC2PlayerController.cs" Line="1" Column="1" />
-      <File FileName="Assets/Code/Gameplay/Combat/AOC2Unit.cs" Line="1" Column="1" />
-      <File FileName="Assets/Code/Gameplay/Common/AOC2Position.cs" Line="1" Column="1" />
       <File FileName="Assets/Code/Controls/AOC2TouchData.cs" Line="1" Column="1" />
-      <File FileName="Assets/Code/Gameplay/Combat/AI/Logics/AOC2LogicBlinkToTarget.cs" Line="14" Column="3" />
-      <File FileName="Assets/Code/Gameplay/Combat/AI/Logics/AOC2LogicChargeAtTarget.cs" Line="1" Column="1" />
+      <File FileName="Assets/Code/Managers/AOC2PopupManager.cs" Line="25" Column="43" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -21,15 +21,19 @@
                 <Node name="Gameplay" expanded="True">
                   <Node name="Combat" expanded="True">
                     <Node name="AI" expanded="True">
+                      <Node name="Exits" expanded="True" />
                       <Node name="Logics" expanded="True" />
                     </Node>
-                    <Node name="AOC2PlayerController.cs" selected="True" />
                   </Node>
                   <Node name="Common" expanded="True" />
+                  <Node name="Town" expanded="True" />
                 </Node>
                 <Node name="Managers" expanded="True">
                   <Node name="ManagerUtil" expanded="True" />
+                  <Node name="AOC2PopupManager.cs" selected="True" />
                 </Node>
+                <Node name="Networking" expanded="True" />
+                <Node name="UI" expanded="True" />
                 <Node name="Util" expanded="True" />
               </Node>
             </Node>

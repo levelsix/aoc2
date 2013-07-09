@@ -60,4 +60,11 @@ public static class AOC2EventManager
 		public static Action OnEnemiesClear;
 		public static Action OnPlayerVictory;
 	}
+	
+	public static class Popup
+	{
+		public static Action<UIPanel> OnPopup;
+		public static Action<int> ClosePopupLayer;
+		public static Action CloseAllPopups;
+	}
 }

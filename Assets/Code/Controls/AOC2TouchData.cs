@@ -56,6 +56,12 @@ public class AOC2TouchData
 	/// </summary>
 	public float size = 0;
 	
+	/// <summary>
+	/// The count of touches.
+	/// Value == 1 unless this is a multitouch data
+	/// </summary>
+	public float count = 1;
+	
 	#endregion
 	
 	#region Private
