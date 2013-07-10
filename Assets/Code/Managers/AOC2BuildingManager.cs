@@ -263,6 +263,22 @@ public class AOC2BuildingManager : MonoBehaviour
 	
 	#region Grid/Building Control (Adding/Removing)
 	
+	public Collider SelectFromScreen(Vector2 point)
+	{
+		//Cast a ray using the mouse position
+        Ray ray = Camera.main.ScreenPointToRay(point);
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit))
+        {
+            //If our ray hits, select that building
+            return hit.collider;
+        }
+        else
+        {
+            return null;
+        }
+	}
+	
 	/// <summary>
 	/// Selects the building from a touch or click
 	/// </summary>
@@ -271,18 +287,12 @@ public class AOC2BuildingManager : MonoBehaviour
 	/// </param>
 	public AOC2Building SelectBuildingFromScreen(Vector2 point)
 	{
-        //Cast a ray using the mouse position
-        Ray ray = Camera.main.ScreenPointToRay(point);
-        RaycastHit hit;
-        if (Physics.Raycast(ray, out hit))
-        {
-            //If our ray hits, select that building
-            return hit.collider.GetComponent<AOC2Building>();
-        }
-        else
-        {
-            return null;
-        }
+		Collider coll = SelectFromScreen(point);
+		if (coll != null)
+		{
+			return coll.GetComponent<AOC2Building>();
+		}
+		return null;
 	}
 	
 	/// <summary>
@@ -340,17 +350,18 @@ public class AOC2BuildingManager : MonoBehaviour
 	/// </param>
 	public void OnTap(AOC2TouchData touch)
 	{        
-		AOC2Building chosen = SelectBuildingFromScreen(touch.pos);
-		if (chosen != null)
+		Collider hit = SelectFromScreen(touch.pos);
+		AOC2Building building = hit.GetComponent<AOC2Building>();
+		if (building != null)
 		{
-			if (chosen != _selectedBuilding)
+			if (building != _selectedBuilding)
 			{
 				Deselect();
-				chosen.Select();
+				building.Select();
 			}
-			_selectedBuilding = chosen;
+			_selectedBuilding = building;
 		}
-		else
+		else if (hit.GetComponent<AOC2Ground>() != null)
 		{
 			Deselect();	
 			_selectedBuilding = null;

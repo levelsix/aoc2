@@ -4,12 +4,17 @@
     <Files>
       <File FileName="Assets/Code/Managers/AOC2ControlManager.cs" Line="1" Column="1" />
       <File FileName="Assets/Code/Managers/AOC2BuildingManager.cs" Line="1" Column="1" />
-      <File FileName="Assets/Code/Managers/AOC2EventManager.cs" Line="67" Column="45" />
-      <File FileName="Assets/Code/Gameplay/Town/AOC2BuildingCamera.cs" Line="44" Column="31" />
-      <File FileName="Assets/Code/Gameplay/Combat/AOC2CombatCamera.cs" Line="52" Column="19" />
+      <File FileName="Assets/Code/Managers/AOC2EventManager.cs" Line="1" Column="1" />
+      <File FileName="Assets/Code/Gameplay/Town/AOC2BuildingCamera.cs" Line="1" Column="1" />
+      <File FileName="Assets/Code/Gameplay/Combat/AOC2CombatCamera.cs" Line="1" Column="1" />
       <File FileName="Assets/Code/Gameplay/Combat/AOC2PlayerController.cs" Line="1" Column="1" />
       <File FileName="Assets/Code/Controls/AOC2TouchData.cs" Line="1" Column="1" />
-      <File FileName="Assets/Code/Managers/AOC2PopupManager.cs" Line="25" Column="43" />
+      <File FileName="Assets/Code/Managers/AOC2PopupManager.cs" Line="1" Column="1" />
+      <File FileName="Assets/Code/UI/ButtonTest.cs" Line="1" Column="1" />
+      <File FileName="Assets/NGUI/Scripts/Interaction/UIButton.cs" Line="1" Column="1" />
+      <File FileName="Assets/NGUI/Scripts/Interaction/UIButtonMessage.cs" Line="1" Column="1" />
+      <File FileName="Assets/NGUI/Scripts/Interaction/UIButtonColor.cs" Line="1" Column="1" />
+      <File FileName="Assets/NGUI/Scripts/UI/UICamera.cs" Line="1" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -35,6 +40,12 @@
                 <Node name="Networking" expanded="True" />
                 <Node name="UI" expanded="True" />
                 <Node name="Util" expanded="True" />
+              </Node>
+              <Node name="NGUI" expanded="True">
+                <Node name="Scripts" expanded="True">
+                  <Node name="Interaction" expanded="True" />
+                  <Node name="UI" expanded="True" />
+                </Node>
               </Node>
             </Node>
           </Node>
