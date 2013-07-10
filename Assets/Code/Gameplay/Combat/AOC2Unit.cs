@@ -125,11 +125,10 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 	/// <param name='origin'>
 	/// Position to spawn at
 	/// </param>
-	override public AOC2Spawnable Spawn(Vector3 origin)
+	override public void Spawn(Vector3 origin)
 	{
 		AOC2Unit unit = AOC2ManagerReferences.poolManager.Get(this, origin) as AOC2Unit;
 		unit.Init();
-		return unit;
 	}
 	
 	/// <summary>

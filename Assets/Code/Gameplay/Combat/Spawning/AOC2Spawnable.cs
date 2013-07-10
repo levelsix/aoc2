@@ -11,6 +11,6 @@ public abstract class AOC2Spawnable : MonoBehaviour {
 	/// <summary>
 	/// Return a spawnable instance
 	/// </summary>
-	abstract public AOC2Spawnable Spawn(Vector3 origin);
+	abstract public void Spawn(Vector3 origin);
 	
 }
