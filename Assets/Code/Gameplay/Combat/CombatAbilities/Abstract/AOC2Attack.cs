@@ -22,7 +22,7 @@ public class AOC2Attack {
 	/// <summary>
 	/// The damage of the delivery of this attack
 	/// </summary>
-	private float _damage = 1f;
+	private float _damage = 1;
 	
 	/// <summary>
 	/// The lifetime of the delivery after created
@@ -111,9 +111,20 @@ public class AOC2Attack {
 		AOC2Delivery deliv = AOC2ManagerReferences.poolManager.Get(
 			AOC2ManagerReferences.deliveryList.Deliveries[(int)deliveryType], origin + dir * _offset)
 			as AOC2Delivery;
-	
-		deliv.Init(_damage,_speed,_life,dir,_persist,_retarget);
 		
+		if (user.isEnemy)
+		{
+			deliv.gameObject.layer = AOC2Values.Layers.TARGET_PLAYER;
+		}
+		else
+		{
+			deliv.gameObject.layer = AOC2Values.Layers.TARGET_ENEMY;
+		}
+	
+		deliv.Init((int)(_damage * user.power),
+			_speed,_life,dir,_persist,_retarget);
+		
+		Debug.Log("Size: " + _size);
 		deliv.transform.localScale = new Vector3(_size, _size, _size);
 		
 	}

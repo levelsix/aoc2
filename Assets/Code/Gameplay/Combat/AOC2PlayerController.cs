@@ -96,9 +96,11 @@ public class AOC2PlayerController : AOC2UnitLogic {
 	void Awake () 
 	{
 		_unit = GetComponent<AOC2Unit>();
-		abilities = new AOC2Ability[2];
+		abilities = new AOC2Ability[4];
 		abilities[0] = AOC2AbilityLists.Warrior.baseAttackAbility;
 		abilities[1] = AOC2AbilityLists.Warrior.powerAttackAbility;
+		abilities[2] = AOC2AbilityLists.Warrior.ironWillAbility;
+		abilities[3] = AOC2AbilityLists.Warrior.cleaveAbility;
 	}
 	
 	/// <summary>
@@ -110,7 +112,6 @@ public class AOC2PlayerController : AOC2UnitLogic {
 		AOC2LogicState doNothing = new AOC2LogicDoNothing();
 		
 		moveLogic = new AOC2LogicFollowPath(_unit);
-		//moveLogic.AddExit(new AOC2ExitTargetInRange(doNothing, _unit, MIN_MOVE_DIST));
 		moveLogic.AddExit(new AOC2ExitWhenComplete(moveLogic, doNothing));
 		
 		sprintLogic = new AOC2LogicSprint(_unit);
@@ -120,16 +121,17 @@ public class AOC2PlayerController : AOC2UnitLogic {
 		
 		AOC2LogicState abilityState;
 		
+		//Set up the logic for each ability
 		for (int i = 0; i < abilityLogics.Length; i++) {
 			abilityLogics[i] = new AOC2LogicMoveTowardTarget(_unit);
 			abilityState = new AOC2LogicUseAbility(_unit, abilities[i], false);
 			abilityState.AddExit(new AOC2ExitWhenComplete(abilityState, doNothing));
-			//attacksState.AddExit(new AOC2ExitAttackOnCooldown(attacks[i], doNothing));
-			//Debug.Log(abilities[i].name);
 			abilityLogics[i].AddExit(new AOC2ExitTargetInRange(abilityState, _unit, abilities[i].range));
 		}
 		
 		_baseState = doNothing;
+		
+		AOC2EventManager.Combat.OnPlayerHealthChange(_unit);
 	}
 	
 	/// <summary>
@@ -142,6 +144,7 @@ public class AOC2PlayerController : AOC2UnitLogic {
 		AOC2EventManager.Controls.OnDoubleTap[0] += OnDoubleTap;
 		AOC2EventManager.Combat.SetPlayerAttack += SetPlayerAttack;
 		AOC2EventManager.Combat.OnEnemyDeath += OnEnemyDeath;
+		_unit.OnDamage += OnDamage;
 	}
 	
 	/// <summary>
@@ -154,13 +157,32 @@ public class AOC2PlayerController : AOC2UnitLogic {
 		AOC2EventManager.Controls.OnDoubleTap[0] -= OnDoubleTap;
 		AOC2EventManager.Combat.SetPlayerAttack -= SetPlayerAttack;
 		AOC2EventManager.Combat.OnEnemyDeath -= OnEnemyDeath;
+		_unit.OnDamage -= OnDamage;
 	}
 	
+	void OnDamage(int amount)
+	{
+		AOC2EventManager.Combat.OnPlayerHealthChange(_unit);
+	}
+	
+	/// <summary>
+	/// Sets the player attack.
+	/// </summary>
+	/// <param name='index'>
+	/// Attack Index.
+	/// </param>
 	void SetPlayerAttack(int index)
 	{
 		attackIndex = index;
 		
-		if (attackTarget != null)
+		if (abilities[attackIndex].targetType == AOC2Values.Abilities.TargetType.SELF)
+		{
+			_unit.targetPos = _unit.aPos;
+			
+			abilityLogics[index].Start();
+			_current = abilityLogics[index];
+		}
+		else if (attackTarget != null)
 		{
 			_unit.targetPos = attackTarget.aPos;
 			
@@ -221,6 +243,13 @@ public class AOC2PlayerController : AOC2UnitLogic {
 		}
 	}
 	
+	/// <summary>
+	/// Whenever an enemy dies, check to see if it was our current target,
+	/// in which case we need to null out the target
+	/// </summary>
+	/// <param name='unit'>
+	/// The enemy that died
+	/// </param>
 	void OnEnemyDeath(AOC2Unit unit)
 	{
 		if (unit == attackTarget)
@@ -230,6 +259,14 @@ public class AOC2PlayerController : AOC2UnitLogic {
 		}
 	}
 	
+	/// <summary>
+	/// DEBUG: Tints the enemy that was selected
+	/// TODO: Have some UI or other visual element
+	/// that identifies the targetted enemy
+	/// </summary>
+	/// <param name='unit'>
+	/// Unit that was just targetted
+	/// </param>
 	void TargetEnemy(AOC2Unit unit)
 	{
 		if (attackTarget != null)
@@ -240,6 +277,15 @@ public class AOC2PlayerController : AOC2UnitLogic {
 		attackTarget.DebugTint(targetColor);
 	}
 	
+	/// <summary>
+	/// Targets the ground from a click/tap
+	/// </summary>
+	/// <returns>
+	/// Whether the ground was hit
+	/// </returns>
+	/// <param name='screenPos'>
+	/// The clicked/tapped screen position.
+	/// </param>
 	bool TargetGround(Vector3 screenPos)
 	{
 		Ray ray = Camera.main.ScreenPointToRay(screenPos);

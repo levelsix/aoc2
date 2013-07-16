@@ -1,6 +1,12 @@
 using UnityEngine;
 using System.Collections;
 
+/// <summary>
+/// @author Rob Giusti
+/// Logic state where the unit waits for a cast time, then immediately
+/// moves to its target, followed by a delay before the next check
+/// for exit states.
+/// </summary>
 public class AOC2LogicBlinkToTarget : AOC2LogicState {
 
 	private AOC2Unit _unit;

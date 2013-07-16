@@ -1,6 +1,12 @@
 using UnityEngine;
 using System.Collections;
 
+/// <summary>
+/// @author Rob Giusti
+/// Exit state meant for enemies, which finds the closest unit in the
+/// combat manager's Player group. If that unit is within the range,
+/// triggers and sets that unit as the current target.
+/// </summary>
 public class AOC2ExitPlayerInRange : AOC2ExitLogicState {
 
 	/// <summary>

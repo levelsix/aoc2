@@ -3,7 +3,7 @@ using System.Collections;
 
 /// <summary>
 /// @author Rob Giusti
-/// Exit condition for there being a valid player target within range
+/// Exit condition for this unit's target being within range
 /// </summary>
 public class AOC2ExitTargetInRange : AOC2ExitLogicState {
 	

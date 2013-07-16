@@ -6,6 +6,10 @@ public class AOC2Ability {
 	
 	public string name;
 	
+	public int manaCost;
+	
+	public AOC2Values.Abilities.TargetType targetType;
+	
 	/// <summary>
 	/// The cast time.
 	/// Time between player using and attack happening.
@@ -40,15 +44,17 @@ public class AOC2Ability {
 	public virtual float range{
 		get
 		{
-			return 0f;
+			return .5f;
 		}
 	}
 	
-	public AOC2Ability(string abName, float cast, float cool)
+	public AOC2Ability(string abName, float cast, float cool, int mana, AOC2Values.Abilities.TargetType target)
 	{
 		name = abName;
 		castTime = cast;
 		coolDown = cool;
+		manaCost = mana;
+		targetType = target;
 	}
 
 	public IEnumerator Cool ()

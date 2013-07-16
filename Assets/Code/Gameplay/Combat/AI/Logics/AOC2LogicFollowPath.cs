@@ -3,7 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 
 /// <summary>
-/// Weird HFSM for following a path from the Pathfinder
+/// @author Rob Giusti
+/// Hierarchal state machine for following a path from the Pathfinder.
+/// Finds the path to the next grid coordinates, then grabs the next
+/// grid coordinates.
 /// </summary>
 public class AOC2LogicFollowPath : AOC2LogicState {
 	

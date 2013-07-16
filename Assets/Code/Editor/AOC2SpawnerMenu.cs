@@ -2,8 +2,17 @@ using UnityEngine;
 using UnityEditor;
 using System.Collections;
 
+/// <summary>
+/// @author Rob Giusti
+/// Unity Editor menus for quickly adding spawn
+/// objects into the game. Accessed from the top
+/// menu within the unity editor
+/// </summary>
 public class AOC2SpawnerMenu : MonoBehaviour {
-
+	
+	/// <summary>
+	/// Adds an empty spawner into the scene
+	/// </summary>
 	[MenuItem("Spawners/Add Spawner")]
 	static public void AddSpawner()
 	{
@@ -14,6 +23,9 @@ public class AOC2SpawnerMenu : MonoBehaviour {
 		Selection.activeGameObject = spawner;
 	}
 	
+	/// <summary>
+	/// Creates a spawn table and puts it in the scene
+	/// </summary>
 	[MenuItem("Spawners/Add Spawn Table")]
 	static public void AddTable()
 	{
@@ -24,6 +36,9 @@ public class AOC2SpawnerMenu : MonoBehaviour {
 		Selection.activeGameObject = table;
 	}
 	
+	/// <summary>
+	/// Creates a spawn group and puts it in the scene
+	/// </summary>
 	[MenuItem("Spawners/Add Spawn Group")]
 	static public void AddGroup()
 	{

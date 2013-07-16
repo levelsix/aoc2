@@ -29,6 +29,27 @@ public static class AOC2Values
 		public static int UI = 20;
 	}
 	
+	public enum UnitStat
+	{
+		STRENGTH = 0,
+		DEFENSE = 1,
+		RESISTANCE = 2,
+		MOVE_SPEED = 3,
+		ATTACK_SPEED = 4,
+		MANA = 5,
+		HEALTH = 6,
+		COUNT = 7 //Used whenever we need the length of the stat list
+	}
+	
+	public static class Abilities
+	{
+		public enum TargetType
+		{
+			ENEMY = 0,
+			SELF = 1
+		}
+	}
+	
 	public static class Buildings
 	{
 		public enum ResourceType

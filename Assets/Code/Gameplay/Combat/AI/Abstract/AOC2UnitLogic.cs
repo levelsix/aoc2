@@ -1,6 +1,11 @@
 using UnityEngine;
 using System.Collections;
 
+/// <summary>
+/// @author Rob Giusti
+/// Component that allows an object to follow a finite
+/// state machine constructed out of logic states
+/// </summary>
 public abstract class AOC2UnitLogic : MonoBehaviour {
 	
 	/// <summary>

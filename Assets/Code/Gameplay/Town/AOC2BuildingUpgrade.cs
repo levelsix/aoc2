@@ -18,16 +18,19 @@ public abstract class AOC2BuildingUpgrade : MonoBehaviour {
 	/// <summary>
 	/// The upgrade costs
 	/// </summary>
+	[SerializeField]
 	int[] upgradeCost;
 	
 	/// <summary>
 	/// The upgrade spants
 	/// </summary>
+	[SerializeField]
 	TimeSpan[] upgradeSpan;
 	
 	/// <summary>
 	/// The upgrade resource.
 	/// </summary>
+	[SerializeField]
 	AOC2Values.Buildings.ResourceType upgradeResource;
 	
 	/// <summary>

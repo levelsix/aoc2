@@ -2,7 +2,9 @@ using UnityEngine;
 using System.Collections;
 
 /// <summary>
-/// Exits when the referrenced logic state is completed
+/// @author Rob Giusti
+/// Exits when the referrenced logic state is completed.
+/// Each logic state has its own measure of completion.
 /// </summary>
 public class AOC2ExitWhenComplete : AOC2ExitLogicState {
 

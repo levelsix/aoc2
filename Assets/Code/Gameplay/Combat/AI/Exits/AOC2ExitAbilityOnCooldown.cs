@@ -1,6 +1,11 @@
 using UnityEngine;
 using System.Collections;
 
+/// <summary>
+/// @author Rob Giusti
+/// Exit state that triggers whenever a specific ability is on
+/// cooldown
+/// </summary>
 public class AOC2ExitAbilityOnCooldown : AOC2ExitLogicState {
 	
 	/// <summary>

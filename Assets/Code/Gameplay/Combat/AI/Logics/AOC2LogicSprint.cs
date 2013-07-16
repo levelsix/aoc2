@@ -1,6 +1,11 @@
 using UnityEngine;
 using System.Collections;
 
+/// <summary>
+/// @author Rob Giusti
+/// Similiar to the MoveTowardTarget logic, however calls the unit's
+/// Sprint() function in order to move faster.
+/// </summary>
 public class AOC2LogicSprint : AOC2LogicState {
 	/// <summary>
 	/// Constant Minimum Move Distance.

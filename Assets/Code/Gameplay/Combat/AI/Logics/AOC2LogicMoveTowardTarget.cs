@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 
 /// <summary>
+/// @author Rob Giusti
 /// Logic state for moving towards a target
 /// </summary>
 public class AOC2LogicMoveTowardTarget : AOC2LogicState {

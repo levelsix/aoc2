@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 
 /// <summary>
+/// @author Rob Giusti
 /// Abstract class for tests to change state
 /// in a state machine
 /// </summary>

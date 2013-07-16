@@ -259,6 +259,11 @@ public class AOC2CombatManager : MonoBehaviour {
 		StartCoroutine(ability.Cool());
 	}
 	
+	public void RunBuff(AOC2Unit user, AOC2BuffAbility ability)
+	{
+		StartCoroutine(ability.Buff(user));
+	}
+	
 	void SpawnNewWave(int wave)
 	{
 		for (int i = 0; i < _spawners.Length; i++) 

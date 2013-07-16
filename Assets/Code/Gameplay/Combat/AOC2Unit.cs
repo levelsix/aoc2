@@ -15,14 +15,34 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 	#region Public
 	
 	/// <summary>
-	/// The max health.
+	/// The stats of this unit.
 	/// </summary>
-	public float maxHealth = 1;
+	public AOC2UnitStats stats;
 	
 	/// <summary>
-	/// The move speed.
+	/// Gets the full power of this unit,
+	/// for attacks.
+	/// Strength + Weapon Power
+	/// TODO: Add weapon defense
 	/// </summary>
-	public float moveSpeed = 1;
+	public int power{
+		get
+		{
+			return stats.strength;
+		}
+	}
+	
+	/// <summary>
+	/// Gets the full defense of this unit
+	/// Defense + Weapon Defense
+	/// TODO: Add weapon defense
+	/// </summary>
+	public int defense{
+		get
+		{
+			return stats.defense;
+		}
+	}
 	
 	/// <summary>
 	/// The mass of this unit.
@@ -50,6 +70,11 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 	/// The target position.
 	/// </summary>
 	public AOC2Position targetPos;
+	
+	/// <summary>
+	/// The local event for taking damage.
+	/// </summary>
+	public Action<int> OnDamage;
 	
 	/// <summary>
 	/// The local on death event for this unit
@@ -93,7 +118,12 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 	/// <summary>
 	/// The current health.
 	/// </summary>
-	private float _health = 1;
+	public float health = 1;
+	
+	/// <summary>
+	/// The current mana.
+	/// </summary>
+	public float mana = 1;
 	
 	/// <summary>
 	/// The prefab.
@@ -107,9 +137,9 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 	
 	#endregion
 	
-	#region Constant
+	#region Constants
 	
-	//private static readonly Plane GROUND_PLANE = new Plane(Vector3.up, Vector3.zero);
+	const float BASE_DEFENSE_MOD = .25f;
 	
 	#endregion
 	
@@ -169,7 +199,9 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 	/// </summary>
 	public void Init()
 	{
-		_health = maxHealth;
+		health = stats.maxHealth;
+		
+		mana = stats.maxMana;
 		
 		if (_logic != null)
 		{
@@ -216,10 +248,22 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 	/// </param>
 	public void TakeDamage(AOC2Delivery deliv)
 	{
-		_health -= deliv.damage;
-		if (_health <= 0)
+		int damage = (deliv.damage) - (int)(defense * BASE_DEFENSE_MOD);
+		if (damage > 0){
+			health -= damage;
+			Debug.Log("Damage: " + deliv.damage + ", Taken: " + damage);
+			if (health <= 0)
+			{
+				Die();
+			}
+			else if (OnDamage != null)
+			{
+				OnDamage(damage);
+			}
+		}
+		else
 		{
-			Die();
+			Debug.Log("High defense, attack blocked!");
 		}
 	}
 	
@@ -270,14 +314,14 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 	{		
 		direction.Normalize();
 		
-		aPos.position += direction * moveSpeed * Time.deltaTime;
+		aPos.position += direction * stats.moveSpeed * Time.deltaTime;
 	}
 	
 	public void Sprint(Vector3 direction)
 	{
 		direction.Normalize();
 		
-		aPos.position += direction * moveSpeed * sprintMod * Time.deltaTime;
+		aPos.position += direction * stats.moveSpeed * sprintMod * Time.deltaTime;
 	}
 	
 	#endregion

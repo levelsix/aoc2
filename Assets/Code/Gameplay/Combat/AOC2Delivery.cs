@@ -8,7 +8,7 @@ public class AOC2Delivery : MonoBehaviour, AOC2Poolable {
 	/// The damage.
 	/// </summary>
 	[HideInInspector]
-	public float damage;
+	public int damage;
 	
 	/// <summary>
 	/// The speed.
@@ -97,7 +97,7 @@ public class AOC2Delivery : MonoBehaviour, AOC2Poolable {
 	}
 	
 	// Use this for initialization
-	public void Init (float dam, float spd, float life, Vector3 dir, bool pers, float ret, AOC2Unit targ = null) 
+	public void Init (int dam, float spd, float life, Vector3 dir, bool pers, float ret, AOC2Unit targ = null) 
 	{
 		gameObject.SetActive(true);
 		
@@ -154,7 +154,7 @@ public class AOC2Delivery : MonoBehaviour, AOC2Poolable {
 	void OnTriggerStay (Collider other)
 	{
 		AOC2Unit unit = other.GetComponent<AOC2Unit>();
-		if (unit != null && !collList.Contains(unit))
+		if (unit != null && (target == unit || target == null) && !collList.Contains(unit))
 		{
 			unit.TakeDamage(this);
 			if (!persist)
