@@ -4,23 +4,23 @@ using System.Collections;
 /// <summary>
 /// Exit state that tests true when a particular attack is on cooldown
 /// </summary>
-public class AOC2ExitAttackOffCooldown : AOC2ExitLogicState {
+public class AOC2ExitAbilityOffCooldown : AOC2ExitLogicState {
 	
 	/// <summary>
 	/// The attack to check the cooldown for
 	/// </summary>
-	private readonly AOC2Attack _attack;
+	private readonly AOC2Ability _ability;
 	
 	/// <summary>
-	/// Initializes a new instance of the <see cref="AOC2ExitAttackOffCooldown"/> class.
+	/// Initializes a new instance of the <see cref="AOC2ExitAbilityOffCooldown"/> class.
 	/// </summary>
-	/// <param name='attack'>
+	/// <param name='abil'>
 	/// Attack reference to check
 	/// </param>
-	public AOC2ExitAttackOffCooldown(AOC2Attack attack, AOC2LogicState state)
+	public AOC2ExitAbilityOffCooldown(AOC2Ability abil, AOC2LogicState state)
 		: base(state)
 	{
-		_attack = attack;
+		_ability = abil;
 	}
 	
 	/// <summary>
@@ -28,6 +28,6 @@ public class AOC2ExitAttackOffCooldown : AOC2ExitLogicState {
 	/// </summary>
 	public override bool Test ()
 	{
-		return !_attack.onCool;
+		return !_ability.onCool;
 	}
 }

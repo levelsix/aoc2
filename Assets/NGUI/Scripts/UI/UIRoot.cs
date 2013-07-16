@@ -18,7 +18,7 @@ public class UIRoot : MonoBehaviour
 	static List<UIRoot> mRoots = new List<UIRoot>();
 
 	public bool automatic = true;
-	public int manualHeight = 800;
+	public float manualHeight = 800;
 
 	Transform mTrans;
 

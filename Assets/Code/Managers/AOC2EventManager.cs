@@ -18,15 +18,18 @@ public static class AOC2EventManager
 	/// </summary>
 	public static class Controls
 	{
-		public static Action<AOC2TouchData> OnTap;
-		public static Action<AOC2TouchData> OnStartHold;
-		public static Action<AOC2TouchData> OnKeepHold;
-		public static Action<AOC2TouchData> OnReleaseHold;
-		public static Action<AOC2TouchData> OnStartDrag;
-		public static Action<AOC2TouchData> OnKeepDrag;
-		public static Action<AOC2TouchData> OnReleaseDrag;
-		public static Action<AOC2TouchData> OnFlick;
-		public static Action<AOC2TouchData> OnDoubleTap;
+		//All touch events are indexed using how many touches were involved in their action
+		//This way, listening to multi-touch events is done by listening to the index of touches-1
+		//Example, OnTap[0] fires on a 1-finger tap; OnDoubleTap[2] fires on a three-fingered double-tap
+		public static Action<AOC2TouchData>[] OnTap = new Action<AOC2TouchData>[AOC2ControlManager.MAX_TOUCHES];
+		public static Action<AOC2TouchData>[] OnStartHold = new Action<AOC2TouchData>[AOC2ControlManager.MAX_TOUCHES];
+		public static Action<AOC2TouchData>[] OnKeepHold = new Action<AOC2TouchData>[AOC2ControlManager.MAX_TOUCHES];
+		public static Action<AOC2TouchData>[] OnReleaseHold = new Action<AOC2TouchData>[AOC2ControlManager.MAX_TOUCHES];
+		public static Action<AOC2TouchData>[] OnStartDrag = new Action<AOC2TouchData>[AOC2ControlManager.MAX_TOUCHES];
+		public static Action<AOC2TouchData>[] OnKeepDrag = new Action<AOC2TouchData>[AOC2ControlManager.MAX_TOUCHES];
+		public static Action<AOC2TouchData>[] OnReleaseDrag = new Action<AOC2TouchData>[AOC2ControlManager.MAX_TOUCHES];
+		public static Action<AOC2TouchData>[] OnFlick = new Action<AOC2TouchData>[AOC2ControlManager.MAX_TOUCHES];
+		public static Action<AOC2TouchData>[] OnDoubleTap = new Action<AOC2TouchData>[AOC2ControlManager.MAX_TOUCHES];
 		
 		/// <summary>
 		/// The on pinch event. The float passed along with it
@@ -59,12 +62,21 @@ public static class AOC2EventManager
 		
 		public static Action OnEnemiesClear;
 		public static Action OnPlayerVictory;
+		
+		public static Action<int> SetPlayerAttack;
 	}
 	
 	public static class Popup
 	{
-		public static Action<UIPanel> OnPopup;
+		public static Action<GameObject> OnPopup;
 		public static Action<int> ClosePopupLayer;
 		public static Action CloseAllPopups;
+		public static Action<string> CreatePopup;
+	}
+	
+	public static class UI
+	{
+		public static Action<Camera> OnCameraResize;
+		public static Action<int>[] OnChangeResource = new Action<int>[3];
 	}
 }

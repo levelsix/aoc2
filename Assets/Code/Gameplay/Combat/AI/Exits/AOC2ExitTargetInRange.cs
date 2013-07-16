@@ -45,9 +45,14 @@ public class AOC2ExitTargetInRange : AOC2ExitLogicState {
 	{
 		if (_thisUnit.targetPos != null)
 		{
-			return (AOC2Math.GroundDistanceSqr(_thisUnit.aPos.position, _thisUnit.targetPos.position) < _rangeSqr);
+			return Test (_thisUnit.targetPos.position);
 		}
 		return false;
+	}
+	
+	public bool Test(Vector3 pos)
+	{
+		return AOC2Math.GroundDistanceSqr(_thisUnit.aPos.position, pos) < _rangeSqr;
 	}
 	
 }

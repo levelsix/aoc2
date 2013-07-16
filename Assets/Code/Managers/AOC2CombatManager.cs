@@ -169,12 +169,36 @@ public class AOC2CombatManager : MonoBehaviour {
 	/// </summary>
 	void OnPlayerVictory()
 	{
-		Debug.Log("Player Victory!");
+		AOC2EventManager.Popup.CreatePopup("Player Victory!");
 	}
 	
 	#endregion
 	
 	#region Targetting Utilities
+	
+	public AOC2Unit GetClosestFromList(AOC2Unit toThis, List<AOC2Unit> list)
+	{
+		AOC2Unit closest = null;
+		float dist = float.NaN;
+		for (int i = 0; i < list.Count; i++) 
+		{
+			if (closest == null)
+			{
+				closest = list[i];
+				dist = AOC2Math.GroundDistanceSqr(toThis.aPos.position, closest.aPos.position);
+			}
+			else
+			{
+				float checkDist = AOC2Math.GroundDistanceSqr(toThis.aPos.position, list[i].aPos.position);
+				if (checkDist < dist)
+				{
+					closest = list[i];
+					dist = checkDist;
+				}
+			}
+		}
+		return closest;
+	}
 	
 	/// <summary>
 	/// Gets the closest player unit
@@ -188,26 +212,12 @@ public class AOC2CombatManager : MonoBehaviour {
 	/// </param>
 	public AOC2Unit GetClosestPlayer(AOC2Unit toThis)
 	{
-		AOC2Unit closest = null;
-		float dist = float.NaN;
-		for (int i = 0; i < _allies.Count; i++) 
-		{
-			if (closest == null)
-			{
-				closest = _allies[i];
-				dist = AOC2Math.GroundDistanceSqr(toThis.aPos.position, closest.aPos.position);
-			}
-			else
-			{
-				float checkDist = AOC2Math.GroundDistanceSqr(toThis.aPos.position, _allies[i].aPos.position);
-				if (checkDist < dist)
-				{
-					closest = _allies[i];
-					dist = checkDist;
-				}
-			}
-		}
-		return closest;
+		return GetClosestFromList(toThis, _allies);
+	}
+	
+	public AOC2Unit GetClosestEnemy(AOC2Unit toThis)
+	{
+		return GetClosestFromList(toThis, _enemies);
 	}
 	
 	/// <summary>
@@ -241,12 +251,12 @@ public class AOC2CombatManager : MonoBehaviour {
 	/// Because attacks are not MonoBehaviours, they
 	/// cannot call coroutines on themselves.
 	/// </summary>
-	/// <param name='attack'>
+	/// <param name='ability'>
 	/// Attack to cooldown
 	/// </param>
-	public void CoolAttack(AOC2Attack attack)
+	public void CoolAbility(AOC2Ability ability)
 	{
-		StartCoroutine(attack.Cool());
+		StartCoroutine(ability.Cool());
 	}
 	
 	void SpawnNewWave(int wave)

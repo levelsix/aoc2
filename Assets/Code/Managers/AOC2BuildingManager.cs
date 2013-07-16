@@ -109,11 +109,11 @@ public class AOC2BuildingManager : MonoBehaviour
 	/// </summary>
 	void OnEnable ()
 	{
-		AOC2EventManager.Controls.OnTap += OnTap;
-		AOC2EventManager.Controls.OnKeepDrag += OnDrag;
-		AOC2EventManager.Controls.OnStartHold += OnStartHold;
-		AOC2EventManager.Controls.OnReleaseDrag += OnReleaseDrag;
-		AOC2EventManager.Controls.OnStartDrag += OnStartDrag;
+		AOC2EventManager.Controls.OnTap[0] += OnTap;
+		AOC2EventManager.Controls.OnKeepDrag[0] += OnDrag;
+		AOC2EventManager.Controls.OnStartHold[0] += OnStartHold;
+		AOC2EventManager.Controls.OnReleaseDrag[0] += OnReleaseDrag;
+		AOC2EventManager.Controls.OnStartDrag[0] += OnStartDrag;
 		AOC2EventManager.Town.PlaceBuilding += OnPlace;
 	}
 	
@@ -123,11 +123,11 @@ public class AOC2BuildingManager : MonoBehaviour
 	/// </summary>
 	void OnDisable ()
 	{
-		AOC2EventManager.Controls.OnTap -= OnTap;
-		AOC2EventManager.Controls.OnKeepDrag -= OnDrag;
-		AOC2EventManager.Controls.OnStartHold -= OnStartHold;
-		AOC2EventManager.Controls.OnStartDrag -= OnStartDrag;
-		AOC2EventManager.Controls.OnReleaseDrag -= OnReleaseDrag;
+		AOC2EventManager.Controls.OnTap[0] -= OnTap;
+		AOC2EventManager.Controls.OnKeepDrag[0] -= OnDrag;
+		AOC2EventManager.Controls.OnStartHold[0] -= OnStartHold;
+		AOC2EventManager.Controls.OnStartDrag[0] -= OnStartDrag;
+		AOC2EventManager.Controls.OnReleaseDrag[0] -= OnReleaseDrag;
 		AOC2EventManager.Town.PlaceBuilding -= OnPlace;
 	}
 	
@@ -305,6 +305,7 @@ public class AOC2BuildingManager : MonoBehaviour
 			//_selectedBuilding.Deselect();
 			AOC2EventManager.Town.PlaceBuilding();	
 			_selectedBuilding = null;
+			_target = null;
 		}
 	}
 	

@@ -4,7 +4,19 @@ using System.Collections.Generic;
 
 public class AOC2PopupManager : MonoBehaviour {
 	
-	Stack<UIPanel> _currPops;
+	/// <summary>
+	/// The popup prefab.
+	/// </summary>
+	[SerializeField]
+	AOC2Popup popupPrefab;
+	
+	[SerializeField]
+	UIPanel popupPanel;
+	
+	/// <summary>
+	/// The stack of current popup menus.
+	/// </summary>
+	Stack<GameObject> _currPops;
 	
 	/// <summary>
 	/// Awake this instance.
@@ -12,7 +24,7 @@ public class AOC2PopupManager : MonoBehaviour {
 	/// </summary>
 	void Awake()
 	{
-		_currPops = new Stack<UIPanel>();
+		_currPops = new Stack<GameObject>();
 	}
 	
 	/// <summary>
@@ -24,6 +36,7 @@ public class AOC2PopupManager : MonoBehaviour {
 		AOC2EventManager.Popup.OnPopup += OnPopup;
 		AOC2EventManager.Popup.CloseAllPopups += CloseAllPopups;
 		AOC2EventManager.Popup.ClosePopupLayer += ClosePopupLayer;
+		AOC2EventManager.Popup.CreatePopup += CreatePopup;
 	}
 	
 	/// <summary>
@@ -35,6 +48,22 @@ public class AOC2PopupManager : MonoBehaviour {
 		AOC2EventManager.Popup.OnPopup -= OnPopup;
 		AOC2EventManager.Popup.CloseAllPopups -= CloseAllPopups;
 		AOC2EventManager.Popup.ClosePopupLayer -= ClosePopupLayer;
+		AOC2EventManager.Popup.CreatePopup -= CreatePopup;
+	}
+	
+	void CreatePopup(string text)
+	{
+		AOC2Popup pop = Instantiate(popupPrefab) as AOC2Popup;
+		
+		pop.Init(text);
+		
+		Transform popT = pop.transform;
+		
+		popT.parent = popupPanel.transform;
+		popT.localScale = Vector3.one;
+		popT.localPosition = Vector3.zero;
+		
+		OnPopup(pop.gameObject);
 	}
 	
 	/// <summary>
@@ -44,9 +73,9 @@ public class AOC2PopupManager : MonoBehaviour {
 	/// <param name='popup'>
 	/// Popup.
 	/// </param>
-	void OnPopup(UIPanel popup)
+	void OnPopup(GameObject popup)
 	{
-		popup.gameObject.SetActive(true);
+		popup.SetActive(true);
 		_currPops.Push(popup);
 	}
 	
@@ -68,7 +97,7 @@ public class AOC2PopupManager : MonoBehaviour {
 	{
 		while(_currPops.Count > stackLayer)
 		{
-			_currPops.Pop().gameObject.SetActive(false);
+			_currPops.Pop().SetActive(false);
 		}
 	}
 	

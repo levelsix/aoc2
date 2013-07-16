@@ -5,6 +5,7 @@ using System.Collections;
 /// @author Rob Giusti
 /// Touch data class, so that we can keep track of certain aspects of touch
 /// </summary>
+[System.Serializable]
 public class AOC2TouchData 
 {
 	#region Members
@@ -19,6 +20,11 @@ public class AOC2TouchData
 	#endregion
 	
 	#region Public
+	
+	/// <summary>
+	/// Whether or not this touch started on UI
+	/// </summary>
+	public bool ui = false;
 	
 	/// <summary>
 	/// Constant for the amount of time it takes for a tap to become a hold
@@ -60,7 +66,22 @@ public class AOC2TouchData
 	/// The count of touches.
 	/// Value == 1 unless this is a multitouch data
 	/// </summary>
-	public float count = 1;
+	public int count = 1;
+	
+	/// <summary>
+	/// Gets the index of the count.
+	/// Used for touch events, which are indexed with
+	/// 1-finger touches being index[0]
+	/// </summary>
+	/// <value>
+	/// The index of the count.
+	/// </value>
+	public int countIndex{
+		get
+		{
+			return count-1;
+		}
+	}
 	
 	#endregion
 	
@@ -159,12 +180,13 @@ public class AOC2TouchData
 			stationary = !stationary;
 			//If nothing is detecting flicks, turn this into a hold
 			//so that a drag will be detected immediately
-			if (AOC2EventManager.Controls.OnFlick == null)
+			
+			if (AOC2EventManager.Controls.OnFlick[countIndex] == null)
 			{
 				phase = Phase.HOLD;
-				if (AOC2EventManager.Controls.OnStartDrag != null)
+				if (AOC2EventManager.Controls.OnStartDrag[countIndex] != null)
 				{
-					AOC2EventManager.Controls.OnStartDrag(this);
+					AOC2EventManager.Controls.OnStartDrag[countIndex](this);
 				}
 			}
 		}

@@ -200,8 +200,22 @@ public class AOC2GridManager : MonoBehaviour {
 	/// </param>
 	public Vector2 PointToGridCoords(Vector3 point)
 	{
-		return new Vector2((int)(point.x / SPACE_SIZE), (int)(point.z / SPACE_SIZE));
-	}    
+		return new Vector2(Mathf.Clamp((int)(point.x / SPACE_SIZE), 0, GRID_SIZE-1), Mathf.Clamp((int)(point.z / SPACE_SIZE), 0, GRID_SIZE-1));
+	}
+	
+	/// <summary>
+	/// Takes a grid position and turns it into world coordinates
+	/// </summary>
+	/// <returns>
+	/// The world coordinates of the center of the grid space
+	/// </returns>
+	/// <param name='pos'>
+	/// Position on grid
+	/// </param>
+	public Vector3 GridToWorld(Vector2 pos)
+	{
+		return new Vector3(pos.x * SPACE_SIZE + GRID_OFFSET, 0, pos.y * SPACE_SIZE + GRID_OFFSET);
+	}
 	
 	/// <summary>
     /// Adds a building to this ground's grid
@@ -249,12 +263,16 @@ public class AOC2GridManager : MonoBehaviour {
 	/// <param name='screenPos'>
 	/// Screen position.
 	/// </param>
-	public Vector3 ScreenToGround(Vector3 screenPos)
+	public Vector3 ScreenToGround(Vector3 screenPos, bool withinGrid = false)
 	{
 		float dist;
 		Ray fromPoint = Camera.main.ScreenPointToRay(screenPos);
 		if (GROUND_PLANE.Raycast(fromPoint, out dist))
 		{
+			if (withinGrid)
+			{
+				return SnapPointToGrid(fromPoint.GetPoint(dist),0,0);
+			}
 			return fromPoint.GetPoint(dist);
 		}
 		Debug.LogWarning("Raycast from screen to ground failed. Returned (0,0,0).");
@@ -308,6 +326,14 @@ public class AOC2GridManager : MonoBehaviour {
 		Vector3 zOff = Vector3.zero;
 		for (int i = 0; i < GRID_SIZE; i++) 
 		{
+			if (i % 5 == 0)
+			{
+				Gizmos.color = Color.magenta;
+			}
+			else
+			{
+				Gizmos.color = Color.yellow;
+			}
 			xOff.x = SPACE_SIZE * i;
 			zOff.z = SPACE_SIZE * i;
 			Gizmos.DrawLine(transform.position + xOff, backLeft + xOff);
@@ -322,7 +348,7 @@ public class AOC2GridManager : MonoBehaviour {
 	
 	public bool IsOpen(int x, int y)
 	{
-		return _grid[x,y] != null;
+		return x >= 0 && y >= 0 && x < GRID_SIZE && y < GRID_SIZE && _grid[x,y] == null;
 	}
 	
 	public bool CanMoveInDir(AOC2GridNode start, Vector2 dir)
@@ -341,7 +367,7 @@ public class AOC2GridManager : MonoBehaviour {
 			return false;
 		}
 		
-		if (dir.x * dir.y != 0)
+		if (dir.x * dir.y != 0) //Diagonal case
 		{
 			return (IsOpen((int)(start.x + dir.x), (int)(start.y)) && IsOpen((int)start.x, (int)(start.y + dir.y)));
 		}

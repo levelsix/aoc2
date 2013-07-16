@@ -16,10 +16,17 @@ public class AOC2LogicUseAttack : AOC2LogicState {
 		_unit = unit;
 	}
 	
+	/// <summary>
+	/// Logic this instance.
+	/// Uses the given attack, including waiting for cast time.
+	/// </summary>
 	protected override IEnumerator Logic ()
 	{
+		
 		while(true)
 		{
+			Debug.LogError("DEPRECATED: Use AOC2LogicUseAbility instead");
+			/*
 			//Wait for the cast time if there is one
 			if (_attack.castTime > 0)
 			{
@@ -47,8 +54,11 @@ public class AOC2LogicUseAttack : AOC2LogicState {
 					deliv.gameObject.layer = AOC2Values.Layers.TARGET_ENEMY;
 				}
 			}
+			*/
+			complete = true;
 			yield return null;
 		}
+		
 	}
 	
 }

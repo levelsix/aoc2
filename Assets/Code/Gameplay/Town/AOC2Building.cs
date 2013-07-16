@@ -44,6 +44,8 @@ public class AOC2Building : MonoBehaviour, AOC2Placeable
 	/// </summary>
 	public Color badColor = new Color(1f, .5f, .5f);
 	
+	public Action OnSelect;
+	
     #endregion
 
     #region Private
@@ -244,13 +246,19 @@ public class AOC2Building : MonoBehaviour, AOC2Placeable
     /// </summary>
     public void Select()
     {
-		if (!_selected){
+		if (!_selected)
+		{
 			_originalPos = trans.position;
 			_tempPos = trans.position;
 	        AOC2ManagerReferences.gridManager.RemoveBuilding(this);
 			AOC2EventManager.Town.PlaceBuilding += Place;
 			_selected = true;
 			_currColor = selectColor;
+			
+			if (OnSelect != null)
+			{
+				OnSelect();
+			}
 			
 			StartCoroutine(ColorPingPong());
 		}

@@ -16,9 +16,23 @@ public class AOC2ControlManager : MonoBehaviour
     private const int LEFT_MOUSE = 0;
 	
 	/// <summary>
+	/// The most touches we'll ever report as being part of a single
+	/// multi-touch data
+	/// </summary>
+	public const int MAX_TOUCHES = 5;
+	
+	/// <summary>
 	/// A dictionary of current touches, indexed by Touch.fingerId
 	/// </summary>
 	private Dictionary<int, AOC2TouchData> touches;
+	
+	/// <summary>
+	/// The user interface camera.
+	/// Used to distinguish touches on UI from gameplay touches
+	/// NEEDS to be set in editor
+	/// </summary>
+	[SerializeField]
+	Camera uiCamera;
 	
 	/// <summary>
 	/// The touch pile.
@@ -108,6 +122,11 @@ public class AOC2ControlManager : MonoBehaviour
 		touchPile = new List<AOC2TouchData>();
 		
 		AOC2ManagerReferences.controlManager = this;
+		
+		if (uiCamera == null)
+		{
+			Debug.LogError("UICamera NEEDS TO BE SET IN EDITOR");
+		}
 	}
 	
 	/// <summary>
@@ -169,6 +188,7 @@ public class AOC2ControlManager : MonoBehaviour
 			if (touch.phase == TouchPhase.Began)
 			{
 				touches[touch.fingerId] = GetTouch(touch.position);
+				touches[touch.fingerId].ui = HitsUI(touch.position);				
 			}
 			
 			//Remove all ended touches in the dictionary
@@ -208,6 +228,7 @@ public class AOC2ControlManager : MonoBehaviour
         if (Input.GetMouseButtonDown(LEFT_MOUSE))
         {
 			mouseData.init(Input.mousePosition);
+			mouseData.ui = HitsUI(Input.mousePosition);
         }
         else if (Input.GetMouseButton(LEFT_MOUSE))
         {
@@ -232,14 +253,14 @@ public class AOC2ControlManager : MonoBehaviour
 	{
 		if (!touch.stationary)
 		{
-			if (AOC2EventManager.Controls.OnKeepDrag != null){
-				AOC2EventManager.Controls.OnKeepDrag(touch);
+			if (AOC2EventManager.Controls.OnKeepDrag[touch.countIndex] != null){
+				AOC2EventManager.Controls.OnKeepDrag[touch.countIndex](touch);
 			}
 		}
 		else
 		{
-			if (AOC2EventManager.Controls.OnKeepHold != null){
-				AOC2EventManager.Controls.OnKeepHold(touch);
+			if (AOC2EventManager.Controls.OnKeepHold[touch.countIndex] != null){
+				AOC2EventManager.Controls.OnKeepHold[touch.countIndex](touch);
 			}
 		}
 	}
@@ -253,25 +274,29 @@ public class AOC2ControlManager : MonoBehaviour
 	/// </param>
 	private void ProcessRelease(AOC2TouchData touch)
 	{
+		if (touch.ui) //Ignore UI clicks
+		{
+			return;
+		}
 		if (touch.phase == AOC2TouchData.Phase.TAP)
 		{
 			if (!touch.stationary)
 			{
-				if (AOC2EventManager.Controls.OnFlick != null){
-					AOC2EventManager.Controls.OnFlick(touch);
+				if (AOC2EventManager.Controls.OnFlick[touch.countIndex] != null){
+					AOC2EventManager.Controls.OnFlick[touch.countIndex](touch);
 				}
 			}
 			else
 			{
 				//Try to double-tap
-				if (CheckDoubleTap(touch) && AOC2EventManager.Controls.OnDoubleTap != null)
+				if (CheckDoubleTap(touch) && AOC2EventManager.Controls.OnDoubleTap[touch.countIndex] != null)
 				{
-					AOC2EventManager.Controls.OnDoubleTap(touch);
+					AOC2EventManager.Controls.OnDoubleTap[touch.countIndex](touch);
 				}
 				//Tap
-				else if (AOC2EventManager.Controls.OnTap != null)
+				else if (AOC2EventManager.Controls.OnTap[touch.countIndex] != null)
 				{
-					AOC2EventManager.Controls.OnTap(touch);
+					AOC2EventManager.Controls.OnTap[touch.countIndex](touch);
 				}
 				StartCoroutine(HoldTap(touch));
 			}
@@ -280,14 +305,14 @@ public class AOC2ControlManager : MonoBehaviour
 		{
 			if (!touch.stationary)
 			{
-				if (AOC2EventManager.Controls.OnReleaseDrag != null){
-					AOC2EventManager.Controls.OnReleaseDrag(touch);
+				if (AOC2EventManager.Controls.OnReleaseDrag[touch.countIndex] != null){
+					AOC2EventManager.Controls.OnReleaseDrag[touch.countIndex](touch);
 				}
 			}
 			else
 			{
-				if (AOC2EventManager.Controls.OnReleaseHold != null){
-					AOC2EventManager.Controls.OnReleaseHold(touch);
+				if (AOC2EventManager.Controls.OnReleaseHold[touch.countIndex] != null){
+					AOC2EventManager.Controls.OnReleaseHold[touch.countIndex](touch);
 				}
 			}
 		}		
@@ -301,6 +326,10 @@ public class AOC2ControlManager : MonoBehaviour
 	/// </param>
 	private void UpdateTouch(AOC2TouchData touch)
 	{
+		if (touch.ui) //Ignore UI clicks
+		{
+			return;
+		}
 		if (touch.phase == AOC2TouchData.Phase.TAP)
 		{
 			touch.Update(Time.deltaTime);
@@ -309,9 +338,9 @@ public class AOC2ControlManager : MonoBehaviour
 				if (touch.stationary)
 				{
 					//Separate 'if' for clarity
-					if (AOC2EventManager.Controls.OnStartHold != null)
+					if (AOC2EventManager.Controls.OnStartHold[touch.countIndex] != null)
 					{
-						AOC2EventManager.Controls.OnStartHold(touch);
+						AOC2EventManager.Controls.OnStartHold[touch.countIndex](touch);
 					}
 				}
 				ProcessHold(touch);
@@ -341,7 +370,7 @@ public class AOC2ControlManager : MonoBehaviour
 		}
 		if (multiData != null)
 		{
-			multiData.count = touches.Count;
+			multiData.count = Mathf.Min(touches.Count, MAX_TOUCHES); //Caps reported touches at MAX_TOUCHES
 			if (multiData.count <= 1)
 			{
 				PoolTouch(multiData);
@@ -390,6 +419,8 @@ public class AOC2ControlManager : MonoBehaviour
 			float size = GetSize();
 			AOC2EventManager.Controls.OnPinch(multiData.size - size);
 			multiData.size = size;
+			
+			UpdateTouch(multiData);
 		}
 	}
 	
@@ -402,7 +433,7 @@ public class AOC2ControlManager : MonoBehaviour
 	/// </returns>
 	private float GetSize()
 	{
-		//Set all this values to inf to make sure they get set
+		//Set all this values to +/- inf to make sure they get set
 		//on first iteration
 		float minX = float.PositiveInfinity;
 		float minY = float.PositiveInfinity;
@@ -431,5 +462,11 @@ public class AOC2ControlManager : MonoBehaviour
 		
 		return maxX - minX + maxY - minY;
 	}
-
+	
+	bool HitsUI(Vector2 screenPos)
+	{
+		Ray ray = uiCamera.ScreenPointToRay(screenPos);
+		return Physics.Raycast(ray, uiCamera.far - uiCamera.near, 1 << AOC2Values.Layers.UI);
+	}
+	
 }

@@ -170,6 +170,12 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 	public void Init()
 	{
 		_health = maxHealth;
+		
+		if (_logic != null)
+		{
+			_logic.Init();
+		}
+		
 		if (isEnemy)
 		{
 			AOC2EventManager.Combat.OnSpawnEnemy(this);
@@ -180,10 +186,6 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 			AOC2EventManager.Combat.OnSpawnPlayer(this);
 			gameObject.layer = AOC2Values.Layers.PLAYER;
 		}
-		if (_logic != null)
-		{
-			_logic.Init();
-		}
 	}
 	
 	/// <summary>
@@ -192,7 +194,7 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 	/// <param name='color'>
 	/// Color to tint
 	/// </param>
-	private void DebugTint(Color color)
+	public void DebugTint(Color color)
 	{
 		Mesh mesh = GetComponent<MeshFilter>().mesh;
 		Color[] colorArr = new Color[mesh.vertices.Length];
@@ -275,7 +277,7 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 	{
 		direction.Normalize();
 		
-		aPos.position += direction * moveSpeed * Time.deltaTime;
+		aPos.position += direction * moveSpeed * sprintMod * Time.deltaTime;
 	}
 	
 	#endregion

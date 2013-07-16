@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System;
+using System.Collections.Generic;
 
 public class AOC2GridNode : IComparable {
 	
@@ -25,6 +26,19 @@ public class AOC2GridNode : IComparable {
 	/// The distance from the root
 	/// </summary>
 	public float dist = 0;
+	
+	private static readonly Vector2[] moveDirs =
+	{
+		new Vector2(0,1),
+		new Vector2(1,1),
+		new Vector2(1,0),
+		new Vector2(0,-1),
+		new Vector2(-1,-1),
+		new Vector2(-1,0),
+		new Vector2(-1,1),
+		new Vector2(1,-1)
+	};
+		
 	
 	/// <summary>
 	/// Gets the cost of this node, for sorting
@@ -80,7 +94,39 @@ public class AOC2GridNode : IComparable {
 		heur = Mathf.Abs(destination.x - x) + Mathf.Abs (destination.y - y);
 	}
 	
+	/// <summary>
+	/// Gets all neighbors.
+	/// </summary>
+	/// <returns>
+	/// The neighbors.
+	/// </returns>
+	public List<AOC2GridNode> GetNeighbors()
+	{
+		List<AOC2GridNode> neighs = new List<AOC2GridNode>();
+		
+		
+		for (int i = 0; i < moveDirs.Length; i++) {
+			if (AOC2ManagerReferences.gridManager.CanMoveInDir(this, moveDirs[i])) //This is never working!!!
+			{
+				AOC2GridNode node = new AOC2GridNode(pos + moveDirs[i]);
+				node.dist = dist + 1;
+				node.parent = this;
+				neighs.Add(node);
+			}
+		}
+		
+		return neighs;
+	}
 	
+	/// <summary>
+	/// Compares costs
+	/// </summary>
+	/// <returns>
+	/// Comparison turnery int
+	/// </returns>
+	/// <param name='obj'>
+	/// Other grid node
+	/// </param>
 	public int CompareTo(object obj)
 	{
 		if (!(obj is AOC2GridNode))

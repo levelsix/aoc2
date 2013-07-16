@@ -1,7 +1,11 @@
 using UnityEngine;
 using System.Collections;
+using System;
 
 public static class AOC2Math {
+	
+	
+	const int secondsPerGem = 400;
 	
 	/// <summary>
 	/// Gets the square of the ground distance (y-axis ignored)
@@ -19,6 +23,11 @@ public static class AOC2Math {
 	public static float GroundDistanceSqr(Vector3 ptA, Vector3 ptB)
 	{
 		return Mathf.Pow(ptA.x-ptB.x,2) + Mathf.Pow (ptA.z-ptB.z,2);
+	}
+	
+	public static int GemsForTime(TimeSpan time)
+	{
+		return (int)Mathf.Ceil((float)(time.TotalSeconds / secondsPerGem));
 	}
 	
 }

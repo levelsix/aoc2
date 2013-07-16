@@ -16,7 +16,7 @@ public class AOC2CombatCamera : AOC2BuildingCamera {
 		}
 		AOC2EventManager.Combat.OnSpawnPlayer += LockCameraToUnit;
 		AOC2EventManager.Combat.OnPlayerDeath += Unlock;
-		AOC2EventManager.Controls.OnKeepDrag += MoveRelative;
+		AOC2EventManager.Controls.OnKeepDrag[0] += MoveRelative;
 		base.OnEnable();
 	}
 	
@@ -24,7 +24,7 @@ public class AOC2CombatCamera : AOC2BuildingCamera {
 	{
 		AOC2EventManager.Combat.OnSpawnPlayer -= LockCameraToUnit;
 		AOC2EventManager.Combat.OnPlayerDeath -= Unlock;
-		AOC2EventManager.Controls.OnKeepDrag -= MoveRelative;
+		AOC2EventManager.Controls.OnKeepDrag[0] -= MoveRelative;
 		base.OnDisable();
 	}
 	
@@ -68,6 +68,10 @@ public class AOC2CombatCamera : AOC2BuildingCamera {
 		if (Input.GetKeyDown(KeyCode.T))
 		{
 			Unlock();
+		}
+		if (Input.GetKey(KeyCode.K))
+		{
+			Zoom(-5f);
 		}
 	}
 	

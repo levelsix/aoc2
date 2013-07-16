@@ -24,6 +24,7 @@ public class AOC2LogicBlinkToTarget : AOC2LogicState {
 			yield return new WaitForSeconds(delayBef);
 			_unit.aPos.position = _unit.targetPos.position;
 			yield return new WaitForSeconds(delayAft);
+			complete = true;
 			yield return null;
 		}
 	}

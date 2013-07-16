@@ -23,6 +23,14 @@ public class AOC2Delivery : MonoBehaviour, AOC2Poolable {
 	public Vector3 direction;
 	
 	/// <summary>
+	/// The target.
+	/// If this attack does not have a target, it will hit the
+	/// first enemy that it comes into contact with.
+	/// Otherwise, it will target this enemy specifically
+	/// </summary>
+	public AOC2Unit target;
+	
+	/// <summary>
 	/// Whether this delivery persists past the first hit
 	/// </summary>
 	public bool persist;
@@ -89,7 +97,7 @@ public class AOC2Delivery : MonoBehaviour, AOC2Poolable {
 	}
 	
 	// Use this for initialization
-	public void Init (float dam, float spd, float life, Vector3 dir, bool pers, float ret) 
+	public void Init (float dam, float spd, float life, Vector3 dir, bool pers, float ret, AOC2Unit targ = null) 
 	{
 		gameObject.SetActive(true);
 		
@@ -98,6 +106,8 @@ public class AOC2Delivery : MonoBehaviour, AOC2Poolable {
 		direction = dir;
 		retarget = ret;
 		persist = pers;
+		
+		target = targ;
 		
 		//Clear the collision list
 		collList.RemoveRange(0, collList.Count);

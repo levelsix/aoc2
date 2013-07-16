@@ -23,7 +23,19 @@ public static class AOC2Values
 		public static int TARGET_ENEMY = 14;
 		public static int TARGET_ALL = 15;
 		
-		public static int TOUCH_PLAYER = 18;
-		public static int TOUCH_ENEMY = 19;
+		public static int TOUCH_PLAYER = 17;
+		public static int TOUCH_ENEMY = 18;
+		
+		public static int UI = 20;
+	}
+	
+	public static class Buildings
+	{
+		public enum ResourceType
+		{
+			GOLD = 0,
+			TONIC = 1,
+			GEMS = 2
+		}
 	}
 }

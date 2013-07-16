@@ -16,14 +16,42 @@ public class AOC2PlayerController : AOC2UnitLogic {
 	public float MIN_MOVE_DIST = .2f;
 	
 	/// <summary>
+	/// Constant for AB testing.
+	/// Flip to change test.
+	/// </summary>
+	public bool A = true;
+	
+	/// <summary>
+	/// DEBUG
+	/// The color of the target.
+	/// </summary>
+	public Color targetColor = Color.magenta;
+	
+	//public AOC2Attack[] attacks;
+	
+	public int attackIndex = -1;
+	
+	private AOC2LogicState[] abilityLogics;
+	
+	/// <summary>
+	/// The abilities of this player
+	/// </summary>
+	public AOC2Ability[] abilities;
+	
+	/// <summary>
 	/// DEBUG: the player character's ranged attack.
 	/// </summary>
-	public AOC2Attack baseAttack;
+	//public AOC2Attack baseAttack;
 	
 	/// <summary>
 	/// DEBUG: The melee attack.
 	/// </summary>
-	public AOC2Attack meleeAttack;
+	//public AOC2Attack meleeAttack;
+	
+	/// <summary>
+	/// The attack target.
+	/// </summary>
+	public AOC2Unit attackTarget;
 	
 	/// <summary>
 	/// The unit component
@@ -38,8 +66,9 @@ public class AOC2PlayerController : AOC2UnitLogic {
 	/// <summary>
 	/// The blink logic.
 	/// </summary>
-	private AOC2LogicState blinkLogic;
+	private AOC2LogicState sprintLogic;
 	
+	/*
 	/// <summary>
 	/// The base attack logic.
 	/// </summary>
@@ -49,6 +78,7 @@ public class AOC2PlayerController : AOC2UnitLogic {
 	/// The melee attack logic.
 	/// </summary>
 	private AOC2LogicState meleeAttackLogic;
+	*/
 	
 	/// <summary>
 	/// The delay before a blink begins; the casting time
@@ -66,6 +96,9 @@ public class AOC2PlayerController : AOC2UnitLogic {
 	void Awake () 
 	{
 		_unit = GetComponent<AOC2Unit>();
+		abilities = new AOC2Ability[2];
+		abilities[0] = AOC2AbilityLists.Warrior.baseAttackAbility;
+		abilities[1] = AOC2AbilityLists.Warrior.powerAttackAbility;
 	}
 	
 	/// <summary>
@@ -76,27 +109,25 @@ public class AOC2PlayerController : AOC2UnitLogic {
 	{
 		AOC2LogicState doNothing = new AOC2LogicDoNothing();
 		
-		moveLogic = new AOC2LogicChargeAtTarget(_unit);
-		moveLogic.AddExit(new AOC2ExitTargetInRange(doNothing, _unit, MIN_MOVE_DIST));
+		moveLogic = new AOC2LogicFollowPath(_unit);
+		//moveLogic.AddExit(new AOC2ExitTargetInRange(doNothing, _unit, MIN_MOVE_DIST));
+		moveLogic.AddExit(new AOC2ExitWhenComplete(moveLogic, doNothing));
 		
-		blinkLogic = new AOC2LogicBlinkToTarget(_unit, BLINK_DELAY, BLINK_AFTER_DELAY);
-		blinkLogic.AddExit(new AOC2ExitTargetInRange(doNothing, _unit, MIN_MOVE_DIST));
+		sprintLogic = new AOC2LogicSprint(_unit);
+		sprintLogic.AddExit(new AOC2ExitTargetInRange(doNothing, _unit, MIN_MOVE_DIST));
 		
-		AOC2LogicState chaseState = new AOC2LogicChargeAtTarget(_unit);
-		AOC2LogicState attackState = new AOC2LogicUseAttack(_unit, baseAttack, false);
+		abilityLogics = new AOC2LogicState[abilities.Length];
 		
-		chaseState.AddExit(new AOC2ExitTargetInRange(attackState, _unit, baseAttack.range));
-		attackState.AddExit(new AOC2ExitAttackOnCooldown(baseAttack, doNothing));
+		AOC2LogicState abilityState;
 		
-		baseAttackLogic = chaseState;
-		
-		AOC2LogicState meleeChase = new AOC2LogicChargeAtTarget(_unit);
-		AOC2LogicState meleeState = new AOC2LogicUseAttack(_unit, meleeAttack, false);
-		
-		meleeChase.AddExit(new AOC2ExitTargetInRange(meleeState, _unit, meleeAttack.range));
-		meleeState.AddExit(new AOC2ExitAttackOnCooldown(meleeAttack, doNothing));
-		
-		meleeAttackLogic = meleeChase;
+		for (int i = 0; i < abilityLogics.Length; i++) {
+			abilityLogics[i] = new AOC2LogicMoveTowardTarget(_unit);
+			abilityState = new AOC2LogicUseAbility(_unit, abilities[i], false);
+			abilityState.AddExit(new AOC2ExitWhenComplete(abilityState, doNothing));
+			//attacksState.AddExit(new AOC2ExitAttackOnCooldown(attacks[i], doNothing));
+			//Debug.Log(abilities[i].name);
+			abilityLogics[i].AddExit(new AOC2ExitTargetInRange(abilityState, _unit, abilities[i].range));
+		}
 		
 		_baseState = doNothing;
 	}
@@ -107,8 +138,10 @@ public class AOC2PlayerController : AOC2UnitLogic {
 	/// </summary>
 	void OnEnable()
 	{
-		AOC2EventManager.Controls.OnTap += OnTap;
-		AOC2EventManager.Controls.OnDoubleTap += OnDoubleTap;
+		AOC2EventManager.Controls.OnTap[0] += OnTap;
+		AOC2EventManager.Controls.OnDoubleTap[0] += OnDoubleTap;
+		AOC2EventManager.Combat.SetPlayerAttack += SetPlayerAttack;
+		AOC2EventManager.Combat.OnEnemyDeath += OnEnemyDeath;
 	}
 	
 	/// <summary>
@@ -117,8 +150,30 @@ public class AOC2PlayerController : AOC2UnitLogic {
 	/// </summary>
 	void OnDisable()
 	{
-		AOC2EventManager.Controls.OnTap -= OnTap;
-		AOC2EventManager.Controls.OnDoubleTap -= OnDoubleTap;
+		AOC2EventManager.Controls.OnTap[0] -= OnTap;
+		AOC2EventManager.Controls.OnDoubleTap[0] -= OnDoubleTap;
+		AOC2EventManager.Combat.SetPlayerAttack -= SetPlayerAttack;
+		AOC2EventManager.Combat.OnEnemyDeath -= OnEnemyDeath;
+	}
+	
+	void SetPlayerAttack(int index)
+	{
+		attackIndex = index;
+		
+		if (attackTarget != null)
+		{
+			_unit.targetPos = attackTarget.aPos;
+			
+			abilityLogics[index].Start();
+			_current = abilityLogics[index];
+		}
+		else if (A)
+		{
+			_unit.targetPos = AOC2ManagerReferences.combatManager.GetClosestEnemy(_unit).aPos;
+			
+			abilityLogics[index].Start();
+			_current = abilityLogics[index];
+		}
 	}
 	
 	/// <summary>
@@ -133,17 +188,14 @@ public class AOC2PlayerController : AOC2UnitLogic {
 		AOC2Unit enemyTarget = TryTargetEnemy(data.pos);
 		if (enemyTarget != null)
 		{
-			if (baseAttack.onCool)
-			{
-				return;
-			}
-			_unit.targetPos = enemyTarget.aPos;
-			_current = meleeAttackLogic;
+			
 		}
-		else
+		else if(TargetGround(data.pos))
 		{
 			_unit.targetPos = new AOC2Position(AOC2ManagerReferences.gridManager.ScreenToGround(data.pos));
-			_current = blinkLogic;
+			
+			sprintLogic.Start();
+			_current = sprintLogic;
 		}
 	}
 	
@@ -159,18 +211,44 @@ public class AOC2PlayerController : AOC2UnitLogic {
 		AOC2Unit enemyTarget = TryTargetEnemy(data.pos);
 		if (enemyTarget != null)
 		{
-			if (baseAttack.onCool)
-			{
-				return;
-			}
-			_unit.targetPos = enemyTarget.aPos;
-			_current = baseAttackLogic;
+			TargetEnemy(enemyTarget);
 		}
-		else
+		else if (TargetGround(data.pos))
 		{
 			_unit.targetPos = new AOC2Position(AOC2ManagerReferences.gridManager.ScreenToGround(data.pos));
+			moveLogic.Start();
 			_current = moveLogic;
 		}
+	}
+	
+	void OnEnemyDeath(AOC2Unit unit)
+	{
+		if (unit == attackTarget)
+		{
+			unit.DebugTint(unit.tint);
+			attackTarget = null;
+		}
+	}
+	
+	void TargetEnemy(AOC2Unit unit)
+	{
+		if (attackTarget != null)
+		{
+			attackTarget.DebugTint(attackTarget.tint);
+		}
+		attackTarget = unit;
+		attackTarget.DebugTint(targetColor);
+	}
+	
+	bool TargetGround(Vector3 screenPos)
+	{
+		Ray ray = Camera.main.ScreenPointToRay(screenPos);
+		RaycastHit hit;
+        if (Physics.Raycast(ray, out hit))
+		{
+			return hit.collider.GetComponent<AOC2Ground>() != null;
+		}
+		return false;
 	}
 	
 	/// <summary>
@@ -187,8 +265,8 @@ public class AOC2PlayerController : AOC2UnitLogic {
 	{
 		Ray ray = Camera.main.ScreenPointToRay(screenPos);
 		RaycastHit hit;
-		LayerMask mask = (int)Mathf.Pow(2,AOC2Values.Layers.TOUCH_ENEMY);
-        if (Physics.Raycast(ray, out hit, mask))
+		int mask = 1 << AOC2Values.Layers.TOUCH_ENEMY;
+        if (Physics.Raycast(ray, out hit, Camera.main.far - Camera.main.near, mask))
 		{
 			return hit.collider.GetComponent<AOC2ClickBox>().parent;
 		}

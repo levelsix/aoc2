@@ -1,28 +1,17 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/NGUI/Scripts/Editor/NGUIMenu.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Code/Gameplay/Combat/AOC2PlayerController.cs">
     <Files>
-      <File FileName="Assets/Code/Managers/AOC2ControlManager.cs" Line="1" Column="1" />
-      <File FileName="Assets/Code/Managers/AOC2BuildingManager.cs" Line="1" Column="1" />
-      <File FileName="Assets/Code/Managers/AOC2EventManager.cs" Line="1" Column="1" />
-      <File FileName="Assets/Code/Gameplay/Town/AOC2BuildingCamera.cs" Line="1" Column="1" />
-      <File FileName="Assets/Code/Gameplay/Combat/AOC2CombatCamera.cs" Line="1" Column="1" />
-      <File FileName="Assets/Code/Gameplay/Combat/AOC2PlayerController.cs" Line="1" Column="1" />
-      <File FileName="Assets/Code/Controls/AOC2TouchData.cs" Line="1" Column="1" />
-      <File FileName="Assets/Code/Managers/AOC2PopupManager.cs" Line="1" Column="1" />
-      <File FileName="Assets/NGUI/Scripts/Interaction/UIButton.cs" Line="1" Column="1" />
-      <File FileName="Assets/NGUI/Scripts/Interaction/UIButtonMessage.cs" Line="1" Column="1" />
-      <File FileName="Assets/NGUI/Scripts/Interaction/UIButtonColor.cs" Line="1" Column="1" />
-      <File FileName="Assets/NGUI/Scripts/UI/UICamera.cs" Line="1" Column="1" />
-      <File FileName="Assets/NGUI/Scripts/Interaction/UIPopupList.cs" Line="1" Column="1" />
-      <File FileName="Assets/Code/Networking/AOC2NetworkTest.cs" Line="22" Column="3" />
-      <File FileName="Assets/Code/Networking/AOC2CustomSocketFactory.cs" Line="12" Column="26" />
-      <File FileName="Assets/Code/Gameplay/Combat/Spawning/AOC2Spawnable.cs" Line="14" Column="22" />
-      <File FileName="Assets/Code/Gameplay/Combat/Spawning/AOC2UnitSpawner.cs" Line="26" Column="40" />
-      <File FileName="Assets/Code/Gameplay/Combat/Spawning/AOC2SpawnGroup.cs" Line="18" Column="18" />
-      <File FileName="Assets/Code/Gameplay/Combat/Spawning/AOC2SpawnTable.cs" Line="16" Column="18" />
-      <File FileName="Assets/Code/Gameplay/Combat/AOC2Unit.cs" Line="128" Column="22" />
-      <File FileName="Assets/NGUI/Scripts/Editor/NGUIMenu.cs" Line="98" Column="61" />
+      <File FileName="Assets/Code/Gameplay/Combat/AOC2PlayerController.cs" Line="127" Column="1" />
+      <File FileName="Assets/Code/Util/AOC2AbilityLists.cs" Line="60" Column="9" />
+      <File FileName="Assets/Code/Gameplay/Combat/AI/Logics/AOC2LogicUseAttack.cs" Line="17" Column="3" />
+      <File FileName="Assets/Code/Gameplay/Combat/CombatAbilities/Abstract/AOC2AttackAbility.cs" Line="16" Column="18" />
+      <File FileName="Assets/Code/Gameplay/Combat/CombatAbilities/Abstract/AOC2Ability.cs" Line="49" Column="17" />
+      <File FileName="Assets/Code/Gameplay/Combat/AI/Logics/AOC2LogicUseAbility.cs" Line="32" Column="4" />
+      <File FileName="Assets/Code/Gameplay/Combat/CombatAbilities/Abstract/AOC2Attack.cs" Line="76" Column="1" />
+      <File FileName="Assets/Code/UI/Combat/AOC2SetAttackButton.cs" Line="14" Column="1" />
+      <File FileName="Assets/Code/UI/Combat/AOC2AbilityButtonPanel.cs" Line="52" Column="13" />
+      <File FileName="Assets/Code/Gameplay/Combat/AOC2Unit.cs" Line="173" Column="3" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -30,41 +19,22 @@
           <Node name="Assembly-CSharp" expanded="True">
             <Node name="Assets" expanded="True">
               <Node name="Code" expanded="True">
-                <Node name="Controls" expanded="True" />
                 <Node name="Gameplay" expanded="True">
                   <Node name="Combat" expanded="True">
                     <Node name="AI" expanded="True">
                       <Node name="Exits" expanded="True" />
                       <Node name="Logics" expanded="True" />
                     </Node>
-                    <Node name="Spawning" expanded="True" />
+                    <Node name="CombatAbilities" expanded="True">
+                      <Node name="Abstract" expanded="True" />
+                    </Node>
+                    <Node name="AOC2PlayerController.cs" selected="True" />
                   </Node>
-                  <Node name="Common" expanded="True" />
-                  <Node name="Town" expanded="True" />
                 </Node>
-                <Node name="Managers" expanded="True">
-                  <Node name="ManagerUtil" expanded="True" />
+                <Node name="UI" expanded="True">
+                  <Node name="Combat" expanded="True" />
                 </Node>
-                <Node name="Networking" expanded="True" />
-                <Node name="UI" expanded="True" />
                 <Node name="Util" expanded="True" />
-              </Node>
-              <Node name="NGUI" expanded="True">
-                <Node name="Scripts" expanded="True">
-                  <Node name="Interaction" expanded="True" />
-                  <Node name="UI" expanded="True" />
-                </Node>
-              </Node>
-            </Node>
-          </Node>
-          <Node name="Assembly-CSharp-Editor" expanded="True">
-            <Node name="Assets" expanded="True">
-              <Node name="NGUI" expanded="True">
-                <Node name="Scripts" expanded="True">
-                  <Node name="Editor" expanded="True">
-                    <Node name="NGUIMenu.cs" selected="True" />
-                  </Node>
-                </Node>
               </Node>
             </Node>
           </Node>

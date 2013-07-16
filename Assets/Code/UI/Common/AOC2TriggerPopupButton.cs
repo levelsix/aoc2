@@ -3,7 +3,7 @@ using System.Collections;
 
 public class AOC2TriggerPopupButton : MonoBehaviour {
 
-	public UIPanel popup;
+	public GameObject popup;
 	
 	void OnClick()
 	{

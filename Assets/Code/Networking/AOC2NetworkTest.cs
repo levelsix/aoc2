@@ -23,6 +23,7 @@ public class AOC2NetworkTest : MonoBehaviour {
 		IConnection connection = null;
 		try{
 			connection = factory.CreateConnection();
+			gameObject.SetActive(true);
 		}
 		catch (Exception e)
 		{
@@ -37,6 +38,7 @@ public class AOC2NetworkTest : MonoBehaviour {
 		{
 			channel = connection.CreateModel();
 			Debug.Log("Channel");
+			gameObject.SetActive(true);
 		}
 		catch (Exception e)
 		{
@@ -44,6 +46,7 @@ public class AOC2NetworkTest : MonoBehaviour {
 			gameObject.SetActive(false);
 		}
 		
+		AOC2EventManager.Popup.CreatePopup("Connected");
 		
 	}
 }

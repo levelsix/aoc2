@@ -58,6 +58,14 @@ public class AOC2BuildingCamera : MonoBehaviour, AOC2Placeable
 		_cam = camera;
 	}
 	
+	void Start()
+	{
+		if (AOC2EventManager.UI.OnCameraResize != null)
+		{
+			AOC2EventManager.UI.OnCameraResize(_cam);
+		}
+	}
+	
 	/// <summary>
 	/// Raises the enable event.
 	/// Set up delegtes
@@ -120,6 +128,8 @@ public class AOC2BuildingCamera : MonoBehaviour, AOC2Placeable
 		{
 			_cam.orthographicSize = MIN_SIZE;
 		}
+		
+		AOC2EventManager.UI.OnCameraResize(_cam);
 	}
 	
 #if UNITY_EDITOR

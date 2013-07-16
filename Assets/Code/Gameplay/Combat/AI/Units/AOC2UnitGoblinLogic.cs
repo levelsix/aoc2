@@ -14,7 +14,7 @@ public class AOC2UnitGoblinLogic : AOC2UnitLogic {
 	/// <summary>
 	/// The base attack for this enemy
 	/// </summary>
-	public AOC2Attack baseAttack;
+	public AOC2Ability baseAttack;
 	
 	/// <summary>
 	/// Pointer to this unit
@@ -35,9 +35,11 @@ public class AOC2UnitGoblinLogic : AOC2UnitLogic {
 	/// </summary>
 	protected override void Start ()
 	{
+		baseAttack = AOC2AbilityLists.Enemy.baseAttackAbility;
+		
 		AOC2LogicState doNothing = new AOC2LogicDoNothing();
-		AOC2LogicState chase = new AOC2LogicChargeAtTarget(_unit);
-		AOC2LogicState attack = new AOC2LogicUseAttack(_unit, baseAttack, true);
+		AOC2LogicState chase = new AOC2LogicMoveTowardTarget(_unit);
+		AOC2LogicState attack = new AOC2LogicUseAbility(_unit, baseAttack, true);
 		
 		doNothing.AddExit(new AOC2ExitPlayerInRange(chase, _unit, range));
 		

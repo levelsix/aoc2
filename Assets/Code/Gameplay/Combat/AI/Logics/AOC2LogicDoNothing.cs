@@ -7,6 +7,7 @@ public class AOC2LogicDoNothing : AOC2LogicState {
 	{
 		while (true)
 		{
+			complete = true;
 			yield return null;
 		}
 	}
