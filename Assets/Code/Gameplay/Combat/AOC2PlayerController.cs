@@ -97,9 +97,9 @@ public class AOC2PlayerController : AOC2UnitLogic {
 	{
 		_unit = GetComponent<AOC2Unit>();
 		abilities = new AOC2Ability[4];
-		abilities[0] = AOC2AbilityLists.Warrior.baseAttackAbility;
+		abilities[0] = AOC2AbilityLists.Archer.baseAttackAbility;
 		abilities[1] = AOC2AbilityLists.Warrior.powerAttackAbility;
-		abilities[2] = AOC2AbilityLists.Warrior.ironWillAbility;
+		abilities[2] = AOC2AbilityLists.Archer.fanAttackAbility;
 		abilities[3] = AOC2AbilityLists.Warrior.cleaveAbility;
 	}
 	
@@ -191,7 +191,11 @@ public class AOC2PlayerController : AOC2UnitLogic {
 		}
 		else if (A)
 		{
-			_unit.targetPos = AOC2ManagerReferences.combatManager.GetClosestEnemy(_unit).aPos;
+			AOC2Unit closeEn = AOC2ManagerReferences.combatManager.GetClosestEnemy(_unit);
+			if (closeEn != null)
+			{
+				_unit.targetPos = closeEn.aPos;
+			}
 			
 			abilityLogics[index].Start();
 			_current = abilityLogics[index];

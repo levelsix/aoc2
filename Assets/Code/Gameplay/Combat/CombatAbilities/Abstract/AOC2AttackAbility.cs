@@ -4,7 +4,7 @@ using System.Collections;
 [System.Serializable]
 public class AOC2AttackAbility : AOC2Ability {
 
-	private AOC2Attack _attack;
+	protected AOC2Attack _attack;
 	
 	public override float range {
 		get {
@@ -12,7 +12,8 @@ public class AOC2AttackAbility : AOC2Ability {
 		}
 	}
 	
-	public AOC2AttackAbility(AOC2Attack attack, string abName, float cast, float cool, int mana, AOC2Values.Abilities.TargetType target)
+	public AOC2AttackAbility(AOC2Attack attack, string abName, float cast, 
+		float cool, int mana, AOC2Values.Abilities.TargetType target)
 		: base(abName, cast, cool, mana, target)
 	{
 		_attack = attack;

@@ -251,7 +251,7 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 		int damage = (deliv.damage) - (int)(defense * BASE_DEFENSE_MOD);
 		if (damage > 0){
 			health -= damage;
-			Debug.Log("Damage: " + deliv.damage + ", Taken: " + damage);
+			//Debug.Log("Damage: " + deliv.damage + ", Taken: " + damage);
 			if (health <= 0)
 			{
 				Die();

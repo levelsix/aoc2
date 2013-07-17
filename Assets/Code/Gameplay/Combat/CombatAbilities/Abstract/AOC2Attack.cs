@@ -124,7 +124,6 @@ public class AOC2Attack {
 		deliv.Init((int)(_damage * user.power),
 			_speed,_life,dir,_persist,_retarget);
 		
-		Debug.Log("Size: " + _size);
 		deliv.transform.localScale = new Vector3(_size, _size, _size);
 		
 	}

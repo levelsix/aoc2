@@ -1,19 +1,26 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Code/Util/AOC2AbilityLists.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Code/Managers/AOC2PoolManager.cs">
     <Files>
-      <File FileName="Assets/Code/Gameplay/Combat/AOC2PlayerController.cs" Line="128" Column="92" />
-      <File FileName="Assets/Code/Util/AOC2AbilityLists.cs" Line="105" Column="43" />
-      <File FileName="Assets/Code/Gameplay/Combat/AI/Abstract/AOC2UnitLogic.cs" Line="4" Column="1" />
-      <File FileName="Assets/Code/Gameplay/Combat/CombatAbilities/Abstract/AOC2BuffAbility.cs" Line="43" Column="48" />
+      <File FileName="Assets/Code/Gameplay/Combat/AOC2PlayerController.cs" Line="100" Column="41" />
+      <File FileName="Assets/Code/Util/AOC2AbilityLists.cs" Line="151" Column="41" />
+      <File FileName="Assets/Code/Gameplay/Combat/AI/Abstract/AOC2UnitLogic.cs" Line="1" Column="1" />
+      <File FileName="Assets/Code/Gameplay/Combat/CombatAbilities/Abstract/AOC2BuffAbility.cs" Line="1" Column="1" />
       <File FileName="Assets/Code/Managers/AOC2CombatManager.cs" Line="1" Column="1" />
       <File FileName="Assets/Code/Util/AOC2Values.cs" Line="1" Column="1" />
-      <File FileName="Assets/Code/Gameplay/Combat/CombatAbilities/Abstract/AOC2Ability.cs" Line="47" Column="13" />
-      <File FileName="Assets/Code/Gameplay/Combat/CombatAbilities/Abstract/AOC2Attack.cs" Line="84" Column="25" />
-      <File FileName="Assets/Code/Gameplay/Combat/AOC2Unit.cs" Line="246" Column="66" />
-      <File FileName="Assets/Code/Gameplay/Combat/AOC2UnitStats.cs" Line="15" Column="29" />
-      <File FileName="Assets/Code/Gameplay/Combat/AOC2CombatCamera.cs" Line="55" Column="1" />
-      <File FileName="Assets/Code/Gameplay/Combat/AOC2Delivery.cs" Line="100" Column="23" />
+      <File FileName="Assets/Code/Gameplay/Combat/CombatAbilities/Abstract/AOC2Ability.cs" Line="1" Column="1" />
+      <File FileName="Assets/Code/Gameplay/Combat/CombatAbilities/Abstract/AOC2Attack.cs" Line="1" Column="1" />
+      <File FileName="Assets/Code/Gameplay/Combat/AOC2Unit.cs" Line="1" Column="1" />
+      <File FileName="Assets/Code/Gameplay/Combat/AOC2UnitStats.cs" Line="1" Column="1" />
+      <File FileName="Assets/Code/Gameplay/Combat/AOC2CombatCamera.cs" Line="1" Column="1" />
+      <File FileName="Assets/Code/Gameplay/Combat/AOC2Delivery.cs" Line="1" Column="1" />
+      <File FileName="Assets/Code/UI/Combat/AOC2HealthBar.cs" Line="1" Column="1" />
+      <File FileName="Assets/Code/Managers/AOC2EventManager.cs" Line="1" Column="1" />
+      <File FileName="Assets/Code/Gameplay/Combat/Spawning/AOC2Spawnable.cs" Line="1" Column="1" />
+      <File FileName="Assets/Code/Gameplay/Combat/CombatAbilities/Abstract/AOC2AttackAbility.cs" Line="7" Column="11" />
+      <File FileName="Assets/Code/Gameplay/Combat/CombatAbilities/Abstract/AOC2ArcMultiAttackAbility.cs" Line="31" Column="58" />
+      <File FileName="Assets/Code/Gameplay/Combat/Spawning/AOC2SpawnGroup.cs" Line="29" Column="19" />
+      <File FileName="Assets/Code/Managers/AOC2PoolManager.cs" Line="1" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -32,17 +39,18 @@
                     <Node name="CombatAbilities" expanded="True">
                       <Node name="Abstract" expanded="True" />
                     </Node>
+                    <Node name="Spawning" expanded="True" />
                   </Node>
                   <Node name="Town" expanded="True" />
                 </Node>
-                <Node name="Managers" expanded="True" />
+                <Node name="Managers" expanded="True">
+                  <Node name="AOC2PoolManager.cs" selected="True" />
+                </Node>
                 <Node name="Static" expanded="True" />
                 <Node name="UI" expanded="True">
                   <Node name="Combat" expanded="True" />
                 </Node>
-                <Node name="Util" expanded="True">
-                  <Node name="AOC2AbilityLists.cs" selected="True" />
-                </Node>
+                <Node name="Util" expanded="True" />
               </Node>
             </Node>
           </Node>
