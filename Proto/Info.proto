@@ -1,0 +1,19 @@
+package com.lvl6.proto;
+
+option java_outer_classname = "InfoProto";
+
+message FullUserStructureProto {
+	optional int32 userStructId = 1;
+	optional int32 userId = 2;
+	optional int32 structId = 3;
+	optional StructType structType = 4;
+	
+}
+
+enum StructType{
+	TOWN_HALL = 0;
+	GOLD_COLLECTOR = 1;
+	GOLD_STORAGE = 2;
+	TONIC_COLLECTOR = 3;
+	TONIC_STORAGE = 4;
+}
