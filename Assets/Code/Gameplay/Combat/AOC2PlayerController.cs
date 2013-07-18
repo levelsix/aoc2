@@ -1,7 +1,9 @@
 using UnityEngine;
 using System.Collections;
+using com.lvl6.proto;
 
 /// <summary>
+/// @author Rob Giusti
 /// Unit logic for the player controller.
 /// Ties together character logic and touch controls
 /// </summary>
@@ -27,26 +29,20 @@ public class AOC2PlayerController : AOC2UnitLogic {
 	/// </summary>
 	public Color targetColor = Color.magenta;
 	
-	//public AOC2Attack[] attacks;
-	
+	/// <summary>
+	/// The index of the current attack.
+	/// </summary>
 	public int attackIndex = -1;
 	
+	/// <summary>
+	/// The ability logics.
+	/// </summary>
 	private AOC2LogicState[] abilityLogics;
 	
 	/// <summary>
 	/// The abilities of this player
 	/// </summary>
 	public AOC2Ability[] abilities;
-	
-	/// <summary>
-	/// DEBUG: the player character's ranged attack.
-	/// </summary>
-	//public AOC2Attack baseAttack;
-	
-	/// <summary>
-	/// DEBUG: The melee attack.
-	/// </summary>
-	//public AOC2Attack meleeAttack;
 	
 	/// <summary>
 	/// The attack target.
@@ -173,9 +169,7 @@ public class AOC2PlayerController : AOC2UnitLogic {
 	/// </param>
 	void SetPlayerAttack(int index)
 	{
-		attackIndex = index;
-		
-		if (abilities[attackIndex].targetType == AOC2Values.Abilities.TargetType.SELF)
+		if (abilities[index].targetType == AOC2Values.Abilities.TargetType.SELF)
 		{
 			_unit.targetPos = _unit.aPos;
 			

@@ -1,6 +1,15 @@
 using UnityEngine;
 using System.Collections;
 
+/// <summary>
+/// @author Rob Giusti
+/// 
+/// Compendium of all abilities for all characters.
+/// 
+/// TODO: Move all this to server-side, so that
+/// we can make changes to abilities without having
+/// to patch the entire game.
+/// </summary>
 public static class AOC2AbilityLists {
 
 	public static class Warrior

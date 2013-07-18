@@ -4,7 +4,6 @@ using System;
 
 public static class AOC2Math {
 	
-	
 	const int secondsPerGem = 400;
 	
 	/// <summary>
@@ -25,9 +24,13 @@ public static class AOC2Math {
 		return Mathf.Pow(ptA.x-ptB.x,2) + Mathf.Pow (ptA.z-ptB.z,2);
 	}
 	
-	public static int GemsForTime(TimeSpan time)
+	public static int GemsForTime(long time)
 	{
-		return (int)Mathf.Ceil((float)(time.TotalSeconds / secondsPerGem));
+		return (int)Mathf.Ceil((float)(time / secondsPerGem));
 	}
 	
+    public static long UnixTimeStamp(DateTime time)
+    {
+        return (long) (time - new DateTime(1970, 1, 1, 0, 0, 0).ToLocalTime()).TotalSeconds;
+    }
 }

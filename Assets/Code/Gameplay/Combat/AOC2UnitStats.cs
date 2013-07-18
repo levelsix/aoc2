@@ -1,15 +1,17 @@
 using UnityEngine;
 using System.Collections;
+using com.lvl6.proto;
 
 /// <summary>
 /// @author Rob Giusti
 /// Wrapper for a unit's stats. Editable from inside
 /// the editor. Can be indexed using the [] operator
-/// and the UnitStat enum.
+/// and the UnitStat enum. Can be added together using
+/// the addition operator.
 /// </summary>
 [System.Serializable]
 public class AOC2UnitStats {
-
+	
 	public int strength = 10;
 	public int defense = 10;
 	public int resistance = 100;
@@ -17,6 +19,31 @@ public class AOC2UnitStats {
 	public int attackSpeed = 1;
 	public int maxMana = 100;
 	public int maxHealth = 100;
+	
+	/// <summary>
+	/// Empty constructor.
+	/// Initializes a new instance of the <see cref="AOC2UnitStats"/> class with
+	/// default values.
+	/// </summary>
+	public AOC2UnitStats(){}
+	
+	/// <summary>
+	/// Initializes a new instance of the <see cref="AOC2UnitStats"/> class
+	/// using a serializable protocol
+	/// </summary>
+	/// <param name='proto'>
+	/// Unit stats protocol instance to create this object from
+	/// </param>
+	public AOC2UnitStats(UnitStatsProto proto)
+	{
+		strength = proto.strength;
+		defense = proto.defense;
+		resistance = proto.resistance;
+		moveSpeed = proto.moveSpeed;
+		attackSpeed = proto.attackSpeed;
+		maxMana = proto.maxMana;
+		maxHealth = proto.maxHealth;
+	}
 	
 	/// <summary>
 	/// Indexer using an enum so that we can access
@@ -81,5 +108,27 @@ public class AOC2UnitStats {
 					break;
 			}
 		}
+	}
+	
+	/// <summary>
+	/// Addition overload; loads two sets of stats together.
+	/// Used to add equipment to a character's base stats
+	/// </summary>
+	/// <param name='us1'>
+	/// The first <see cref="AOC2UnitStats"/> to add.
+	/// </param>
+	/// <param name='us2'>
+	/// The second <see cref="AOC2UnitStats"/> to add.
+	/// </param>
+	/// <returns>
+	/// The <see cref="AOC2UnitStats"/> that is the sum of the values of <c>us1</c> and <c>us2</c>.
+	/// </returns>
+	public static AOC2UnitStats operator +(AOC2UnitStats us1, AOC2UnitStats us2)
+	{
+		AOC2UnitStats stats = new AOC2UnitStats();
+		for (int i = 0; i < (int)AOC2Values.UnitStat.COUNT; i++) {
+			stats[i] = us1[i] + us2[i];
+		}
+		return stats;
 	}
 }

@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using com.lvl6.proto;
 
 public class AOC2ResourceManager : MonoBehaviour {
 	
@@ -43,7 +44,7 @@ public class AOC2ResourceManager : MonoBehaviour {
 	/// <param name='amount'>
 	/// Amount.
 	/// </param>
-	public int AddResource(AOC2Values.Buildings.ResourceType resource, int amount)
+	public int AddResource(ResourceType resource, int amount)
 	{
 		int overflow = Collect(resource, amount);
 		Store(resource, amount - overflow);
@@ -65,7 +66,7 @@ public class AOC2ResourceManager : MonoBehaviour {
 	/// <param name='amount'>
 	/// Amount.
 	/// </param>
-	int Collect(AOC2Values.Buildings.ResourceType resource, int amount)
+	int Collect(ResourceType resource, int amount)
 	{
 		//If we're collecting over the limit, max it out and return the overflow
 		if (resources[(int)resource] + amount > capacity[(int)resource])
@@ -88,7 +89,7 @@ public class AOC2ResourceManager : MonoBehaviour {
 	/// <param name='amount'>
 	/// Amount.
 	/// </param>
-	void Store(AOC2Values.Buildings.ResourceType resource, int amount)
+	void Store(ResourceType resource, int amount)
 	{
 		foreach (AOC2ResourceStorage stor in storages[(int)resource]) 
 		{
@@ -109,7 +110,7 @@ public class AOC2ResourceManager : MonoBehaviour {
 	/// <param name='amount'>
 	/// The amount
 	/// </param>
-	public bool SpendResource(AOC2Values.Buildings.ResourceType resource, int amount)
+	public bool SpendResource(ResourceType resource, int amount)
 	{
 		if (Spend (resource, amount))
 		{
@@ -135,7 +136,7 @@ public class AOC2ResourceManager : MonoBehaviour {
 	/// <param name='amount'>
 	/// If set to <c>true</c> amount.
 	/// </param>
-	bool Spend(AOC2Values.Buildings.ResourceType resource, int amount)
+	bool Spend(ResourceType resource, int amount)
 	{
 		if (resources[(int)resource] > amount)
 		{
@@ -160,7 +161,7 @@ public class AOC2ResourceManager : MonoBehaviour {
 	/// <param name='amount'>
 	/// Amount.
 	/// </param>
-	void RemoveFromStorage(AOC2Values.Buildings.ResourceType resource, int amount)
+	void RemoveFromStorage(ResourceType resource, int amount)
 	{
 		foreach (AOC2ResourceStorage stor in storages[(int)resource]) 
 		{
@@ -177,7 +178,7 @@ public class AOC2ResourceManager : MonoBehaviour {
 	/// <param name='resource'>
 	/// Resource.
 	/// </param>
-	void OnChangeStorageAmount(AOC2Values.Buildings.ResourceType resource)
+	void OnChangeStorageAmount(ResourceType resource)
 	{
 		int amount = 0;
 		foreach (AOC2ResourceStorage stor in storages[(int)resource])

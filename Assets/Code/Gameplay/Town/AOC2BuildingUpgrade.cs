@@ -1,12 +1,20 @@
 using UnityEngine;
 using System.Collections;
 using System;
+using com.lvl6.proto;
 
-public abstract class AOC2BuildingUpgrade : MonoBehaviour {
+/// <summary>
+/// @author Rob Giusti
+/// Component of a building that mananges upgrading,
+/// including timing and cost.
+/// </summary>
+[RequireComponent (typeof (AOC2Building))]
+public class AOC2BuildingUpgrade : MonoBehaviour {
 	
 	/// <summary>
 	/// The level.
-	/// From [0,maxLevel)
+    /// Level zero buildings are those that are still building,
+    /// that way all building/upgrading is tied into a single system
 	/// </summary>
 	protected int level;
 	
@@ -25,39 +33,44 @@ public abstract class AOC2BuildingUpgrade : MonoBehaviour {
 	/// The upgrade spants
 	/// </summary>
 	[SerializeField]
-	TimeSpan[] upgradeSpan;
+	long[] upgradeSpan;
 	
 	/// <summary>
 	/// The upgrade resource.
 	/// </summary>
 	[SerializeField]
-	AOC2Values.Buildings.ResourceType upgradeResource;
+	ResourceType upgradeResource;
+	
+	/// <summary>
+	/// The UI Popup
+	/// </summary>
+	[SerializeField]
+	GameObject upgradePopup;
 	
 	/// <summary>
 	/// The finish upgrade time.
 	/// </summary>
-	protected DateTime finishUpgradeTime;
+	public long finishUpgradeTime;
 	
 	/// <summary>
 	/// The upgrading flag
 	/// </summary>
 	protected bool upgrading;
 	
-	/// <summary>
-	/// Because levels index from zero but the player thinks
-	/// levels start at one, this is the offset between what
-	/// the internal system understands as the level and what
-	/// the player thinks the level is.
-	/// </summary>
-	/// <value>
-	/// The display level.
-	/// </value>
-	public int displayLevel{
-		get
-		{
-			return level + 1;
-		}
-	}
+    /// <summary>
+    /// The building component.
+    /// </summary>
+	protected AOC2Building building;
+	
+    /// <summary>
+    /// The on start upgrade event.
+    /// </summary>
+    public Action OnStartUpgrade;
+    
+    /// <summary>
+    /// The on upgrade complete event.
+    /// </summary>
+	public Action OnFinishUpgrade;
 	
 	/// <summary>
 	/// Gets the gems to finish this upgrade immediately
@@ -68,8 +81,32 @@ public abstract class AOC2BuildingUpgrade : MonoBehaviour {
 	public int gemsToFinish{
 		get
 		{
-			return AOC2Math.GemsForTime(finishUpgradeTime - DateTime.UtcNow);
+			return AOC2Math.GemsForTime(finishUpgradeTime - AOC2Math.UnixTimeStamp(DateTime.UtcNow));
 		}
+	}
+	
+	/// <summary>
+	/// Awake this instance.
+	/// Set up internal component references
+	/// </summary>
+	public void Awake()
+	{
+		building = GetComponent<AOC2Building>();
+	}
+    
+    void Init()
+    {
+        
+    }
+	
+	void OnSelect()
+	{
+		upgradePopup.SetActive(true);
+	}
+	
+	void OnDeselect()
+	{
+		upgradePopup.SetActive(false);
 	}
 	
 	/// <summary>
@@ -77,9 +114,9 @@ public abstract class AOC2BuildingUpgrade : MonoBehaviour {
 	/// </summary>
 	public virtual void StartUpgrade()
 	{
-		if (level < maxLevel - 1 && AOC2ManagerReferences.resourceManager.SpendResource(upgradeResource, upgradeCost[level]))
+		if (level < maxLevel && AOC2ManagerReferences.resourceManager.SpendResource(upgradeResource, upgradeCost[level]))
 		{
-			finishUpgradeTime = DateTime.UtcNow + upgradeSpan[level];
+			finishUpgradeTime = AOC2Math.UnixTimeStamp(DateTime.UtcNow) + upgradeSpan[level];
 			upgrading = true;
 		}
 	}
@@ -97,7 +134,7 @@ public abstract class AOC2BuildingUpgrade : MonoBehaviour {
 		}
 		
 		
-		if (DateTime.Now > finishUpgradeTime)
+		if (AOC2Math.UnixTimeStamp(DateTime.UtcNow) > finishUpgradeTime)
 		{
 			FinishUpgrade();
 		}
@@ -108,7 +145,7 @@ public abstract class AOC2BuildingUpgrade : MonoBehaviour {
 	/// </summary>
 	public void FinishWithGems()
 	{
-		if (AOC2ManagerReferences.resourceManager.SpendResource(AOC2Values.Buildings.ResourceType.GEMS, gemsToFinish))
+		if (AOC2ManagerReferences.resourceManager.SpendResource(ResourceType.GEMS, gemsToFinish))
 		{
 			FinishUpgrade();
 		}
@@ -119,7 +156,14 @@ public abstract class AOC2BuildingUpgrade : MonoBehaviour {
 	/// </summary>
 	public virtual void FinishUpgrade()
 	{
+        //TODO: Intercept this with a server check UpgradeNormStructure
+        
 		upgrading = false;
 		level++;
+        
+        if (OnFinishUpgrade != null)
+        {
+            OnFinishUpgrade();  
+        }
 	}
 }

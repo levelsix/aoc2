@@ -1,30 +1,26 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Code/Managers/AOC2PoolManager.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Code/Gameplay/Town/AOC2BuildingUpgrade.cs">
     <Files>
-      <File FileName="Assets/Code/Gameplay/Combat/AOC2PlayerController.cs" Line="100" Column="41" />
-      <File FileName="Assets/Code/Util/AOC2AbilityLists.cs" Line="151" Column="41" />
-      <File FileName="Assets/Code/Gameplay/Combat/AI/Abstract/AOC2UnitLogic.cs" Line="1" Column="1" />
-      <File FileName="Assets/Code/Gameplay/Combat/CombatAbilities/Abstract/AOC2BuffAbility.cs" Line="1" Column="1" />
-      <File FileName="Assets/Code/Managers/AOC2CombatManager.cs" Line="1" Column="1" />
-      <File FileName="Assets/Code/Util/AOC2Values.cs" Line="1" Column="1" />
-      <File FileName="Assets/Code/Gameplay/Combat/CombatAbilities/Abstract/AOC2Ability.cs" Line="1" Column="1" />
-      <File FileName="Assets/Code/Gameplay/Combat/CombatAbilities/Abstract/AOC2Attack.cs" Line="1" Column="1" />
-      <File FileName="Assets/Code/Gameplay/Combat/AOC2Unit.cs" Line="1" Column="1" />
+      <File FileName="Assets/Code/Gameplay/Combat/AOC2PlayerController.cs" Line="1" Column="1" />
       <File FileName="Assets/Code/Gameplay/Combat/AOC2UnitStats.cs" Line="1" Column="1" />
-      <File FileName="Assets/Code/Gameplay/Combat/AOC2CombatCamera.cs" Line="1" Column="1" />
-      <File FileName="Assets/Code/Gameplay/Combat/AOC2Delivery.cs" Line="1" Column="1" />
-      <File FileName="Assets/Code/UI/Combat/AOC2HealthBar.cs" Line="1" Column="1" />
-      <File FileName="Assets/Code/Managers/AOC2EventManager.cs" Line="1" Column="1" />
-      <File FileName="Assets/Code/Gameplay/Combat/Spawning/AOC2Spawnable.cs" Line="1" Column="1" />
-      <File FileName="Assets/Code/Gameplay/Combat/CombatAbilities/Abstract/AOC2AttackAbility.cs" Line="7" Column="11" />
-      <File FileName="Assets/Code/Gameplay/Combat/CombatAbilities/Abstract/AOC2ArcMultiAttackAbility.cs" Line="31" Column="58" />
-      <File FileName="Assets/Code/Gameplay/Combat/Spawning/AOC2SpawnGroup.cs" Line="29" Column="19" />
-      <File FileName="Assets/Code/Managers/AOC2PoolManager.cs" Line="1" Column="1" />
+      <File FileName="Assets/Code/Gameplay/Town/AOC2Building.cs" Line="212" Column="87" />
+      <File FileName="Assets/Code/Gameplay/Combat/CombatAbilities/Abstract/AOC2Attack.cs" Line="2" Column="26" />
+      <File FileName="Assets/Code/Gameplay/Town/AOC2ResourceCollector.cs" Line="73" Column="17" />
+      <File FileName="Assets/Code/Gameplay/Town/AOC2ResourceStorage.cs" Line="32" Column="3" />
+      <File FileName="Assets/Code/Gameplay/Combat/CombatAbilities/Abstract/AOC2ArcMultiAttackAbility.cs" Line="1" Column="1" />
+      <File FileName="Assets/Code/Gameplay/Combat/Movement/AOC2Pathfind.cs" Line="1" Column="1" />
+      <File FileName="Assets/Code/Networking/AOC2NetworkTest.cs" Line="1" Column="1" />
+      <File FileName="Assets/Code/Managers/AOC2BuildingManager.cs" Line="164" Column="13" />
+      <File FileName="Assets/Code/Managers/AOC2BuildingList.cs" Line="21" Column="2" />
+      <File FileName="Assets/Code/Gameplay/Common/AOC2Sprite.cs" Line="73" Column="3" />
+      <File FileName="Assets/Code/Static/AOC2ManagerReferences.cs" Line="3" Column="1" />
+      <File FileName="Assets/Code/Managers/AOC2ResourceManager.cs" Line="181" Column="29" />
+      <File FileName="Assets/Code/Gameplay/Town/AOC2BuildingUpgrade.cs" Line="41" Column="5" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
-        <State expanded="True">
+        <State expanded="True" selected="True">
           <Node name="Assembly-CSharp" expanded="True">
             <Node name="Assets" expanded="True">
               <Node name="Code" expanded="True">
@@ -32,23 +28,22 @@
                   <Node name="Combat" expanded="True">
                     <Node name="AI" expanded="True">
                       <Node name="Abstract" expanded="True" />
-                      <Node name="Exits" expanded="True" />
-                      <Node name="Logics" expanded="True" />
-                      <Node name="Units" expanded="True" />
                     </Node>
                     <Node name="CombatAbilities" expanded="True">
                       <Node name="Abstract" expanded="True" />
                     </Node>
+                    <Node name="Movement" expanded="True" />
                     <Node name="Spawning" expanded="True" />
                   </Node>
+                  <Node name="Common" expanded="True" />
                   <Node name="Town" expanded="True" />
                 </Node>
-                <Node name="Managers" expanded="True">
-                  <Node name="AOC2PoolManager.cs" selected="True" />
-                </Node>
+                <Node name="Managers" expanded="True" />
+                <Node name="Networking" expanded="True" />
                 <Node name="Static" expanded="True" />
                 <Node name="UI" expanded="True">
                   <Node name="Combat" expanded="True" />
+                  <Node name="Town" expanded="True" />
                 </Node>
                 <Node name="Util" expanded="True" />
               </Node>

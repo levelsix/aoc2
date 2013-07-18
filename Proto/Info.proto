@@ -2,18 +2,116 @@ package com.lvl6.proto;
 
 option java_outer_classname = "InfoProto";
 
-message FullUserStructureProto {
+message UnitStatsProto {
+	optional int32 strength = 1;
+	optional int32 defense = 2;
+	optional int32 resistance = 3;
+	optional int32 moveSpeed = 4;
+	optional int32 attackSpeed = 5;
+	optional int32 maxMana = 6;
+	optional int32 maxHealth = 7;
+}
+
+//Info for each individual building
+message FullUserStructProto {
 	optional int32 userStructId = 1;
 	optional int32 userId = 2;
 	optional int32 structId = 3;
-	optional StructType structType = 4;
-	
+	optional int64 lastCollectTime = 4; //Only needed if the building generates income
+	optional CoordinateProto coordinates = 5;
+	optional int32 level = 6;
+	optional int64 purchaseTime = 7;
+	optional int64 lastUpgradeTime = 8;
+	optional bool isComplete = 9;
+	optional FullStructProto fullStruct = 10;
 }
 
-enum StructType{
+//Readonly info regarding building types
+message FullStructProto { 
+	optional int32 structId = 1;
+	optional string name = 2;
+	optional int32 income = 3; //Only if the building generates income
+	optional int32 storage = 4; //Only if the building stores resources
+	optional int32 minutesToBuild = 5;
+	optional int32 minutesToUpgradeBase = 6;
+	optional int32 price = 7;
+
+	//value of minLevel[i] is the level required to make i of this building
+	repeated int32 minLevel = 8; 
+
+	optional int32 xLength = 10;
+	optional int32 yLength = 11;
+
+	optional StructType structType = 12;
+
+	optional ResourceType upgradeResource = 13;
+}
+
+message CoordinateProto{ 
+	optional int32 x = 1;
+	optional int32 y = 2;
+}
+
+message MinimumUserProto {
+	optional int32 userId = 1;
+	optional string name = 2;
+	optional PlayerClass userClass = 3;
+}
+
+message MinimumUserProtoWithLevel {
+	optional MinimumUserProto minUserProto = 1;
+	optional int32 level = 2;
+}
+
+message FullUserProto {
+	optional int32 userId = 1;
+	optional string name = 2;
+	optional int32 level = 3;
+	optional PlayerClass class = 4;
+
+	optional UnitStatsProto stats = 5;
+	optional int64 lastHealthRefillTime = 6;
+	optional int64 lastManaRefillTime = 7;
+
+	optional int32 gold = 8;
+	optional int32 tonic = 9;
+	optional int32 gems = 10;
+
+	optional int32 experience = 11;
+	optional int32 tasksCompleted = 12;
+	optional int32 battlesWon = 13;
+	optional int32 battlesLost = 14;
+
+	optional string referralCode = 15;
+	optional int32 numReferrals = 16;
+	//optional LocationProto location = 17;
+
+	optional int64 lastLoginTime = 18;
+	optional int64 lastLogoutTime = 19;
+
+	optional bool isFake = 20;
+	optional bool isAdmin = 21;
+
+}
+
+enum ResourceType {
+	GOLD = 0;
+	TONIC = 1;
+	GEMS = 2;
+}
+
+enum StructType {
 	TOWN_HALL = 0;
 	GOLD_COLLECTOR = 1;
 	GOLD_STORAGE = 2;
 	TONIC_COLLECTOR = 3;
 	TONIC_STORAGE = 4;
+	BLACKSMITH = 5;
+	WIZARD = 6;
+}
+
+enum PlayerClass {
+	WARRIOR = 0;
+	ARCHER = 1;
+	MAGE = 2;
 }

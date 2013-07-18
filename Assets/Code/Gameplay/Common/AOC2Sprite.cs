@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using com.lvl6.proto;
 
 [RequireComponent (typeof(MeshFilter))]
 [RequireComponent (typeof(MeshRenderer))]
@@ -69,6 +70,7 @@ public class AOC2Sprite : MonoBehaviour {
 	public void MakeBuildingMesh(AOC2Building building)
 	{	
 		Quaternion rotation = Camera.main.transform.rotation;
+		
 		//Quaternion rotation = Quaternion.identity;
 		
 		Vector3[] vertices = {

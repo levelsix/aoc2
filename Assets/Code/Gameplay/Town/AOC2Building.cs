@@ -1,6 +1,7 @@
 using UnityEngine;
 using System;
 using System.Collections;
+using com.lvl6.proto;
 
 /// <summary>
 /// @author Rob Giusti
@@ -8,11 +9,14 @@ using System.Collections;
 /// </summary>
 [RequireComponent (typeof(AOC2Sprite))]
 [RequireComponent (typeof(BoxCollider))]
+[RequireComponent (typeof(AOC2BuildingUpgrade))]
 public class AOC2Building : MonoBehaviour, AOC2Placeable
 {
 	#region Members
 	
     #region Public
+	
+	public FullUserStructProto userStructProto;
 
     /// <summary>
     /// The position within ground that this building is located
@@ -46,6 +50,8 @@ public class AOC2Building : MonoBehaviour, AOC2Placeable
 	
 	public Action OnSelect;
 	
+	public Action OnDeselect;
+	
     #endregion
 
     #region Private
@@ -75,16 +81,6 @@ public class AOC2Building : MonoBehaviour, AOC2Placeable
 	private bool _selected;
 	
 	/// <summary>
-	/// The sprite for this building.
-	/// </summary>
-	private AOC2Sprite _sprite;
-	
-	/// <summary>
-	/// The box collider for this building
-	/// </summary>
-	private BoxCollider _box;
-	
-	/// <summary>
 	/// Current color.
 	/// </summary>
 	private Color _currColor;
@@ -98,6 +94,35 @@ public class AOC2Building : MonoBehaviour, AOC2Placeable
 	/// The current tracker for the ping-pong
 	/// </summary>
 	private float _ppPow = 0;
+	
+	/// <summary>
+	/// The box collider for this building
+	/// </summary>
+	private BoxCollider _box;
+	
+	/// <summary>
+	/// The sprite for this building.
+	/// </summary>
+	private AOC2Sprite _sprite;
+	
+	/// <summary>
+	/// The upgrade component
+	/// </summary>
+	private AOC2BuildingUpgrade _upgrade;
+	
+	/// <summary>
+	/// The resource collector component.
+	/// Added to the base building if this building
+	/// is meant to be a resource collector.
+	/// </summary>
+	private AOC2ResourceCollector _collector;
+	
+	/// <summary>
+	/// The resource storage component.
+	/// Added to the base building if this building
+	/// is meant to be a resource storage.
+	/// </summary>
+	private AOC2ResourceStorage _storage;
 	
     #endregion
 
@@ -141,23 +166,48 @@ public class AOC2Building : MonoBehaviour, AOC2Placeable
 		_sprite = GetComponent<AOC2Sprite>();
 		_box = GetComponent<BoxCollider>();
 
-        //NOTE: When Unity uses it's built-in properties like transform, it does
-        //a GetComponent call every time. Since we're using this repeatedly, it's
-        //much more efficient to store a direct pointer
         trans = transform;
     }
+	
+	
+	/// <summary>
+	/// Init a building from specified FullUserStructProto.
+	/// </summary>
+	/// <param name='structProto'>
+	/// Struct proto to initialize from.
+	/// </param>
+	public void Init(FullUserStructProto proto)
+	{
+		name = proto.fullStruct.name;
+		
+		//TODO: Assign correct image
+		
+		width = proto.fullStruct.xLength;
+		length = proto.fullStruct.yLength;
+		
+		//Set up functionality components
+		if (proto.fullStruct.income > 0)
+		{
+			_collector = gameObject.AddComponent<AOC2ResourceCollector>();
+            _collector.Init(proto);
+		}
+		if (proto.fullStruct.storage > 0)
+		{
+			_storage = gameObject.AddComponent<AOC2ResourceStorage>();
+            _storage.Init(proto);
+		}
+        
+        _sprite.MakeBuildingMesh(this);
+	}
 
     /// <summary>
     /// Set up scale, position, and material on start
     /// </summary>
     void Start()
     {
-        //_transform.localScale = new Vector3(width * AOC2BuildingManager.SPACE_SIZE, 1, length * AOC2BuildingManager.SPACE_SIZE);
 		_box.size = new Vector3(width * AOC2GridManager.SPACE_SIZE, 1, length * AOC2GridManager.SPACE_SIZE);
 		
         trans.position += new Vector3(SIZE_OFFSET.x * width, 0, SIZE_OFFSET.z * length);
-		_sprite.MakeBuildingMesh(this);
-        //_meshRenderer.material = _unselectedMaterial;
     }
 	
 	/// <summary>
@@ -272,6 +322,10 @@ public class AOC2Building : MonoBehaviour, AOC2Placeable
 		_selected = false;
 		//Reset color to untinted
 		_sprite.SetColor(Color.white);
+		if (OnDeselect != null)
+		{
+			OnDeselect();
+		}
     }
 	
 	#endregion

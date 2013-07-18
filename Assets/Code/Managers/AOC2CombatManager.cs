@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 /// <summary>
+/// @author Rob Giusti
 /// AOC2 Combat Manager.
 /// Keeps track of all units in combat, and provides
 /// utility functions for finding targets

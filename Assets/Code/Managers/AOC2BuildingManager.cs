@@ -1,5 +1,8 @@
 using UnityEngine;
 using System.Collections;
+using System;
+using System.Collections.Generic;
+using com.lvl6.proto;
 
 /// <summary>
 /// @author Rob Giusti
@@ -38,10 +41,19 @@ public class AOC2BuildingManager : MonoBehaviour
 	/// along drag events when the camera is the target
 	/// </summary>
 	public AOC2BuildingCamera cam;
-
+ 
+    private static int _nextId = 0;
+    public static int getNextId{
+        get
+        {
+            return _nextId++;
+        }
+    }
+    
     #endregion
 
     #region Private
+	
 	/// <summary>
 	/// The current selected building.
 	/// </summary>
@@ -52,7 +64,8 @@ public class AOC2BuildingManager : MonoBehaviour
 	/// as a drag continues
 	/// </summary>
 	private AOC2Placeable _target;
-
+ 
+    
     #endregion
 
     #region Constants
@@ -71,7 +84,6 @@ public class AOC2BuildingManager : MonoBehaviour
     /// Number of large buildings to make
     /// </summary>
     const int NUM_LARGE_BUILDINGS = 2;
-	
 
     #endregion
 	
@@ -88,18 +100,18 @@ public class AOC2BuildingManager : MonoBehaviour
         //Make a bunch of buildings to test
         if (createRandomBuildings)
         {
-            for (int i = 0; i < NUM_LARGE_BUILDINGS; i++)
+            /*for (int i = 0; i < NUM_LARGE_BUILDINGS; i++)
             {
                 MakeBuilding(largeBuildingPrefab);
-            }
+            }*/
             for (int i = 0; i < NUM_MED_BUILDINGS; i++)
             {
-                MakeBuilding(mediumBuildingPrefab);
+                MakeNewBuildingFromProto(AOC2BuildingList.Get().goldColl);
             }
-            for (int i = 0; i < NUM_SMALL_BUILDINGS; i++)
+            /*for (int i = 0; i < NUM_SMALL_BUILDINGS; i++)
             {
                 MakeBuilding(smallBuildingPrefab);
-            }
+            }*/
         }
 	}
 	
@@ -145,8 +157,8 @@ public class AOC2BuildingManager : MonoBehaviour
         int x, y;
         do
         {
-            x = (int)(Random.value * (AOC2GridManager.GRID_SIZE + 1 - buildPrefab.width));
-            y = (int)(Random.value * (AOC2GridManager.GRID_SIZE + 1 - buildPrefab.length));
+            x = (int)(UnityEngine.Random.value * (AOC2GridManager.GRID_SIZE + 1 - buildPrefab.width));
+            y = (int)(UnityEngine.Random.value * (AOC2GridManager.GRID_SIZE + 1 - buildPrefab.length));
         } while (!AOC2ManagerReferences.gridManager.HasSpaceForBuilding(buildPrefab, x, y));
 
         Vector3 position = new Vector3(AOC2GridManager.SPACE_SIZE * x, 0, AOC2GridManager.SPACE_SIZE * y);
@@ -156,6 +168,28 @@ public class AOC2BuildingManager : MonoBehaviour
 
         return building;
     }
+	
+	private AOC2Building MakeNewBuildingFromProto(FullStructProto proto)
+	{
+        //TODO: Figure out prefab/size from proto
+		AOC2Building building = MakeBuilding(mediumBuildingPrefab);
+        
+        FullUserStructProto userProt = new FullUserStructProto();
+        //userProt.userStructProto.userId = 
+        userProt.userStructId = getNextId;
+        userProt.lastCollectTime = AOC2Math.UnixTimeStamp(DateTime.UtcNow);
+        //coords?
+        userProt.level = 0;
+        userProt.purchaseTime = userProt.lastCollectTime;
+        userProt.lastUpgradeTime = userProt.lastCollectTime;
+        userProt.isComplete = false;
+        
+        userProt.fullStruct = proto;
+        
+		building.Init(userProt);
+		return building;
+	}
+	
 	
 	/// <summary>
 	/// Makes a building, adding it to the closest place near the center of the current screen possible

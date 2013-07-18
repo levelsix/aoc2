@@ -1,17 +1,24 @@
 using UnityEngine;
 using System.Collections;
 using System;
+using com.lvl6.proto;
 
+/// <summary>
+/// @author Rob Giusti
+/// Component attached to a building to turn it into
+/// a resource collector.
+/// Gathers resources over time
+/// </summary>
 [RequireComponent (typeof (AOC2Building))]
-public class AOC2ResourceCollector : AOC2BuildingUpgrade {
-	
+public class AOC2ResourceCollector : MonoBehaviour {
+    
 	const int MIN_TO_COLLECT = 60;
 	
 	/// <summary>
 	/// The resource type.
 	/// </summary>
 	[SerializeField]
-	AOC2Values.Buildings.ResourceType resource;
+	ResourceType resource;
 	
 	/// <summary>
 	/// The capacity.
@@ -34,7 +41,7 @@ public class AOC2ResourceCollector : AOC2BuildingUpgrade {
 	/// <summary>
 	/// The last collection.
 	/// </summary>
-	protected DateTime lastCollection;
+	protected long lastCollection;
 	
 	/// <summary>
 	/// The overflow of resources that was unable to be
@@ -44,21 +51,68 @@ public class AOC2ResourceCollector : AOC2BuildingUpgrade {
 	/// </summary>
 	public int overflow;
 	
-	private AOC2Building building;
+	/// <summary>
+	/// Gets the total resources in this collector
+	/// </summary>
+	/// <value>
+	/// The total.
+	/// </value>
+	public int total{
+		get
+		{
+			return overflow + contents;
+		}
+	}
+    
+    private AOC2Building _building;
+    
+    private AOC2BuildingUpgrade _upgrade;
 	
+	/// <summary>
+	/// The UI Popup that signifies that this collector
+	/// has enough resources to be harvested
+	/// </summary>
 	[SerializeField]
-	GameObject popup;
+	GameObject hasResourcesPopup;
 	
-	void Awake()
+    void Awake()
+    {
+        _building = GetComponent<AOC2Building>();
+        _upgrade = GetComponent<AOC2BuildingUpgrade>();
+    }
+    
+    /// <summary>
+    /// Initialize, using the specified protocol.
+    /// </summary>
+    /// <param name='proto'>
+    /// Protocol instance.
+    /// </param>
+    public void Init(FullUserStructProto proto)
+    {
+        hourlyRate = proto.fullStruct.income;
+        lastCollection = proto.lastCollectTime;
+    }
+	
+	/// <summary>
+	/// Raises the enable event.
+	/// Register delegates
+	/// </summary>
+	void OnEnable()
 	{
-		building = GetComponent<AOC2Building>();
-		building.OnSelect += Collect;
+		_building.OnSelect += Collect;
+        _upgrade.OnStartUpgrade += OnStartUpgrade;
+        _upgrade.OnFinishUpgrade += OnFinishUpgrade;
 	}
 	
-	void Start()
+	/// <summary>
+	/// Raises the disable event.
+	/// Release delegates
+	/// </summary>
+	void OnDisable()
 	{
-		//TODO build from a BuildingProto
-		lastCollection = DateTime.UtcNow;
+		_building.OnSelect -= Collect;
+        _upgrade.OnStartUpgrade -= OnStartUpgrade;
+        _upgrade.OnFinishUpgrade -= OnFinishUpgrade;
 	}
 	
 	void Init()
@@ -78,7 +132,7 @@ public class AOC2ResourceCollector : AOC2BuildingUpgrade {
 			{
 				AOC2EventManager.Popup.CreatePopup("Not enough storage to store contents!");
 			}
-			lastCollection = DateTime.UtcNow;
+			lastCollection = AOC2Math.UnixTimeStamp(DateTime.UtcNow);
 		}
 	}
 	
@@ -90,7 +144,7 @@ public class AOC2ResourceCollector : AOC2BuildingUpgrade {
 		CalcContents();
 		
 		//Set the popup's activity to whether this has enough to collect
-		popup.SetActive(contents + overflow > MIN_TO_COLLECT);
+		//hasResourcesPopup.SetActive(contents + overflow > MIN_TO_COLLECT);
 	}
 	
 	/// <summary>
@@ -98,24 +152,22 @@ public class AOC2ResourceCollector : AOC2BuildingUpgrade {
 	/// </summary>
 	void CalcContents()
 	{
-		TimeSpan span = DateTime.UtcNow - lastCollection;
-		contents = (int)(span.TotalSeconds * hourlyRate / 3600);
+		long secs = AOC2Math.UnixTimeStamp(DateTime.UtcNow) - lastCollection;
+		contents = (int)(secs * hourlyRate / 3600);
 		if (contents + overflow > capacity)
 		{
 			contents = capacity - overflow;
 		}
 	}
 	
-	public override void StartUpgrade ()
+	public void OnStartUpgrade ()
 	{
 		overflow += contents;
-		base.StartUpgrade();
 	}
 	
-	public override void FinishUpgrade ()
+	public void OnFinishUpgrade ()
 	{
-		lastCollection = finishUpgradeTime;
-		base.FinishUpgrade();
+		lastCollection = _upgrade.finishUpgradeTime;
 	}
 	
 }

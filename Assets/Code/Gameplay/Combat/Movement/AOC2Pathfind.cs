@@ -4,8 +4,6 @@ using System.Collections.Generic;
 
 public static class AOC2Pathfind {
 	
-	static bool DEBUG = true;
-	
 	public static Stack<AOC2GridNode> aStar(AOC2GridNode start, AOC2GridNode end)
 	{
 		List<AOC2GridNode> open = new List<AOC2GridNode>();

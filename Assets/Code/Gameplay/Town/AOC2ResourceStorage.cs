@@ -1,12 +1,17 @@
 using UnityEngine;
 using System.Collections;
+using com.lvl6.proto;
 
-public class AOC2ResourceStorage : AOC2BuildingUpgrade {
+/// <summary>
+/// @author Rob Giusti
+/// Building component for resource storage.
+/// </summary>
+public class AOC2ResourceStorage : MonoBehaviour {
 	
 	/// <summary>
 	/// The resource type
 	/// </summary>
-	public AOC2Values.Buildings.ResourceType resource;
+	public ResourceType resource;
 	
 	/// <summary>
 	/// The max capacity of this building
@@ -23,9 +28,13 @@ public class AOC2ResourceStorage : AOC2BuildingUpgrade {
 	/// </summary>
 	void Start()
 	{
-		//TODO: Init from a Protocol
 		AOC2ManagerReferences.resourceManager.AddStorage(this);
 	}
+    
+    public void Init(FullUserStructProto proto)
+    {
+        capacity = proto.fullStruct.storage; //TODO: Take level into account!
+    }
 	
 	/// <summary>
 	/// Store the specified amount.
