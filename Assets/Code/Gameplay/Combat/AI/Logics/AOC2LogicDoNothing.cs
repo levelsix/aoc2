@@ -13,11 +13,11 @@ using System.Collections;
 /// </summary>
 public class AOC2LogicDoNothing : AOC2LogicState {
 
-	protected override IEnumerator Logic ()
+	public override IEnumerator Logic ()
 	{
 		while (true)
 		{
-			complete = true;
+			_complete = true;
 			yield return null;
 		}
 	}

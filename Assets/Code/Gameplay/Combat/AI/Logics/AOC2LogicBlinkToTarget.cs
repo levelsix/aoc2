@@ -23,14 +23,14 @@ public class AOC2LogicBlinkToTarget : AOC2LogicState {
 		delayBef = delayBefore;
 	}
 	
-	protected override IEnumerator Logic ()
+	public override IEnumerator Logic ()
 	{
 		while (true)
 		{
 			yield return new WaitForSeconds(delayBef);
 			_unit.aPos.position = _unit.targetPos.position;
 			yield return new WaitForSeconds(delayAft);
-			complete = true;
+			_complete = true;
 			yield return null;
 		}
 	}

@@ -12,7 +12,7 @@ public class AOC2LogicMoveTowardTarget : AOC2LogicState {
 	/// If the distance between this and a target squared is
 	/// less than this, the logic will be complete. 
 	/// </summary>
-	private const float MIN_MOVE_DIST_SQR = .5f;
+	private const float MIN_MOVE_DIST_SQR = .005f;
 	
 	/// <summary>
 	/// The unit.
@@ -34,12 +34,12 @@ public class AOC2LogicMoveTowardTarget : AOC2LogicState {
 	/// <summary>
 	/// Moves this unit towards its target.
 	/// </summary>
-	protected override IEnumerator Logic ()
+	public override IEnumerator Logic ()
 	{
 		while (true)
 		{
 			_unit.Move(_unit.targetPos.position - _unit.aPos.position);
-			complete = AOC2Math.GroundDistanceSqr(_unit.aPos.position, _unit.targetPos.position) < MIN_MOVE_DIST_SQR;
+			_complete = AOC2Math.GroundDistanceSqr(_unit.aPos.position, _unit.targetPos.position) < MIN_MOVE_DIST_SQR;
 			yield return null;
 		}
 	}

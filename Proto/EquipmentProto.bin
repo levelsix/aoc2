@@ -1,0 +1,17 @@
+
+–
+EquipmentProto.protocom.lvl6.aoc2.protoRarityType.protoEquipmentType.protoJobType.proto"¥
+EquipmentProto
+equipID (
+level (0
+type (2".com.lvl6.aoc2.proto.EquipmentType
+
+durability (
+attack (
+defense (
+	addHealth (
+addMana (
+name	 (	/
+rarity
+ (2.com.lvl6.aoc2.proto.RarityType)
+job (2.com.lvl6.aoc2.proto.JobTypeBB	Equipment

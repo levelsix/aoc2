@@ -4,7 +4,11 @@ using System.Collections;
 public enum AOC2DeliveryType
 {
 	BOX,
-	SPHERE
+	SPHERE,
+	TORNADO,
+	DUST_STORM,
+	STARFALL,
+	LIGHTNING
 }
 
 public class AOC2DeliveryList : MonoBehaviour {

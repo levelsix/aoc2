@@ -1,0 +1,15 @@
+
+”
+MonsterRewardProto.protocom.lvl6.aoc2.proto"Ñ
+MonsterRewardProto
+	monsterID (
+equipIDs (
+equipDropChance (
+itemIDs (
+itemDropChance (
+minGold (
+maxGold (
+minTonic (
+maxTonic	 (
+isBoss
+ (BBMonsterReward

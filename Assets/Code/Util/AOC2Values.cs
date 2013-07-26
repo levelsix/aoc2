@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 /// <summary>
 /// @author Rob Giusti
@@ -28,6 +29,25 @@ public static class AOC2Values
 		
 		public static int UI = 20;
 	}
+    
+    public static class Scene
+    {
+        public enum Scenes
+        {
+            BUILDING_TEST_SCENE,
+            COMBAT_TEST_SCENE
+        }
+        public static Dictionary<Scenes, string> sceneDict = new Dictionary<Scenes, string>()
+        {
+            {Scenes.BUILDING_TEST_SCENE, "BuildingTestScene"},
+            {Scenes.COMBAT_TEST_SCENE, "CombatTestScene"}
+        };
+        
+        public static void ChangeScene(Scenes scene)
+        {
+            UnityEngine.Application.LoadLevel(sceneDict[scene]);
+        }
+    }
 	
 	public enum UnitStat
 	{

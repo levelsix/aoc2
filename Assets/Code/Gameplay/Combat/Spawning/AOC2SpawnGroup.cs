@@ -26,7 +26,6 @@ public class AOC2SpawnGroup : AOC2Spawnable {
 	/// </param>
 	public override void Spawn (Vector3 origin)
 	{
-		Debug.Log(name);
 		Vector3 offset;
 		for (int i = 0; i < contents.Length; i++) 
 		{

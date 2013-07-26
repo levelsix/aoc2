@@ -1,6 +1,7 @@
 using UnityEngine;
 using System;
 using System.Collections;
+using com.lvl6.proto;
 
 /// <summary>
 /// @author Rob Giusti
@@ -13,6 +14,11 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 	#region Members
 	
 	#region Public
+	
+	/// <summary>
+	/// The protocol buffer that this unit was created from
+	/// </summary>
+    public UnitProto proto;
 	
 	/// <summary>
 	/// The stats of this unit.
@@ -72,6 +78,27 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 	public AOC2Position targetPos;
 	
 	/// <summary>
+	/// The target unit.
+	/// </summary>
+	public AOC2Unit targetUnit;
+	
+	/// <summary>
+	/// The Position of this unit.
+	/// Transform wrapper that allows us to 
+	/// </summary>
+	public AOC2Position aPos;
+    
+    /// <summary>
+    /// The basic attack ability.
+    /// </summary>
+    [HideInInspector]
+    public AOC2Ability basicAttackAbility;
+    
+    public bool ranged;
+	
+	#region Action Delegates
+	
+	/// <summary>
 	/// The local event for taking damage.
 	/// </summary>
 	public Action<int> OnDamage;
@@ -81,11 +108,11 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 	/// </summary>
 	public Action OnDeath;
 	
-	/// <summary>
-	/// The Position of this unit.
-	/// Transform wrapper that allows us to 
-	/// </summary>
-	public AOC2Position aPos;
+	public Action OnUseAbility;
+	
+	public Action OnPathfind;
+	
+	#endregion
 	
 	/// <summary>
 	/// Gets or sets the prefab of this unit
@@ -110,6 +137,10 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 	}
 	
 	public AOC2MoveAbility basicMove;
+    
+    public int id;
+    
+    private static int nextID = 0;
 	
 	#endregion
 	
@@ -124,7 +155,7 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 	/// The current mana.
 	/// </summary>
 	public float mana = 1;
-	
+    
 	/// <summary>
 	/// The prefab.
 	/// </summary>
@@ -134,6 +165,8 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 	/// The logic for this unit.
 	/// </summary>
 	private AOC2UnitLogic _logic;
+    
+    private Transform _trans;
 	
 	#endregion
 	
@@ -171,6 +204,7 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 	{
 		AOC2Unit unit = Instantiate(this, origin, Quaternion.identity) as AOC2Unit;
 		unit.prefab = this;
+        unit.id = nextID++;
 		return unit;
 	}
 	
@@ -182,23 +216,27 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 	{
 		_logic = GetComponent<AOC2UnitLogic>();
 		aPos = new AOC2Position(transform);
+        _trans = transform;
 	}
 	
 	/// <summary>
-	/// DEBUG
-	/// Start this instance.
-	/// </summary>
-	void Start()
-	{
-		DebugTint(tint);
-	}
-	
-	/// <summary>
+	/// Debug: Init without proto
 	/// Initialize this instance.
 	/// Sets health, layer, and initializes the logic
 	/// </summary>
 	public void Init()
 	{
+        DebugTint(tint);
+        
+        if (ranged)
+        {
+            basicAttackAbility = new AOC2AttackAbility(AOC2AbilityLists.Generic.baseRangeAttackAbility);
+        }
+        else
+        {
+            basicAttackAbility = new AOC2AttackAbility(AOC2AbilityLists.Generic.baseMeleeAttackAbility);   
+        }
+        
 		health = stats.maxHealth;
 		
 		mana = stats.maxMana;
@@ -218,7 +256,46 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 			AOC2EventManager.Combat.OnSpawnPlayer(this);
 			gameObject.layer = AOC2Values.Layers.PLAYER;
 		}
+		
+		_trans.Translate(0, _trans.localScale.y / 2, 0);
 	}
+        
+    /// <summary>
+    /// Initialize this instance, using a UnitProto.
+    /// Sets health, layer, and initializes the logic
+    /// </summary>
+    public void Init(UnitProto _proto)
+    {
+        proto = _proto;
+        
+        stats = new AOC2UnitStats(_proto.stats);
+        health = stats.maxHealth;
+        mana = stats.maxMana;
+        
+        name = _proto.name;
+     
+        DebugTint(AOC2Math.ProtoToColor(proto.color));
+        
+        _trans.localScale = new Vector3(_proto.size, _proto.size, _proto.size);
+		
+		_trans.Translate(0, _proto.size / 2, 0);
+            
+        if (_logic != null)
+        {
+            _logic.Init();
+        }
+         
+        if (_proto.enemy)
+        {
+            gameObject.layer = AOC2Values.Layers.ENEMY;
+            AOC2EventManager.Combat.OnSpawnEnemy(this);
+        }
+        else
+        {
+            gameObject.layer = AOC2Values.Layers.PLAYER;
+            AOC2EventManager.Combat.OnSpawnPlayer(this);
+        }
+    }
 	
 	/// <summary>
 	/// Debugs tint.
@@ -248,7 +325,7 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 	/// </param>
 	public void TakeDamage(AOC2Delivery deliv)
 	{
-		int damage = (deliv.damage) - (int)(defense * BASE_DEFENSE_MOD);
+		int damage = (int) (((deliv.damage) - (defense * BASE_DEFENSE_MOD)) * AOC2Math.ResistanceMod(stats.resistance));
 		if (damage > 0){
 			health -= damage;
 			//Debug.Log("Damage: " + deliv.damage + ", Taken: " + damage);
@@ -273,8 +350,14 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 	public void Die()
 	{
 		//TODO: Play death animation
+		if (gameObject.activeSelf){
+        Pool();
 		
-		
+        if (OnDeath != null)
+        {
+            OnDeath();
+        }
+        
 		if (isEnemy)
 		{
 			AOC2EventManager.Combat.OnEnemyDeath(this);
@@ -284,12 +367,7 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 			AOC2EventManager.Combat.OnPlayerDeath(this);
 		}
 		
-		if (OnDeath != null)
-		{
-			OnDeath();
 		}
-		
-		Pool();
 	}
 	
 	/// <summary>
@@ -312,6 +390,8 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 	/// </param>
 	public void Move(Vector3 direction)
 	{		
+		direction.y = 0;
+		
 		direction.Normalize();
 		
 		aPos.position += direction * stats.moveSpeed * Time.deltaTime;

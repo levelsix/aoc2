@@ -35,7 +35,7 @@ public class AOC2AbilityButtonPanel : MonoBehaviour {
 	/// </param>
 	void OnPlayerSpawn(AOC2Unit unit)
 	{
-		AOC2PlayerController player = unit.GetComponent<AOC2PlayerController>();
+		AOC2Player player = unit.GetComponent<AOC2Player>();
 		AOC2SetAttackButton button;
 		Transform butTrans;
 		for (int i = 0; i < player.abilities.Length; i++) 

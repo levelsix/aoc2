@@ -1,0 +1,12 @@
+
+package com.lvl6.aoc2.proto;
+
+option java_outer_classname = "UserEquipment";
+
+message UserEquipmentProto {
+	optional int32 userID = 1;
+	optional int32 equipID = 2;
+	optional int32 equipLevel = 3;
+	optional int32 currDurability = 4;
+	optional bool equipped = 5;
+}

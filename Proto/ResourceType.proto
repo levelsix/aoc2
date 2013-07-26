@@ -1,0 +1,10 @@
+
+package com.lvl6.aoc2.proto;
+
+option java_outer_classname = "ResourceEnum";
+
+enum ResourceType {
+	GOLD = 0;
+	TONIC = 1;
+	GEMS = 2;
+}

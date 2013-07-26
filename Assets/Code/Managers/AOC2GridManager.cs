@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using com.lvl6.proto;
 
 public class AOC2GridManager : MonoBehaviour {
 	
@@ -23,12 +24,12 @@ public class AOC2GridManager : MonoBehaviour {
     /// <summary>
     /// Size of the ground grid, in squares
     /// </summary>
-    public const int GRID_SIZE = 36;
+    public int gridSize = 36;
 
     /// <summary>
     /// Size of the placeable area of the mesh
     /// </summary>
-    public const float WORLD_SIZE = 26.5f;
+    public float worldSize = 36f;
 	
 	public const float GRID_OFFSET = .5f;
 	
@@ -45,19 +46,19 @@ public class AOC2GridManager : MonoBehaviour {
 	/// The size of one space.
 	/// Stored here so that we only have to calculate it once.
 	/// </summary>
-	private static float _space = float.NaN;
+	private float _space = float.NaN;
 	
     /// <summary>
     /// The size of one side of a square on the grid
     /// Stored the first time we get it, so we're not doing
     /// this calculation more than necessary
     /// </summary>
-	public static float SPACE_SIZE{
+	public float spaceSize{
 		get
 		{
 			if (float.IsNaN(_space))
 			{
-				_space = WORLD_SIZE / GRID_SIZE;	
+				_space = worldSize / gridSize;	
 			}
 			return _space;
 		}
@@ -67,18 +68,18 @@ public class AOC2GridManager : MonoBehaviour {
 	/// The hypotenuse through the center of a square.
 	/// Store it here, so we only have to calculate it once
 	/// </summary>
-	private static float _hypoton = float.NaN;
+	private float _hypoton = float.NaN;
 	
 	/// <summary>
 	/// Gets the hypotenuse of a space.
 	/// If it hasn't been set, calculates it once.
 	/// </summary>
-	public static float SPACE_HYPOTENUSE{
+	public float gridSpaceHypotenuse{
 		get
 		{
 			if (float.IsNaN(_hypoton))
 			{
-				_hypoton = Mathf.Sqrt(SPACE_SIZE * SPACE_SIZE * 2);
+				_hypoton = Mathf.Sqrt(spaceSize * spaceSize * 2);
 			}
 			return _hypoton;
 		}
@@ -95,22 +96,22 @@ public class AOC2GridManager : MonoBehaviour {
 	void Awake () 
 	{
 		AOC2ManagerReferences.gridManager = this;
-	    _grid = new AOC2Building[GRID_SIZE,GRID_SIZE];
+	    _grid = new AOC2Building[gridSize,gridSize];
 	}
 	    
 	/// <summary>
     /// Checks if there is room on the ground for the given building prefab to be inserted
     /// at the specified coordinates
     /// </summary>
-    /// <param name="building">Building to use for checking for space</param>
+    /// <param name="proto">Building to use for checking for space</param>
     /// <param name="x">X position to check the grid at</param>
     /// <param name="y">Y position to check the grid at</param>
     /// <returns>Whether the grid has space for this building at the given space</returns>
-    public bool HasSpaceForBuilding(AOC2Building building, int x, int y)
+    public bool HasSpaceForBuilding(FullStructProto proto, int x, int y)
     {
-        for (int i = 0; i < building.width; i++)
+        for (int i = 0; i < proto.xLength; i++)
         {
-            for (int j = 0; j < building.length; j++)
+            for (int j = 0; j < proto.yLength; j++)
             {
 				if (!OnGrid(x+i, y+j))
 				{
@@ -129,12 +130,12 @@ public class AOC2GridManager : MonoBehaviour {
     /// Checks if there is room on the ground for the given building prefab to be inserted
     /// at the specified coordinates
     /// </summary>
-    /// <param name="building">Building to use for checking for space</param>
+    /// <param name="proto">Building to use for checking for space</param>
     /// <param name="coords">Position to check the grid at</param>
     /// <returns>Whether the grid has space for this building at the given space</returns>
-	public bool HasSpaceForBuilding(AOC2Building building, Vector2 coords)
+	public bool HasSpaceForBuilding(FullStructProto proto, AOC2GridNode coords)
 	{
-		return HasSpaceForBuilding (building, (int)coords.x, (int)coords.y);	
+		return HasSpaceForBuilding (proto, coords.x, coords.z);	
 	}
 	
 	/// <summary>
@@ -151,7 +152,7 @@ public class AOC2GridManager : MonoBehaviour {
 	/// </param>
 	private bool OnGrid(int x, int y)
 	{
-		return (x >= 0 && x < GRID_SIZE && y >= 0 && y < GRID_SIZE);
+		return (x >= 0 && x < gridSize && y >= 0 && y < gridSize);
 	}
 	
     /// <summary>
@@ -180,13 +181,13 @@ public class AOC2GridManager : MonoBehaviour {
     {
         if (dimension < GRID_OFFSET * size)
         {
-            return SPACE_SIZE * GRID_OFFSET * size;
+            return spaceSize * GRID_OFFSET * size;
         }
-        if (dimension > SPACE_SIZE * GRID_SIZE - GRID_OFFSET * size)
+        if (dimension > spaceSize * gridSize - GRID_OFFSET * size)
         {
-            return SPACE_SIZE * GRID_SIZE - SPACE_SIZE * GRID_OFFSET * size;
+            return spaceSize * gridSize - spaceSize * GRID_OFFSET * size;
         }
-        return Mathf.Round(dimension / SPACE_SIZE - SPACE_SIZE * GRID_OFFSET * size) * SPACE_SIZE + SPACE_SIZE * GRID_OFFSET * size;
+        return Mathf.Round(dimension / spaceSize - spaceSize * GRID_OFFSET * size) * spaceSize + spaceSize * GRID_OFFSET * size;
     }
 	
 	/// <summary>
@@ -200,7 +201,7 @@ public class AOC2GridManager : MonoBehaviour {
 	/// </param>
 	public Vector2 PointToGridCoords(Vector3 point)
 	{
-		return new Vector2(Mathf.Clamp((int)(point.x / SPACE_SIZE), 0, GRID_SIZE-1), Mathf.Clamp((int)(point.z / SPACE_SIZE), 0, GRID_SIZE-1));
+		return new AOC2GridNode(Mathf.Clamp((int)(point.x / spaceSize), 0, gridSize-1), Mathf.Clamp((int)(point.z / spaceSize), 0, gridSize-1));
 	}
 	
 	/// <summary>
@@ -214,7 +215,7 @@ public class AOC2GridManager : MonoBehaviour {
 	/// </param>
 	public Vector3 GridToWorld(Vector2 pos)
 	{
-		return new Vector3(pos.x * SPACE_SIZE + GRID_OFFSET, 0, pos.y * SPACE_SIZE + GRID_OFFSET);
+		return new Vector3((pos.x + GRID_OFFSET) * spaceSize, 0, (pos.y + GRID_OFFSET) * spaceSize);
 	}
 	
 	/// <summary>
@@ -223,14 +224,14 @@ public class AOC2GridManager : MonoBehaviour {
     /// <param name="building">The building to be added</param>
     /// <param name="x">The left-most x position in grid coordinates</param>
     /// <param name="y">The lowest y positing in grid coordinates</param>
-    public void AddBuilding(AOC2Building building, int x, int y)
+    public void AddBuilding(AOC2Building building, int x, int y, FullStructProto proto)
     {
         _grid[x, y] = building;
         building.groundPos = new Vector2(x, y);
 
-        for (int i = 0; i < building.width; i++)
+        for (int i = 0; i < proto.xLength; i++)
         {
-            for (int j = 0; j < building.length; j++)
+            for (int j = 0; j < proto.yLength; j++)
             {
                 _grid[x + i, y + j] = building;
             }
@@ -288,7 +289,7 @@ public class AOC2GridManager : MonoBehaviour {
 	/// <param name='screenPos'>
 	/// Screen position.
 	/// </param>
-	public Vector2 ScreenToPoint(Vector3 screenPos)
+	public AOC2GridNode ScreenToPoint(Vector3 screenPos)
 	{
 		return PointToGridCoords(ScreenToGround(screenPos));
 	}
@@ -299,11 +300,11 @@ public class AOC2GridManager : MonoBehaviour {
 	private void DebugPrintGrid()
 	{
 		string s = "";
-		for (int i = 0; i < GRID_SIZE; i++) 
+		for (int i = 0; i < gridSize; i++) 
 		{
-			for (int j = 0; j < GRID_SIZE; j++) 
+			for (int j = 0; j < gridSize; j++) 
 			{
-				AOC2Building building = _grid[j, GRID_SIZE - 1 - i];
+				AOC2Building building = _grid[j, gridSize - 1 - i];
 				if (building == null) s += "0 ";
 				else s += building.width + building.length + " ";
 			}
@@ -320,11 +321,11 @@ public class AOC2GridManager : MonoBehaviour {
 	void OnDrawGizmos()
 	{
 		Gizmos.color = Color.yellow;
-		Vector3 frontRight = transform.position + new Vector3(WORLD_SIZE,0,0);
-		Vector3 backLeft = transform.position + new Vector3(0,0,WORLD_SIZE);
+		Vector3 frontRight = transform.position + new Vector3(worldSize,0,0);
+		Vector3 backLeft = transform.position + new Vector3(0,0,worldSize);
 		Vector3 xOff = Vector3.zero;
 		Vector3 zOff = Vector3.zero;
-		for (int i = 0; i < GRID_SIZE; i++) 
+		for (int i = 0; i < gridSize; i++) 
 		{
 			if (i % 5 == 0)
 			{
@@ -334,8 +335,8 @@ public class AOC2GridManager : MonoBehaviour {
 			{
 				Gizmos.color = Color.yellow;
 			}
-			xOff.x = SPACE_SIZE * i;
-			zOff.z = SPACE_SIZE * i;
+			xOff.x = spaceSize * i;
+			zOff.z = spaceSize * i;
 			Gizmos.DrawLine(transform.position + xOff, backLeft + xOff);
 			Gizmos.DrawLine(transform.position + zOff, frontRight + zOff);
 		}	
@@ -348,16 +349,16 @@ public class AOC2GridManager : MonoBehaviour {
 	
 	public bool IsOpen(int x, int y)
 	{
-		return x >= 0 && y >= 0 && x < GRID_SIZE && y < GRID_SIZE && _grid[x,y] == null;
+		return x >= 0 && y >= 0 && x < gridSize && y < gridSize && _grid[x,y] == null;
 	}
 	
 	public bool CanMoveInDir(AOC2GridNode start, Vector2 dir)
 	{
-		if (start.x + dir.x > GRID_SIZE || start.x + dir.x < 0)
+		if (start.x + dir.x > gridSize || start.x + dir.x < 0)
 		{
 			return false;
 		}
-		if (start.y + dir.y > GRID_SIZE || start.y + dir.y < 0)
+		if (start.z + dir.y > gridSize || start.z + dir.y < 0)
 		{
 			return false;
 		}
@@ -369,7 +370,7 @@ public class AOC2GridManager : MonoBehaviour {
 		
 		if (dir.x * dir.y != 0) //Diagonal case
 		{
-			return (IsOpen((int)(start.x + dir.x), (int)(start.y)) && IsOpen((int)start.x, (int)(start.y + dir.y)));
+			return (IsOpen((int)(start.x + dir.x), (int)(start.z)) && IsOpen((int)start.x, (int)(start.z + dir.y)));
 		}
 		return true;
 	}
@@ -378,14 +379,14 @@ public class AOC2GridManager : MonoBehaviour {
 	{
 		//Get dx and dy
 		int dx = end.x - start.x;
-		int dy = end.y - start.y;
+		int dy = end.z - start.z;
 		
 		if (Mathf.Abs (dx) > 1 || Mathf.Abs (dy) > 1)
 		{
 			Debug.LogError("Bad neighbor check!");
 		}
 		
-		if (!IsOpen (end.x, end.y))
+		if (!IsOpen (end.x, end.z))
 		{
 			return false;
 		}
@@ -393,7 +394,7 @@ public class AOC2GridManager : MonoBehaviour {
 		//Diagonal needs all three open
 		if (dx * dy != 0)
 		{
-			return (IsOpen(start.x,end.y) && IsOpen(end.x,start.y));
+			return (IsOpen(start.x,end.z) && IsOpen(end.x,start.z));
 		}
 		return true;
 	}

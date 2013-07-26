@@ -8,42 +8,26 @@ using System.Collections;
 /// </summary>
 public abstract class AOC2UnitLogic : MonoBehaviour {
 	
-	/// <summary>
-	/// The current logic state
-	/// </summary>
-	protected AOC2LogicState _current;
-	
-	/// <summary>
-	/// The base logic state that this unit
-	/// will always start out in
-	/// </summary>
-	protected AOC2LogicState _baseState;
-	
-	/// <summary>
-	/// Use to set up state machine graph and
-	/// assign the base state
-	/// </summary>
-	abstract protected void Start ();
+	public AOC2HFSMLogic logic;
 	
 	/// <summary>
 	/// Sets the base logic state and starts
 	/// the state machine
+	/// Gets called by the Unit component on Init
 	/// </summary>
-	public void Init()
+	virtual public void Init()
 	{
-		_current = _baseState;
-		//_current.Start();
-		
-		StartCoroutine(RunLogic());
+		StartCoroutine(logic.Logic());
 	}
 	
+	/*
 	/// <summary>
 	/// Runs the logic.
 	/// </summary>
 	/// <returns>
 	/// The logic.
 	/// </returns>
-	protected IEnumerator RunLogic () 
+	virtual public IEnumerator Logic() 
 	{
 		while(true)
 		{
@@ -55,7 +39,7 @@ public abstract class AOC2UnitLogic : MonoBehaviour {
 				{
 					//Set up the returned state for the next frame
 					_current = change;
-					_current.Start();
+					_current.Init();
 					
 					//Keep checking if we need to immediately change
 					//state
@@ -83,5 +67,5 @@ public abstract class AOC2UnitLogic : MonoBehaviour {
 			}
 		}
 	}
-	
+	*/
 }

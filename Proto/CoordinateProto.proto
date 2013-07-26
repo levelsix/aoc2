@@ -1,0 +1,9 @@
+
+package com.lvl6.aoc2.proto;
+
+option java_outer_classname = "Coordiante";
+
+message CoordinateProto {
+	optional int32 x = 1;
+	optional int32 y = 2;
+}

@@ -45,7 +45,10 @@ public class AOC2ExitTargetInRange : AOC2ExitLogicState {
 	{
 		if (_thisUnit.targetPos != null)
 		{
-			return Test (_thisUnit.targetPos.position);
+			if( Test (_thisUnit.targetPos.position) )
+			{
+				return true;
+			}
 		}
 		return false;
 	}

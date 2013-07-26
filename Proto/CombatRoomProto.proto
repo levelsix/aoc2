@@ -1,0 +1,10 @@
+
+package com.lvl6.aoc2.proto;
+
+option java_outer_classname = "CombatRoom";
+
+message CombatRoomProto {
+	optional int32 roomID = 1;
+	optional int32 dungeon = 2;
+	repeated int32 monsters = 3;
+}

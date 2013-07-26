@@ -35,11 +35,6 @@ public class AOC2Attack {
 	private float _speed = 5f;
 	
 	/// <summary>
-	/// The offset of the attack from the character creating it
-	/// </summary>
-	private float _offset = .5f;
-	
-	/// <summary>
 	/// Whether the delivery for this attack should persist.
 	/// If false, the delivery will pool after the first hit.
 	/// </summary>
@@ -57,6 +52,11 @@ public class AOC2Attack {
 	/// </summary>
 	private float _size = 1f;
 	
+    /// <summary>
+    /// The targetted.
+    /// </summary>
+    private bool _targetted = true;
+    
 	#endregion
 	
 	#region Private
@@ -69,9 +69,9 @@ public class AOC2Attack {
 	/// <summary>
 	/// Gets the range of the spell
 	/// </summary>
-	public float range{
+	virtual public float range{
 		get{
-			return _speed * _life + _offset + AOC2ManagerReferences.deliveryList.Deliveries[(int)deliveryType].size;
+			return _speed * _life + _size;
 		}
 	}
 	
@@ -81,17 +81,18 @@ public class AOC2Attack {
 	
 	#region Functions
 	
-	public AOC2Attack(float dam, float lifetime, float speed, float offset, AOC2DeliveryType deliv, float size = 1f,
+	public AOC2Attack(float dam, float lifetime, float speed, 
+		AOC2DeliveryType deliv, bool targetted, float size = 1f,
 		bool persist = false, float retarget = 0f)
 	{
 		_damage = dam;
 		_life = lifetime;
 		_speed = speed;
-		_offset = offset;
 		deliveryType = deliv;
 		_size = size;
 		_persist = persist;
 		_retarget = retarget;
+        _targetted = targetted;
 	}
 
 	
@@ -104,14 +105,19 @@ public class AOC2Attack {
 	/// <param name='dir'>
 	/// Direction to send the delivery
 	/// </param>
-	public void Use(AOC2Unit user, Vector3 origin, Vector3 target)
+	public virtual void Use(AOC2Unit user, Vector3 origin, Vector3 target)
 	{
 		Vector3 dir = (target - origin).normalized;
 		
 		AOC2Delivery deliv = AOC2ManagerReferences.poolManager.Get(
-			AOC2ManagerReferences.deliveryList.Deliveries[(int)deliveryType], origin + dir * _offset)
+			AOC2ManagerReferences.deliveryList.Deliveries[(int)deliveryType], origin + dir * user.proto.size)
 			as AOC2Delivery;
 		
+		InitDelivery(deliv, user, dir);
+	}
+	
+	protected void InitDelivery(AOC2Delivery deliv, AOC2Unit user, Vector3 dir)
+	{
 		if (user.isEnemy)
 		{
 			deliv.gameObject.layer = AOC2Values.Layers.TARGET_PLAYER;
@@ -123,9 +129,13 @@ public class AOC2Attack {
 	
 		deliv.Init((int)(_damage * user.power),
 			_speed,_life,dir,_persist,_retarget);
+        
+        if (_targetted)
+        {
+            deliv.target = user.targetPos.transform.GetComponent<AOC2Unit>();  
+        }
 		
 		deliv.transform.localScale = new Vector3(_size, _size, _size);
-		
 	}
 	
 	#endregion

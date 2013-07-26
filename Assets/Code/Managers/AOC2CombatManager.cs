@@ -255,9 +255,9 @@ public class AOC2CombatManager : MonoBehaviour {
 	/// <param name='ability'>
 	/// Attack to cooldown
 	/// </param>
-	public void CoolAbility(AOC2Ability ability)
+	public void CoolAbility(AOC2Ability ability, AOC2Unit user)
 	{
-		StartCoroutine(ability.Cool());
+		StartCoroutine(ability.Cool(user));
 	}
 	
 	public void RunBuff(AOC2Unit user, AOC2BuffAbility ability)

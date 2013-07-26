@@ -1,0 +1,12 @@
+
+package com.lvl6.aoc2.proto;
+
+option java_outer_classname = "MonsterEnum";
+
+//Example placeholder values until we have
+//action assets
+enum MonsterType {
+	GOBLIN = 0;
+	TROLL = 1;
+	DRAGON = 2;
+}

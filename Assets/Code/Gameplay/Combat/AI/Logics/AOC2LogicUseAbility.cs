@@ -18,11 +18,6 @@ public class AOC2LogicUseAbility : AOC2LogicState {
 	/// </summary>
 	private AOC2Ability _ability;
 	
-	/// <summary>
-	/// The enemy flag.
-	/// </summary>
-	private bool _isEnemy;
-	
 	AOC2LogicState moveLogic;
 	
 	/// <summary>
@@ -37,7 +32,7 @@ public class AOC2LogicUseAbility : AOC2LogicState {
 	/// <param name='enemy'>
 	/// Enemy flag.
 	/// </param>
-	public AOC2LogicUseAbility(AOC2Unit unit, AOC2Ability abil, bool enemy)
+	public AOC2LogicUseAbility(AOC2Unit unit, AOC2Ability abil)
 		: base()
 	{
 		_ability = abil;
@@ -48,14 +43,19 @@ public class AOC2LogicUseAbility : AOC2LogicState {
 	/// Logic this instance.
 	/// Uses the given ability, including waiting for cast time.
 	/// </summary>
-	protected override IEnumerator Logic ()
+	public override IEnumerator Logic ()
 	{
 		while(true)
 		{	
+            while(_ability.onCool)
+            {
+                yield return null;  
+            }
+            
 			//Wait for the cast time if there is one
 			if (_ability.castTime > 0)
 			{
-				yield return new WaitForSeconds(_ability.castTime);
+				yield return new WaitForSeconds(_ability.castTime * AOC2Math.AttackSpeedMod(_unit.stats.attackSpeed));
 			}
 			
 			while(!_ability.Use(_unit, _unit.aPos.position, _unit.targetPos.position))
@@ -63,8 +63,7 @@ public class AOC2LogicUseAbility : AOC2LogicState {
 				yield return null;
 			}
 			
-			complete = true;
-			yield return null;
+			_complete = true;
 		}
 	}
 	

@@ -54,6 +54,13 @@ public class AOC2ArcMultiAttackAbility : AOC2AttackAbility {
 		_shots = shots;
 		_arc = arc * Mathf.Deg2Rad; //Store arc as radians, so that we don't have to repeatedly convert later
 	}
+    
+    public AOC2ArcMultiAttackAbility(AOC2ArcMultiAttackAbility ability)
+        :base(ability)
+    {
+        _shots = ability._shots;
+        _arc = ability._arc;
+    }
 	
 	/// <summary>
 	/// Use the specified user, origin and target.
@@ -79,7 +86,7 @@ public class AOC2ArcMultiAttackAbility : AOC2AttackAbility {
 				Vector3 dir = new Vector3(Mathf.Cos (angle), 0, Mathf.Sin(angle));
 				_attack.Use(user, origin, origin + dir); 
 			}
-			AOC2ManagerReferences.combatManager.CoolAbility(this);
+			AOC2ManagerReferences.combatManager.CoolAbility(this, user);
 			return true;
 		}
 		return false;

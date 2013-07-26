@@ -1,0 +1,26 @@
+
+import "JobType.proto";
+
+package com.lvl6.aoc2.proto;
+
+option java_outer_classname = "FullUser";
+
+message FullUserProto {
+	optional int32 userID = 1;
+	optional int32 level = 2;
+	optional string name = 3;
+	optional int32 exp = 4;
+	optional int32 gold = 5;
+	optional int32 tonic = 6;
+	optional int32 gems = 7;
+	required JobType job = 8;
+	optional int32 lastHealth = 9;
+	optional int32 maxHealth = 10;
+	optional int64 lastHealthRegen = 11;
+	optional int32 lastMana = 12;
+	optional int32 maxMana = 13;
+	optional int64 lastManaRecovery = 14;
+	optional int32 gameCenterID = 15;
+	optional int64 dateCreated = 16;
+	optional int32 clanID = 17;
+}

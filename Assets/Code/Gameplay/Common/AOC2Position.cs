@@ -149,6 +149,12 @@ public class AOC2Position{
 		_position = pos;
 	}
 	
+	public AOC2Position(AOC2GridNode node)
+	{
+		_position = new Vector3(node.x * AOC2ManagerReferences.gridManager.spaceSize, 0,
+			node.z * AOC2ManagerReferences.gridManager.spaceSize);
+	}
+	
 	/// <summary>
 	/// Initializes a new instance of the <see cref="AOC2Position"/> class.
 	/// </summary>

@@ -1,0 +1,16 @@
+
+Ô
+MonsterProto.protocom.lvl6.aoc2.protoMonsterType.protoColorProto.proto"ø
+MonsterProto
+	monsterID (
+	maxHealth (
+maxMana (
+attack (
+defense (.
+type (2 .com.lvl6.aoc2.proto.MonsterType.
+color (2.com.lvl6.aoc2.proto.ColorProto
+size (
+
+experience	 (
+isBoss
+ (B	BMonster

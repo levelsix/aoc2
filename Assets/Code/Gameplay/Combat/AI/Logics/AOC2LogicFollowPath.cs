@@ -29,7 +29,7 @@ public class AOC2LogicFollowPath : AOC2LogicState {
 			}
 			else
 			{
-				complete = true;
+				_complete = true;
 				return _unit.targetPos.position;
 			}
 		}
@@ -40,29 +40,39 @@ public class AOC2LogicFollowPath : AOC2LogicState {
 	{
 		_unit = thisUnit;
 		followLogic = new AOC2LogicMoveTowardTarget(_unit);
+		newNodeLogic = new AOC2ExitTargetInRange(null, _unit, AOC2ManagerReferences.gridManager.spaceSize / 2);
 	}
 	
-	public override void Start ()
+	public override void Init ()
 	{
-		base.Start();
+		base.Init();
 		
+		//Store target position for when we exit
+		destination = _unit.targetPos;
 		
 		path = AOC2Pathfind.aStar(
 		 	new AOC2GridNode(AOC2ManagerReferences.gridManager.PointToGridCoords(_unit.aPos.position)),
 			new AOC2GridNode(AOC2ManagerReferences.gridManager.PointToGridCoords(_unit.targetPos.position)));
 		
-		followLogic.Start();
+		followLogic.Init();
 		_unit.targetPos = new AOC2Position(nextNodePos); //Need a new pos to make sure we aren't messing with an old transform
 	}
 	
-	protected override IEnumerator Logic ()
+	public override void OnExitState ()
+	{
+		base.OnExitState();
+		
+		//_unit.targetPos = destination; 
+	}
+	
+	public override IEnumerator Logic ()
 	{
 		while(true)
 		{
-			if (followLogic.complete)
+			if (newNodeLogic.Test())
 			{
 				_unit.targetPos.position = nextNodePos;
-				followLogic.Start();
+				followLogic.Init();
 			}
 			if(followLogic.logic.MoveNext()){
 				yield return followLogic.logic.Current;

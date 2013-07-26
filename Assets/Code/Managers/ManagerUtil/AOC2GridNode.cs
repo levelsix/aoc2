@@ -15,7 +15,7 @@ public class AOC2GridNode : IComparable {
 	/// <summary>
 	/// Grid coordinates
 	/// </summary>
-	public int x, y;
+	public int x, z;
 	
 	/// <summary>
 	/// The heuristic value of this node
@@ -56,31 +56,49 @@ public class AOC2GridNode : IComparable {
 	public Vector2 pos{
 		get
 		{
-			return new Vector2(x, y);
+			return new Vector2(x, z);
+		}
+	}
+	
+	public Vector2 worldPos{
+		get
+		{
+			return new Vector2(x * AOC2ManagerReferences.gridManager.spaceSize,
+				z * AOC2ManagerReferences.gridManager.spaceSize);
 		}
 	}
 	
 	public AOC2GridNode()
 	{
 		x = 0;
-		y = 0;
+		z = 0;
 	}
 	
 	public AOC2GridNode(int _x, int _y)
 	{
 		x = _x;
-		y = _y;
+		z = _y;
 	}
 	
 	public AOC2GridNode(Vector2 _pos)
 	{
 		x = (int)_pos.x;
-		y = (int)_pos.y;
+		z = (int)_pos.y;
 	}
 	
 	public static AOC2GridNode operator +(AOC2GridNode n1, AOC2GridNode n2)
 	{
 		return new AOC2GridNode(n1.pos + n2.pos);
+	}
+	
+	public static implicit operator Vector2(AOC2GridNode value)
+	{
+		return value.pos;
+	}
+	
+	public static implicit operator AOC2GridNode(Vector2 value)
+	{
+		return new AOC2GridNode(value);
 	}
 	
 	/// <summary>
@@ -91,7 +109,7 @@ public class AOC2GridNode : IComparable {
 	/// </param>
 	public void SetHeur(AOC2GridNode destination)
 	{
-		heur = Mathf.Abs(destination.x - x) + Mathf.Abs (destination.y - y);
+		heur = Mathf.Abs(destination.x - x) + Mathf.Abs (destination.z - z);
 	}
 	
 	/// <summary>

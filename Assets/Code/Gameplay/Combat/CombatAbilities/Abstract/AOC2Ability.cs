@@ -56,11 +56,20 @@ public class AOC2Ability {
 		manaCost = mana;
 		targetType = target;
 	}
-
-	public IEnumerator Cool ()
+ 
+    public AOC2Ability(AOC2Ability other)
+    {
+        name = other.name;
+        castTime = other.castTime;
+        coolDown = other.coolDown;
+        manaCost = other.manaCost;
+        targetType = other.targetType;
+    }
+    
+	public IEnumerator Cool (AOC2Unit user)
 	{
 		_onCool = true;
-		yield return new WaitForSeconds(coolDown);
+		yield return new WaitForSeconds(coolDown * AOC2Math.AttackSpeedMod(user.stats.attackSpeed));
 		_onCool = false;
 	}
 
@@ -68,7 +77,7 @@ public class AOC2Ability {
 	{
 		if (!_onCool)
 		{
-			AOC2ManagerReferences.combatManager.CoolAbility(this);
+			AOC2ManagerReferences.combatManager.CoolAbility(this, user);
 			return true;
 		}
 		return false;

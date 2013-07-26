@@ -1,0 +1,11 @@
+
+package com.lvl6.aoc2.proto;
+
+option java_outer_classname = "Color";
+
+//Use values [0,255] for RGB values
+message ColorProto {
+	optional int32 r = 1;
+	optional int32 g = 2;
+	optional int32 b = 3;
+}

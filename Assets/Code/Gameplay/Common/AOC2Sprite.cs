@@ -74,10 +74,10 @@ public class AOC2Sprite : MonoBehaviour {
 		//Quaternion rotation = Quaternion.identity;
 		
 		Vector3[] vertices = {
-			rotation * new Vector3(-building.width/2.0f * AOC2GridManager.SPACE_HYPOTENUSE, BUILDING_Y_OFFSET * building.width),
-			rotation * new Vector3(-building.width/2.0f * AOC2GridManager.SPACE_HYPOTENUSE, BUILDING_Y_OFFSET * building.width + building.width * height),
-			rotation * new Vector3(building.width/2.0f * AOC2GridManager.SPACE_HYPOTENUSE, BUILDING_Y_OFFSET * building.width + building.width * height),
-			rotation * new Vector3(building.width/2.0f * AOC2GridManager.SPACE_HYPOTENUSE, BUILDING_Y_OFFSET * building.width)
+			rotation * new Vector3(-building.width/2.0f * AOC2ManagerReferences.gridManager.gridSpaceHypotenuse, BUILDING_Y_OFFSET * building.width),
+			rotation * new Vector3(-building.width/2.0f * AOC2ManagerReferences.gridManager.gridSpaceHypotenuse, BUILDING_Y_OFFSET * building.width + building.width * height),
+			rotation * new Vector3(building.width/2.0f * AOC2ManagerReferences.gridManager.gridSpaceHypotenuse, BUILDING_Y_OFFSET * building.width + building.width * height),
+			rotation * new Vector3(building.width/2.0f * AOC2ManagerReferences.gridManager.gridSpaceHypotenuse, BUILDING_Y_OFFSET * building.width)
 		};
 		
 		MakeSpriteMesh(vertices);

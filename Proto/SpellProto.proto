@@ -1,0 +1,39 @@
+
+import "JobType.proto";
+import "ResourceType.proto";
+
+package com.lvl6.aoc2.proto;
+
+option java_outer_classname = "Spell";
+
+message SpellProto {
+	optional int32 spellID = 1;
+	required JobType job = 2;
+	optional string name = 3;
+
+	optional FunctionType function = 4;
+
+	optional int32 strength = 5;
+	optional int32 manaCost = 6;
+	optional int32 duration = 7;
+	optional int32 speed = 8;
+	optional bool targetted = 9;
+	optional float size = 10;
+	optional float castTime = 11;
+	optional float coolDown = 12;
+	optional float range = 13;
+
+	optional int32 levelReq = 14;
+	optional int32 spellLvl = 15;
+	optional int32 researchCost = 16;
+	optional int32 researchTime = 17;
+	required ResourceType researchResource = 18;
+
+	enum FunctionType {
+		ATTACK = 0;
+		FLAT_BUFF = 1;
+		SCALE_BUFF = 2;
+		HEAL_SELF = 3;
+		HEAL_OTHER = 4;
+	}
+}

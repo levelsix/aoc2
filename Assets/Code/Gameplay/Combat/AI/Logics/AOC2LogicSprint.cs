@@ -34,12 +34,12 @@ public class AOC2LogicSprint : AOC2LogicState {
 	/// <summary>
 	/// Moves this unit towards its target.
 	/// </summary>
-	protected override IEnumerator Logic ()
+	public override IEnumerator Logic ()
 	{
 		while (true)
 		{
 			_unit.Sprint(_unit.targetPos.position - _unit.aPos.position);
-			complete = AOC2Math.GroundDistanceSqr(_unit.aPos.position, _unit.targetPos.position) < MIN_MOVE_DIST_SQR;
+			_complete = AOC2Math.GroundDistanceSqr(_unit.aPos.position, _unit.targetPos.position) < MIN_MOVE_DIST_SQR;
 			yield return null;
 		}
 	}

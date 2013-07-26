@@ -66,6 +66,13 @@ public static class AOC2EventManager
 		public static Action OnPlayerVictory;
 		
 		public static Action<int> SetPlayerAttack;
+		
+		/// <summary>
+		/// The on ability cooldown.
+		/// First parameter is the index of the ability
+		/// Second is 
+		/// </summary>
+		public static Action<int, float> OnAbilityCooldown;
 	}
 	
 	public static class Popup
@@ -80,5 +87,21 @@ public static class AOC2EventManager
 	{
 		public static Action<Camera> OnCameraResize;
 		public static Action<int>[] OnChangeResource = new Action<int>[3];
+        public static Action OnCameraLockButton;
+        public static Action OnCameraSnapButton;
+	}
+	
+	/// <summary>
+	/// All of the events that need to be shared with the other players in PvP
+	/// in order to communicate
+	/// </summary>
+	public static class NetCombat
+	{
+		public static Action<int, int> OnLocalPlayerSetMoveTarget; //Use xz grid coords
+		public static Action<int> OnLocalPlayerSetUnitTarget;
+		public static Action<int> OnLocalPlayerUseAbility;
+		public static Action<AOC2Unit> OnLocalPlayerRoutineUpdate;
+		public static Action<AOC2Delivery> OnLocalPlayerCreateDelivery;
+		public static Action<AOC2Unit, int> OnLocalPlayerTakeDamage;
 	}
 }

@@ -9,11 +9,6 @@ using System.Collections;
 public class AOC2Solid : MonoBehaviour {
 	
 	/// <summary>
-	/// The box around this Solid.
-	/// </summary>
-	private BoxCollider _box;
-	
-	/// <summary>
 	/// The transform of this Solid.
 	/// </summary>
 	private Transform _trans;
@@ -22,13 +17,14 @@ public class AOC2Solid : MonoBehaviour {
 	/// Extra space to push things out to
 	/// ensure that the collision is not still happening
 	/// </summary>
-	private const float COLL_PUSH = .1f;
+	private const float COLL_PUSH = .3f;
+    
+    public bool canBePushed;
 	
 	/// <summary>
 	/// Awake this instance.
 	/// </summary>
 	void Awake () {
-		_box = GetComponent<BoxCollider>();
 		_trans = transform;
 	}
 	
@@ -40,9 +36,9 @@ public class AOC2Solid : MonoBehaviour {
 	/// </param>
 	void OnTriggerStay(Collider other)
 	{
-		if (other is BoxCollider)
+		if (canBePushed && other.GetComponent<AOC2Solid>() != null)
 		{
-			other.transform.position = PushOther(other as BoxCollider);
+			transform.position = PushAwayFrom(other);
 		}
 	}
 	
@@ -55,36 +51,33 @@ public class AOC2Solid : MonoBehaviour {
 	/// <param name='other'>
 	/// Whatever has colided with this
 	/// </param>
-	private Vector3 PushOther(BoxCollider other)
+	private Vector3 PushAwayFrom(Collider other)
 	{
-		Vector3 otherPos = other.transform.position;
+        Vector3 otherPos = other.transform.position;
+		Vector3 pushPos = transform.position;
 		if (Mathf.Abs(_trans.position.x - otherPos.x) > Mathf.Abs(_trans.position.z - otherPos.z))
 		{
 			if (_trans.position.x < otherPos.x)
 			{
-				otherPos = new Vector3(_trans.position.x + other.size.x/2 + _box.size.x/2 + COLL_PUSH, 
-					otherPos.y, otherPos.z);
+				pushPos.x -= COLL_PUSH * Time.deltaTime;
 			}
 			else
 			{
-				otherPos = new Vector3(_trans.position.x - other.size.x/2 - _box.size.x/2 - COLL_PUSH, 
-					otherPos.y, otherPos.z);
+				pushPos.x += COLL_PUSH * Time.deltaTime;
 			}
 		}
 		else
 		{
 			if (_trans.position.z < otherPos.z)
 			{
-				otherPos = new Vector3(otherPos.x, otherPos.y, 
-					_trans.position.z + other.size.z/2 + _box.size.z/2 + COLL_PUSH);
+				pushPos.z -= COLL_PUSH * Time.deltaTime;
 			}
 			else
 			{
-				otherPos = new Vector3(otherPos.x, otherPos.y, 
-					_trans.position.z - other.size.z/2 - _box.size.z/2 + COLL_PUSH);
+				pushPos.z += COLL_PUSH * Time.deltaTime;
 			}
 		}
-		return otherPos;
+		return pushPos;
 	}
 	
 }

@@ -17,7 +17,15 @@ public abstract class AOC2LogicState {
 	/// The complete flag.
 	/// Reset in Start()
 	/// </summary>
-	public bool complete;
+	protected bool _complete;
+	
+	virtual public bool Complete
+	{
+		get
+		{
+			return _complete;
+		}
+	}
 	
 	/// <summary>
 	/// The list of exit conditions for this state
@@ -40,15 +48,23 @@ public abstract class AOC2LogicState {
 	/// and sets the logic pointer back to the start 
 	/// of the Logic function
 	/// </summary>
-	virtual public void Start(){
-		complete = false;
+	virtual public void Init(){
+		_complete = false;
 		logic = Logic();
 	}
 	
 	/// <summary>
+	/// Any clean-up that needs to be done when we leave this state
+	/// </summary>
+	virtual public void OnExitState() {}
+	
+	/// <summary>
 	/// Logic to follow while in this state
 	/// </summary>
-	abstract protected IEnumerator Logic();
+	virtual public IEnumerator Logic()
+	{
+		yield return null;
+	}
 	
 	/// <summary>
 	/// Checks all exit states, returns the

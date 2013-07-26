@@ -1,0 +1,10 @@
+
+package com.lvl6.aoc2.proto;
+
+option java_outer_classname = "DungeonHistory";
+
+message DungeonHistoryProto {
+	optional int32 dungeonID = 1;
+	optional int32 roomID = 2;
+	optional int32 timeTaken = 3;
+}

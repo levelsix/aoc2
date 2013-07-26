@@ -18,13 +18,19 @@ public class AOC2AttackAbility : AOC2Ability {
 	{
 		_attack = attack;
 	}
+    
+    public AOC2AttackAbility(AOC2AttackAbility ability)
+        :base(ability)
+    {
+        _attack = ability._attack;
+    }
 	
 	public override bool Use (AOC2Unit user, Vector3 origin, Vector3 target)
 	{
 		if (!_onCool)
 		{
 			_attack.Use(user, origin, target);
-			AOC2ManagerReferences.combatManager.CoolAbility(this);
+			AOC2ManagerReferences.combatManager.CoolAbility(this, user);
 			return true;
 		}
 		return false;

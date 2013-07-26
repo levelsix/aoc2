@@ -34,7 +34,7 @@ public class AOC2ExitWhenComplete : AOC2ExitLogicState {
 	/// </summary>
 	public override bool Test ()
 	{
-		return checkState.complete;
+		return checkState.Complete;
 	}
 	
 	

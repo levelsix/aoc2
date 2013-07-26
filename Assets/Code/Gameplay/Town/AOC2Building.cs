@@ -73,7 +73,7 @@ public class AOC2Building : MonoBehaviour, AOC2Placeable
     /// If the building is being moved, the current position that it is being
     /// dragged over on the map
     /// </summary>
-    private Vector2 _currPos;
+    private AOC2GridNode _currPos;
 	
 	/// <summary>
 	/// If the building is currently selected
@@ -140,7 +140,8 @@ public class AOC2Building : MonoBehaviour, AOC2Placeable
     private static Vector3 SIZE_OFFSET{
 		get
 		{
-			return new Vector3(AOC2GridManager.SPACE_SIZE * .5f, 0, AOC2GridManager.SPACE_SIZE * .5f);
+			return new Vector3(AOC2ManagerReferences.gridManager.spaceSize * .5f, 0, 
+				AOC2ManagerReferences.gridManager.spaceSize * .5f);
 		}
 	}
 	
@@ -198,6 +199,8 @@ public class AOC2Building : MonoBehaviour, AOC2Placeable
 		}
         
         _sprite.MakeBuildingMesh(this);
+        
+        userStructProto = proto;
 	}
 
     /// <summary>
@@ -205,7 +208,8 @@ public class AOC2Building : MonoBehaviour, AOC2Placeable
     /// </summary>
     void Start()
     {
-		_box.size = new Vector3(width * AOC2GridManager.SPACE_SIZE, 1, length * AOC2GridManager.SPACE_SIZE);
+		_box.size = new Vector3(width * AOC2ManagerReferences.gridManager.spaceSize, 1, 
+			length * AOC2ManagerReferences.gridManager.spaceSize);
 		
         trans.position += new Vector3(SIZE_OFFSET.x * width, 0, SIZE_OFFSET.z * length);
     }
@@ -248,10 +252,10 @@ public class AOC2Building : MonoBehaviour, AOC2Placeable
 
         trans.position = AOC2ManagerReferences.gridManager.SnapPointToGrid(transform.position, width, length);
 
-        _currPos = new Vector2(transform.position.x / AOC2GridManager.SPACE_SIZE - SIZE_OFFSET.x * width,
-                                    transform.position.z / AOC2GridManager.SPACE_SIZE - SIZE_OFFSET.z * length);
+        _currPos = new AOC2GridNode(new Vector2(transform.position.x / AOC2ManagerReferences.gridManager.spaceSize - SIZE_OFFSET.x * width,
+            transform.position.z / AOC2ManagerReferences.gridManager.spaceSize - SIZE_OFFSET.z * length));
 		
-		if (AOC2ManagerReferences.gridManager.HasSpaceForBuilding(this, _currPos))
+		if (AOC2ManagerReferences.gridManager.HasSpaceForBuilding(userStructProto.fullStruct, _currPos))
 		{
 			_currColor = selectColor;
 		}
@@ -277,14 +281,14 @@ public class AOC2Building : MonoBehaviour, AOC2Placeable
     /// </summary>
     public void Place()
     {
-        if (AOC2ManagerReferences.gridManager.HasSpaceForBuilding(this, (int)_currPos.x, (int)_currPos.y))
+        if (AOC2ManagerReferences.gridManager.HasSpaceForBuilding(userStructProto.fullStruct, _currPos))
         {
-            AOC2ManagerReferences.gridManager.AddBuilding(this, (int)_currPos.x, (int)_currPos.y);
+            AOC2ManagerReferences.gridManager.AddBuilding(this, _currPos.x, _currPos.z, userStructProto.fullStruct);
 			_originalPos = trans.position;
         }
         else
         {
-            AOC2ManagerReferences.gridManager.AddBuilding(this, (int)groundPos.x, (int)groundPos.y);
+            AOC2ManagerReferences.gridManager.AddBuilding(this, (int)groundPos.x, (int)groundPos.y, userStructProto.fullStruct);
             trans.position = _originalPos;
         }
 		AOC2EventManager.Town.PlaceBuilding -= Place;

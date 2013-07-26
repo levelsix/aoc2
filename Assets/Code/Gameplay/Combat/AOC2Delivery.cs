@@ -2,24 +2,21 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class AOC2Delivery : MonoBehaviour, AOC2Poolable {
+public class AOC2Delivery : AOC2Particle {
 	
 	/// <summary>
 	/// The damage.
 	/// </summary>
-	[HideInInspector]
 	public int damage;
 	
 	/// <summary>
 	/// The speed.
 	/// </summary>
-	[HideInInspector]
 	public float speed;
 	
 	/// <summary>
 	/// The direction.
 	/// </summary>
-	[HideInInspector]
 	public Vector3 direction;
 	
 	/// <summary>
@@ -48,16 +45,16 @@ public class AOC2Delivery : MonoBehaviour, AOC2Poolable {
 	public float retarget;
 	
 	/// <summary>
-	/// The pointer to this delivery's own prefab.
-	/// </summary>
-	private AOC2Delivery _prefab;
-	
-	/// <summary>
 	/// The collision list.
 	/// Holds recently hit units. Don't hit them again
 	/// until outside of the collList.
 	/// </summary>
 	private List<AOC2Unit> collList;
+	
+	/// <summary>
+	/// The particle generator component, if it exists.
+	/// </summary>
+	private AOC2ParticleGenerator particleGen;
 	
 	/// <summary>
 	/// Awake this instance.
@@ -66,34 +63,7 @@ public class AOC2Delivery : MonoBehaviour, AOC2Poolable {
 	void Awake()
 	{
 		collList = new List<AOC2Unit>();
-	}
-	
-	/// <summary>
-	/// A public getter and setter, so that we can
-	/// make this part of the Poolable interface
-	/// </summary>
-	public AOC2Poolable prefab{
-		get
-		{
-			return _prefab;
-		}
-		set
-		{
-			_prefab = value as AOC2Delivery;
-		}
-	}
-	
-	/// <summary>
-	/// Make the poolable object, setting its prefab
-	/// </summary>
-	/// <param name='origin'>
-	/// The point at which to make the object
-	/// </param>
-	public AOC2Poolable Make(Vector3 origin)
-	{
-		AOC2Delivery deliv = Instantiate(this, origin, Quaternion.identity) as AOC2Delivery;
-		deliv.prefab = this;
-		return deliv;
+		particleGen = GetComponent<AOC2ParticleGenerator>();
 	}
 	
 	// Use this for initialization
@@ -112,19 +82,13 @@ public class AOC2Delivery : MonoBehaviour, AOC2Poolable {
 		//Clear the collision list
 		collList.RemoveRange(0, collList.Count);
 		
-		StartCoroutine(DieAfterLifetime(life));
-	}
-	
-	/// <summary>
-	/// Dies the after lifetime.
-	/// Uses instances to make sure that we don't
-	/// accidentally kill a delivery because a previous cycle
-	/// of the gameobject died
-	/// </summary>
-	IEnumerator DieAfterLifetime(float life)
-	{
-		yield return new WaitForSeconds(life);
-		Pool();
+		if (particleGen != null)
+		{
+			particleGen.overThisTime = life;
+			particleGen.Init();
+		}
+		
+		base.Init(life);
 	}
 	
 	void Update()
@@ -166,10 +130,5 @@ public class AOC2Delivery : MonoBehaviour, AOC2Poolable {
 				StartCoroutine(AddToCollList(unit));
 			}
 		}
-	}
-	
-	public void Pool()
-	{
-		AOC2ManagerReferences.poolManager.Pool(this);
 	}
 }

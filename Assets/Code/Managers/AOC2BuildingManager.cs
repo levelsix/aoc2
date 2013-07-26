@@ -22,19 +22,9 @@ public class AOC2BuildingManager : MonoBehaviour
     public bool createRandomBuildings = true;
 
     /// <summary>
-    /// Prefab for a small building
+    /// Prefab for a building
     /// </summary>
-    public AOC2Building smallBuildingPrefab;
-
-    /// <summary>
-    /// Prefab for a medium building
-    /// </summary>
-    public AOC2Building mediumBuildingPrefab;
-
-    /// <summary>
-    /// Prefab for a large building
-    /// </summary>
-    public AOC2Building largeBuildingPrefab;
+    public AOC2Building buildingPrefab;
 	
 	/// <summary>
 	/// The scene's camera, which this needs to pass
@@ -150,21 +140,22 @@ public class AOC2BuildingManager : MonoBehaviour
     /// <summary>
     /// Makes a building, then adds it to the grid in a random open position
     /// </summary>
-    /// <param name="buildPrefab">The prefab for the building we want to build</param>
+    /// <param name="proto">The prefab for the building we want to build</param>
     /// <returns>The building, placed on the grid</returns>
-    private AOC2Building MakeBuilding(AOC2Building buildPrefab)
+    private AOC2Building MakeBuilding(FullStructProto proto)
     {
         int x, y;
         do
         {
-            x = (int)(UnityEngine.Random.value * (AOC2GridManager.GRID_SIZE + 1 - buildPrefab.width));
-            y = (int)(UnityEngine.Random.value * (AOC2GridManager.GRID_SIZE + 1 - buildPrefab.length));
-        } while (!AOC2ManagerReferences.gridManager.HasSpaceForBuilding(buildPrefab, x, y));
+            x = (int)(UnityEngine.Random.value * (AOC2ManagerReferences.gridManager.gridSize + 1 - proto.xLength));
+            y = (int)(UnityEngine.Random.value * (AOC2ManagerReferences.gridManager.gridSize + 1 - proto.yLength));
+        } while (!AOC2ManagerReferences.gridManager.HasSpaceForBuilding(proto, x, y));
 
-        Vector3 position = new Vector3(AOC2GridManager.SPACE_SIZE * x, 0, AOC2GridManager.SPACE_SIZE * y);
+        Vector3 position = new Vector3(AOC2ManagerReferences.gridManager.spaceSize * x, 0, 
+			AOC2ManagerReferences.gridManager.spaceSize * y);
 
-        AOC2Building building = Instantiate(buildPrefab, position, transform.rotation) as AOC2Building;
-        AOC2ManagerReferences.gridManager.AddBuilding(building, x, y);
+        AOC2Building building = Instantiate(buildingPrefab, position, transform.rotation) as AOC2Building;
+        AOC2ManagerReferences.gridManager.AddBuilding(building, x, y, proto);
 
         return building;
     }
@@ -172,7 +163,7 @@ public class AOC2BuildingManager : MonoBehaviour
 	private AOC2Building MakeNewBuildingFromProto(FullStructProto proto)
 	{
         //TODO: Figure out prefab/size from proto
-		AOC2Building building = MakeBuilding(mediumBuildingPrefab);
+		AOC2Building building = MakeBuilding(proto);
         
         FullUserStructProto userProt = new FullUserStructProto();
         //userProt.userStructProto.userId = 
@@ -197,18 +188,19 @@ public class AOC2BuildingManager : MonoBehaviour
 	/// <returns>
 	/// The created building
 	/// </returns>
-	/// <param name='buildPrefab'>
+	/// <param name='proto'>
 	/// The prefab for the building to be made
 	/// </param>
-	private AOC2Building MakeBuildingCenter(AOC2Building buildPrefab)
+	private AOC2Building MakeBuildingCenter(FullStructProto proto)
 	{
-		Vector2 coords = AOC2ManagerReferences.gridManager.ScreenToPoint(new Vector3(Screen.width/2, Screen.height/2));
-		coords = FindSpaceInRange(buildPrefab, coords, 0);
+		AOC2GridNode coords = AOC2ManagerReferences.gridManager.ScreenToPoint(new Vector3(Screen.width/2, Screen.height/2));
+		coords = FindSpaceInRange(proto, coords, 0);
 		
-		Vector3 position = new Vector3(AOC2GridManager.SPACE_SIZE * coords.x, 0, AOC2GridManager.SPACE_SIZE * coords.y);
+		Vector3 position = new Vector3(AOC2ManagerReferences.gridManager.spaceSize * coords.x, 0, 
+			AOC2ManagerReferences.gridManager.spaceSize * coords.z);
 		
-		AOC2Building building = Instantiate(buildPrefab, position, transform.rotation) as AOC2Building;
-        AOC2ManagerReferences.gridManager.AddBuilding(building, (int)coords.x, (int)coords.y);
+		AOC2Building building = Instantiate(buildingPrefab, position, transform.rotation) as AOC2Building;
+        AOC2ManagerReferences.gridManager.AddBuilding(building, (int)coords.x, (int)coords.z, proto);
 
         return building;
 	}
@@ -224,7 +216,7 @@ public class AOC2BuildingManager : MonoBehaviour
 	/// <returns>
 	/// The space where this building can fit
 	/// </returns>
-	/// <param name='buildingPrefab'>
+	/// <param name='proto'>
 	/// Building prefab.
 	/// </param>
 	/// <param name='startPos'>
@@ -233,7 +225,7 @@ public class AOC2BuildingManager : MonoBehaviour
 	/// <param name='range'>
 	/// Range.
 	/// </param>
-	public Vector2 FindSpaceInRange(AOC2Building buildingPrefab, Vector2 startPos, int range)
+	public AOC2GridNode FindSpaceInRange(FullStructProto proto, AOC2GridNode startPos, int range)
 	{
 		if (range > 36)
 		{
@@ -241,13 +233,19 @@ public class AOC2BuildingManager : MonoBehaviour
 		}
 		for (int i = 0; i <= range; i++) 
 		{
-			Vector2 space;
-			space = CheckSpaces(buildingPrefab, startPos, range, i);
-			if (space.x >= 0) return space;
-			space = CheckSpaces(buildingPrefab, startPos, i, range);
-			if (space.x >= 0) return space;
+			AOC2GridNode space;
+			space = CheckSpaces(proto, startPos, range, i);
+			if (space != null)
+			{
+				return space;
+			}
+			space = CheckSpaces(proto, startPos, i, range);
+			if (space != null)
+			{
+				return space;
+			}
 		}
-		return FindSpaceInRange(buildingPrefab, startPos, range+1);
+		return FindSpaceInRange(proto, startPos, range+1);
 	}
 	
 	/// <summary>
@@ -256,7 +254,7 @@ public class AOC2BuildingManager : MonoBehaviour
 	/// <returns>
 	/// The spaces.
 	/// </returns>
-	/// <param name='buildingPrefab'>
+	/// <param name='proto'>
 	/// Building prefab.
 	/// </param>
 	/// <param name='basePos'>
@@ -268,27 +266,27 @@ public class AOC2BuildingManager : MonoBehaviour
 	/// <param name='y'>
 	/// Y derivation
 	/// </param>
-	public Vector2 CheckSpaces(AOC2Building buildingPrefab, Vector2 basePos, int x, int y)
+	public AOC2GridNode CheckSpaces(FullStructProto proto, AOC2GridNode basePos, int x, int y)
 	{
-		if (AOC2ManagerReferences.gridManager.HasSpaceForBuilding(buildingPrefab, basePos + new Vector2(x,y)))
+		if (AOC2ManagerReferences.gridManager.HasSpaceForBuilding(proto, basePos + new AOC2GridNode(x,y)))
 		{
-			return basePos+new Vector2(x,y);	
+			return basePos+new AOC2GridNode(x,y);	
 		}
-		if (x==0 || y==0) return new Vector2(-1,-1);
-		if (AOC2ManagerReferences.gridManager.HasSpaceForBuilding(buildingPrefab, basePos + new Vector2(-x,y)))
+		if (x==0 || y==0) return new AOC2GridNode(-1,-1);
+		if (AOC2ManagerReferences.gridManager.HasSpaceForBuilding(proto, basePos + new AOC2GridNode(-x,y)))
 		{
-			return basePos+new Vector2(-x,y);	
+			return basePos+new AOC2GridNode(-x,y);	
 		}
-		if (AOC2ManagerReferences.gridManager.HasSpaceForBuilding(buildingPrefab, basePos + new Vector2(x,-y)))
+		if (AOC2ManagerReferences.gridManager.HasSpaceForBuilding(proto, basePos + new AOC2GridNode(x,-y)))
 		{
-			return basePos+new Vector2(x,-y);	
+			return basePos+new AOC2GridNode(x,-y);	
 		}
-		if (AOC2ManagerReferences.gridManager.HasSpaceForBuilding(buildingPrefab, basePos + new Vector2(-x,-y)))
+		if (AOC2ManagerReferences.gridManager.HasSpaceForBuilding(proto, basePos + new AOC2GridNode(-x,-y)))
 		{
-			return basePos+new Vector2(-x,-y);	
+			return basePos+new AOC2GridNode(-x,-y);	
 		}
 		
-		return new Vector2(-1,-1);
+		return new AOC2GridNode(-1,-1);
 	}
 	
 
@@ -367,7 +365,7 @@ public class AOC2BuildingManager : MonoBehaviour
 		}
 		if (Input.GetKeyDown(KeyCode.G))
 		{
-			MakeBuildingCenter(mediumBuildingPrefab);	
+			MakeBuildingCenter(AOC2BuildingList.Get().goldColl);	
 		}
 	}
 #endif

@@ -1,0 +1,10 @@
+
+package com.lvl6.aoc2.proto;
+
+option java_outer_classname = "SpellFunctionEnum";
+
+enum SpellFunctionType {
+	ATTACK = 0;
+	BUFF = 1;
+	HEAL = 2;
+}
