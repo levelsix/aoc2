@@ -1,7 +1,7 @@
 using UnityEngine;
 using System;
 using System.Collections;
-using com.lvl6.proto;
+using com.lvl6.aoc2.proto;
 
 /// <summary>
 /// @author Rob Giusti
@@ -16,7 +16,9 @@ public class AOC2Building : MonoBehaviour, AOC2Placeable
 	
     #region Public
 	
-	public FullUserStructProto userStructProto;
+	public StructureProto structProto;
+	
+	public UserStructProto userStructProto;
 
     /// <summary>
     /// The position within ground that this building is located
@@ -177,30 +179,18 @@ public class AOC2Building : MonoBehaviour, AOC2Placeable
 	/// <param name='structProto'>
 	/// Struct proto to initialize from.
 	/// </param>
-	public void Init(FullUserStructProto proto)
+	public void Init(StructureProto proto)
 	{
-		name = proto.fullStruct.name;
+		name = proto.name;
 		
 		//TODO: Assign correct image
 		
-		width = proto.fullStruct.xLength;
-		length = proto.fullStruct.yLength;
-		
-		//Set up functionality components
-		if (proto.fullStruct.income > 0)
-		{
-			_collector = gameObject.AddComponent<AOC2ResourceCollector>();
-            _collector.Init(proto);
-		}
-		if (proto.fullStruct.storage > 0)
-		{
-			_storage = gameObject.AddComponent<AOC2ResourceStorage>();
-            _storage.Init(proto);
-		}
+		width = proto.size.x;
+		length = proto.size.y;
         
         _sprite.MakeBuildingMesh(this);
         
-        userStructProto = proto;
+        //userStructProto = proto;
 	}
 
     /// <summary>
@@ -255,7 +245,8 @@ public class AOC2Building : MonoBehaviour, AOC2Placeable
         _currPos = new AOC2GridNode(new Vector2(transform.position.x / AOC2ManagerReferences.gridManager.spaceSize - SIZE_OFFSET.x * width,
             transform.position.z / AOC2ManagerReferences.gridManager.spaceSize - SIZE_OFFSET.z * length));
 		
-		if (AOC2ManagerReferences.gridManager.HasSpaceForBuilding(userStructProto.fullStruct, _currPos))
+		
+		if (AOC2ManagerReferences.gridManager.HasSpaceForBuilding(structProto, _currPos))
 		{
 			_currColor = selectColor;
 		}
@@ -281,14 +272,14 @@ public class AOC2Building : MonoBehaviour, AOC2Placeable
     /// </summary>
     public void Place()
     {
-        if (AOC2ManagerReferences.gridManager.HasSpaceForBuilding(userStructProto.fullStruct, _currPos))
+        if (AOC2ManagerReferences.gridManager.HasSpaceForBuilding(structProto, _currPos))
         {
-            AOC2ManagerReferences.gridManager.AddBuilding(this, _currPos.x, _currPos.z, userStructProto.fullStruct);
+            AOC2ManagerReferences.gridManager.AddBuilding(this, _currPos.x, _currPos.z, structProto);
 			_originalPos = trans.position;
         }
         else
         {
-            AOC2ManagerReferences.gridManager.AddBuilding(this, (int)groundPos.x, (int)groundPos.y, userStructProto.fullStruct);
+            AOC2ManagerReferences.gridManager.AddBuilding(this, (int)groundPos.x, (int)groundPos.y, structProto);
             trans.position = _originalPos;
         }
 		AOC2EventManager.Town.PlaceBuilding -= Place;

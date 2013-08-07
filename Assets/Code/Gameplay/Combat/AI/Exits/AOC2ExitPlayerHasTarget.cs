@@ -3,19 +3,19 @@ using System.Collections;
 
 public class AOC2ExitPlayerHasTarget : AOC2ExitLogicState {
 
-    AOC2Player _player;
+    AOC2Player _unit;
     
-    public AOC2ExitPlayerHasTarget(AOC2Player player, AOC2LogicState state)
+    public AOC2ExitPlayerHasTarget(AOC2Player unit, AOC2LogicState state)
         : base(state)
     {
-        _player = player;
+        _unit = unit;
     }
     
     public override bool Test ()
     {
-        if (_player.unit.targetUnit != null)
+        if (_unit.unit.targetUnit != null)
         {
-            _player.unit.targetPos = _player.unit.targetUnit.aPos;
+            _unit.unit.targetPos = _unit.unit.targetUnit.aPos;
             return true;
         }
         return false;

@@ -8,6 +8,8 @@ using System.Collections.Generic;
 /// </summary>
 public abstract class AOC2LogicState {
 	
+	public bool canBeInterrupt = true;
+	
 	/// <summary>
 	/// The pointer to the logic for this state
 	/// </summary>
@@ -18,6 +20,8 @@ public abstract class AOC2LogicState {
 	/// Reset in Start()
 	/// </summary>
 	protected bool _complete;
+	
+	protected AOC2Unit _user;
 	
 	virtual public bool Complete
 	{
@@ -36,8 +40,9 @@ public abstract class AOC2LogicState {
 	/// Initializes a new instance of the <see cref="AOC2LogicState"/> class.
 	/// Sets up the logic pointer and exit list.
 	/// </summary>
-	public AOC2LogicState()
+	public AOC2LogicState(AOC2Unit user)
 	{
+		_user = user;
 		exits = new List<AOC2ExitLogicState>();
 		logic = Logic();
 	}
@@ -50,13 +55,19 @@ public abstract class AOC2LogicState {
 	/// </summary>
 	virtual public void Init(){
 		_complete = false;
+		_user.OnUseAbility += OnAbilityUseFrame;
+		_user.OnAnimationEnd += OnAnimationEnd;
 		logic = Logic();
 	}
 	
 	/// <summary>
 	/// Any clean-up that needs to be done when we leave this state
 	/// </summary>
-	virtual public void OnExitState() {}
+	virtual public void OnExitState() 
+	{
+		_user.OnUseAbility -= OnAbilityUseFrame;
+		_user.OnAnimationEnd -= OnAnimationEnd;
+	}
 	
 	/// <summary>
 	/// Logic to follow while in this state
@@ -65,6 +76,18 @@ public abstract class AOC2LogicState {
 	{
 		yield return null;
 	}
+	
+	/// <summary>
+	/// If a logic state needs to do something on this event trigger, it just
+	/// needs to override this function
+	/// </summary>
+	virtual public void OnAbilityUseFrame() {}
+	
+	/// <summary>
+	/// If a logic state needs to do something at the end of an animation, it
+	/// just needs to override this function
+	/// </summary>
+	virtual public void OnAnimationEnd() {}
 	
 	/// <summary>
 	/// Checks all exit states, returns the

@@ -20,6 +20,21 @@ public abstract class AOC2UnitLogic : MonoBehaviour {
 		StartCoroutine(logic.Logic());
 	}
 	
+	public void SetLogic(AOC2LogicState state)
+	{
+		if (logic.current == null)
+		{
+			state.Init();
+			logic.current = state;
+		}
+		else if (logic.current.canBeInterrupt)
+		{
+			logic.current.OnExitState();
+			state.Init();
+			logic.current = state;
+		}
+	}
+	
 	/*
 	/// <summary>
 	/// Runs the logic.

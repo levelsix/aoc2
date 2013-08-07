@@ -1,6 +1,6 @@
 using UnityEngine;
 using System.Collections;
-using com.lvl6.proto;
+using com.lvl6.aoc2.proto;
 
 /// <summary>
 /// @author Rob Giusti
@@ -31,10 +31,12 @@ public class AOC2ResourceStorage : MonoBehaviour {
 		AOC2ManagerReferences.resourceManager.AddStorage(this);
 	}
     
+	/*
     public void Init(FullUserStructProto proto)
     {
         capacity = proto.fullStruct.storage; //TODO: Take level into account!
     }
+    */
 	
 	/// <summary>
 	/// Store the specified amount.

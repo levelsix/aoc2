@@ -22,9 +22,9 @@ public class AOC2TargettedAttack : AOC2Attack {
 	}
 	
 	public AOC2TargettedAttack(float range, float dam, float lifetime,
-		float speed, AOC2DeliveryType deliv, bool targetted, float size = 1f,
+		float speed, float force, AOC2DeliveryType deliv, bool targetted, float size = 1f,
 		bool persist = false, float retarget = 0f) 
-		: base(dam, lifetime, 0, deliv, targetted, size, persist, retarget)
+		: base(dam, lifetime, 0, force, deliv, targetted, size, persist, retarget)
 	{
 		_range = range;
 	}
@@ -36,5 +36,7 @@ public class AOC2TargettedAttack : AOC2Attack {
 			as AOC2Delivery;
 		
 		InitDelivery(deliv, user, Vector3.zero);
+		
+		DoUserAnimation(user);
 	}
 }

@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System;
-using com.lvl6.proto;
+using com.lvl6.aoc2.proto;
 
 /// <summary>
 /// @author Rob Giusti
@@ -81,6 +81,7 @@ public class AOC2ResourceCollector : MonoBehaviour {
         _upgrade = GetComponent<AOC2BuildingUpgrade>();
     }
     
+	/*
     /// <summary>
     /// Initialize, using the specified protocol.
     /// </summary>
@@ -92,6 +93,7 @@ public class AOC2ResourceCollector : MonoBehaviour {
         hourlyRate = proto.fullStruct.income;
         lastCollection = proto.lastCollectTime;
     }
+    */
 	
 	/// <summary>
 	/// Raises the enable event.

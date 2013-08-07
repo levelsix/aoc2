@@ -74,9 +74,9 @@ public class AOC2ArcMultiAttackAbility : AOC2AttackAbility {
 	/// <param name='target'>
 	/// The target position
 	/// </param>
-	public override bool Use (AOC2Unit user, Vector3 origin, Vector3 target)
+	public override bool Use (AOC2Unit user, Vector3 origin, Vector3 target, bool ignoreCooldown = false)
 	{
-		if (!_onCool)
+		if (!_onCool || ignoreCooldown)
 		{
 			float angle = Mathf.Atan2(target.z - origin.z, target.x - origin.x);
 			float minAngle = angle - _arc/2;
@@ -86,7 +86,10 @@ public class AOC2ArcMultiAttackAbility : AOC2AttackAbility {
 				Vector3 dir = new Vector3(Mathf.Cos (angle), 0, Mathf.Sin(angle));
 				_attack.Use(user, origin, origin + dir); 
 			}
-			AOC2ManagerReferences.combatManager.CoolAbility(this, user);
+			if (!_onCool)
+			{
+				AOC2ManagerReferences.combatManager.CoolAbility(this, user);
+			}
 			return true;
 		}
 		return false;

@@ -6,7 +6,6 @@ option java_outer_classname = "MonsterEnum";
 //Example placeholder values until we have
 //action assets
 enum MonsterType {
-	GOBLIN = 0;
-	TROLL = 1;
-	DRAGON = 2;
+	ROCK_KING = 1;
+	SKELETON = 2;
 }

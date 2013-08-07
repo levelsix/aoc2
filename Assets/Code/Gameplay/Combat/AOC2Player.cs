@@ -1,6 +1,6 @@
 using UnityEngine;
 using System.Collections;
-using com.lvl6.proto;
+using com.lvl6.aoc2.proto;
 
 /// <summary>
 /// @author Rob Giusti
@@ -10,6 +10,9 @@ using com.lvl6.proto;
 /// </summary>
 [RequireComponent (typeof(AOC2Unit))]
 public class AOC2Player : AOC2UnitLogic {
+	
+	public float rollDist = 3;
+	public float rollSpeed = 12;
 	
 	/// <summary>
 	/// The minimum move distance.
@@ -43,7 +46,7 @@ public class AOC2Player : AOC2UnitLogic {
 	/// <summary>
 	/// The basic attack logic.
 	/// </summary>
-    private AOC2LogicState basicAttackLogic;
+    private AOC2LogicState basicAttackMoveLogic;
 	
 	/// <summary>
 	/// The abilities of this player
@@ -70,6 +73,8 @@ public class AOC2Player : AOC2UnitLogic {
 	/// </summary>
 	public AOC2Unit unit;
 	
+	public AOC2LocalPlayerController local;
+	
 	/// <summary>
 	/// The move logic.
 	/// </summary>
@@ -86,10 +91,17 @@ public class AOC2Player : AOC2UnitLogic {
 	void Awake () 
 	{
 		unit = GetComponent<AOC2Unit>();
+		local = GetComponent<AOC2LocalPlayerController>();
 		abilities = new AOC2Ability[3];
-		abilities[0] = new AOC2AttackAbility(AOC2AbilityLists.Wizard.powerAttackAbility);
-		abilities[1] = new AOC2AttackAbility(AOC2AbilityLists.Wizard.propulsionAbility);
-		abilities[2] = new AOC2BuffAbility(AOC2AbilityLists.Archer.marksmanAbility);
+		abilities[0] = new AOC2AttackAbility(AOC2AbilityLists.Warrior.cleaveAbility);
+		abilities[1] = new AOC2BuffAbility(AOC2AbilityLists.Warrior.ironWillAbility);
+		abilities[2] = new AOC2AttackAbility(AOC2AbilityLists.Warrior.powerAttackAbility);
+	}
+	
+	void Start()
+	{
+		unit.Init();
+		unit.Activate();
 	}
 	
 	/// <summary>
@@ -98,36 +110,40 @@ public class AOC2Player : AOC2UnitLogic {
 	/// </summary>
 	public override void Init ()
 	{
-		AOC2LogicState doNothing = new AOC2LogicDoNothing();
+		AOC2LogicState doNothing = new AOC2LogicDoNothing(unit);
         
         AOC2LogicState useBaseAttack = new AOC2LogicUseAbility(unit, unit.basicAttackAbility);
-        AOC2LogicState moveBaseAttack = new AOC2LogicMoveTowardTarget(unit);
+        basicAttackMoveLogic = new AOC2LogicNavigateTowardTarget(unit);
         
         AOC2ExitLogicState noTarget = new AOC2ExitNotOther(new AOC2ExitPlayerHasTarget(this, null), doNothing);
         
-        doNothing.AddExit(new AOC2ExitPlayerHasTarget(this, moveBaseAttack));
+        doNothing.AddExit(new AOC2ExitPlayerHasTarget(this, basicAttackMoveLogic));
         
-        moveBaseAttack.AddExit(new AOC2ExitTargetInRange(useBaseAttack, unit, unit.basicAttackAbility.range));
-        moveBaseAttack.AddExit(noTarget);
+        basicAttackMoveLogic.AddExit(new AOC2ExitTargetInRange(useBaseAttack, unit, unit.basicAttackAbility.range));
+        basicAttackMoveLogic.AddExit(noTarget);
         
-        useBaseAttack.AddExit(new AOC2ExitNoPlayerWithinRange(moveBaseAttack, unit, unit.basicAttackAbility.range));
+        useBaseAttack.AddExit(new AOC2ExitNotOther(new AOC2ExitTargetInRange(null, unit, unit.basicAttackAbility.range), basicAttackMoveLogic));
         useBaseAttack.AddExit(noTarget);
+		useBaseAttack.AddExit(new AOC2ExitWhenComplete(useBaseAttack, useBaseAttack)); //Loop autoattack once animation hits
 		
-		moveLogic = new AOC2LogicFollowPath(unit);
+		moveLogic = new AOC2LogicNavigateTowardTarget(unit);
 		moveLogic.AddExit(new AOC2ExitWhenComplete(moveLogic, doNothing));
 		
-		sprintLogic = new AOC2LogicSprint(unit);
-		sprintLogic.AddExit(new AOC2ExitTargetInRange(doNothing, unit, MIN_MOVE_DIST));
+		//sprintLogic = new AOC2LogicSprint(unit);
+		//sprintLogic.AddExit(new AOC2ExitTargetInRange(doNothing, unit, MIN_MOVE_DIST));
+		
+		sprintLogic = new AOC2LogicCombatRoll(unit, rollDist, .3f, rollSpeed);
+		sprintLogic.AddExit(new AOC2ExitWhenComplete(sprintLogic, doNothing));
 		
 		abilityLogics = new AOC2LogicState[abilities.Length];
 		
 		//Set up the logic for each ability
 		for (int i = 0; i < abilityLogics.Length; i++) {
-			abilityLogics[i] = new AOC2LogicHFAbility(unit, abilities[i]);
+			abilityLogics[i] = new AOC2LogicHighStateAbility(unit, abilities[i]);
 			abilityLogics[i].AddExit(new AOC2ExitWhenComplete(abilityLogics[i], doNothing));
 		}
 		
-		logic = new AOC2HFSMLogic(moveBaseAttack);
+		logic = new AOC2HFSMLogic(basicAttackMoveLogic, unit);
 		
 		base.Init();
 	}
@@ -189,27 +205,35 @@ public class AOC2Player : AOC2UnitLogic {
 	{
 		if (unit == attackTarget)
 		{
-			attackTarget = null;
+			if (local != null)
+			{
+				local.TargetNextEnemy();
+			}
+			else
+			{
+				attackTarget = null;
+				AOC2ManagerReferences.combatManager.TargetNone();
+			}
 		}
 	}
 	
 	/// <summary>
-	/// Sets a specific enemy to be this player's target
-	/// DEBUG: Tints the enemy that was selected
-	/// TODO: Have some UI or other visual element
-	/// that identifies the targetted enemy
+	/// Sets a specific enemy to be this player's target.
+	/// Also, sets the player to use their auto-attack on the
+	/// target
 	/// </summary>
 	/// <param name='unit'>
 	/// Unit that was just targetted
 	/// </param>
 	public void TargetEnemy(AOC2Unit unit)
 	{
-		if (attackTarget != null)
-		{
-			attackTarget.DebugTint(attackTarget.tint);
-		}
+		AOC2ManagerReferences.combatManager.TargetUnit(unit);
+		
 		attackTarget = unit;
-		attackTarget.DebugTint(targetColor);
+
+		//unit.targetPos = attackTarget.aPos;
+
+		//SetLogic(basicAttackMoveLogic);
 	}
 	
 	public void TargetGround(AOC2GridNode pos)
@@ -224,10 +248,9 @@ public class AOC2Player : AOC2UnitLogic {
 		SetLogic(sprintLogic);
 	}
 	
-	void SetLogic(AOC2LogicState state)
+	void OnGizmoDraw()
 	{
-		logic._current.OnExitState();
-		state.Init();
-		logic._current = state;
+		Gizmos.color = Color.green;
+		Gizmos.DrawSphere(unit.targetPos.position, 1f);
 	}
 }

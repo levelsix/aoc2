@@ -41,12 +41,12 @@ public class AOC2BuildingCamera : MonoBehaviour, AOC2Placeable
     /// <summary>
     /// This camera's transform, 
     /// </summary>
-    protected Transform _trans;
+    public Transform trans;
 	
 	/// <summary>
 	/// The camera that this script controls
 	/// </summary>
-	protected Camera _cam;
+	public Camera cam;
 	
 	/// <summary>
 	/// Awake this instance.
@@ -54,15 +54,15 @@ public class AOC2BuildingCamera : MonoBehaviour, AOC2Placeable
 	/// </summary>
 	virtual public void Awake()
 	{
-		_trans = transform;
-		_cam = camera;
+		trans = transform;
+		cam = camera;
 	}
 	
 	void Start()
 	{
 		if (AOC2EventManager.UI.OnCameraResize != null)
 		{
-			AOC2EventManager.UI.OnCameraResize(_cam);
+			AOC2EventManager.UI.OnCameraResize(cam);
 		}
 	}
 	
@@ -92,6 +92,8 @@ public class AOC2BuildingCamera : MonoBehaviour, AOC2Placeable
 	/// </param>
 	virtual public void MoveRelative(AOC2TouchData touch)
 	{
+		Debug.Log("Move rel");
+		
 		Vector3 movement = touch.delta;
 		
         //Turn the mouse difference in screen coordinates to world coordinates
@@ -106,7 +108,7 @@ public class AOC2BuildingCamera : MonoBehaviour, AOC2Placeable
 		movement *= -1;
 
         //Add the difference to the original position, since we only hold original mouse pos
-        _trans.position += movement;
+        trans.position += movement;
 	}
 	
 	/// <summary>
@@ -119,19 +121,19 @@ public class AOC2BuildingCamera : MonoBehaviour, AOC2Placeable
 	/// </param>
 	public void Zoom(float amount)
 	{
-		_cam.orthographicSize += amount * Time.deltaTime * CAMERA_ZOOM_SCALE;
-		if (_cam.orthographicSize > MAX_SIZE)
+		cam.orthographicSize += amount * Time.deltaTime * CAMERA_ZOOM_SCALE;
+		if (cam.orthographicSize > MAX_SIZE)
 		{
-			_cam.orthographicSize = MAX_SIZE;
+			cam.orthographicSize = MAX_SIZE;
 		}
-		else if (_cam.orthographicSize < MIN_SIZE)
+		else if (cam.orthographicSize < MIN_SIZE)
 		{
-			_cam.orthographicSize = MIN_SIZE;
+			cam.orthographicSize = MIN_SIZE;
 		}
 		
 		if (AOC2EventManager.UI.OnCameraResize != null)
 		{
-			AOC2EventManager.UI.OnCameraResize(_cam);
+			AOC2EventManager.UI.OnCameraResize(cam);
 		}
 	}
 	

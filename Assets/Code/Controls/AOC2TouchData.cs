@@ -68,6 +68,8 @@ public class AOC2TouchData
 	/// </summary>
 	public int count = 1;
 	
+	public int id;
+	
 	/// <summary>
 	/// Gets the index of the count.
 	/// Used for touch events, which are indexed with

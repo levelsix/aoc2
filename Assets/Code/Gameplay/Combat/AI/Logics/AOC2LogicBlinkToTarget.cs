@@ -8,17 +8,14 @@ using System.Collections;
 /// for exit states.
 /// </summary>
 public class AOC2LogicBlinkToTarget : AOC2LogicState {
-
-	private AOC2Unit _unit;
 	
 	private float delayBef;
 	
 	private float delayAft;
 	
 	public AOC2LogicBlinkToTarget(AOC2Unit thisUnit, float delayBefore, float delayAfter)
-		: base()
+		: base(thisUnit)
 	{
-		_unit = thisUnit;
 		delayAft = delayAfter;
 		delayBef = delayBefore;
 	}
@@ -28,7 +25,7 @@ public class AOC2LogicBlinkToTarget : AOC2LogicState {
 		while (true)
 		{
 			yield return new WaitForSeconds(delayBef);
-			_unit.aPos.position = _unit.targetPos.position;
+			_user.aPos.position = _user.targetPos.position;
 			yield return new WaitForSeconds(delayAft);
 			_complete = true;
 			yield return null;

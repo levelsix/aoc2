@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 // Generated from: SpellProto.proto
-// Note: requires additional types generated from: JobType.proto
+// Note: requires additional types generated from: ClassType.proto
 // Note: requires additional types generated from: ResourceType.proto
 namespace com.lvl6.aoc2.proto
 {
@@ -26,12 +26,12 @@ namespace com.lvl6.aoc2.proto
       get { return _spellID; }
       set { _spellID = value; }
     }
-    private com.lvl6.aoc2.proto.JobType _class;
-    [global::ProtoBuf.ProtoMember(2, IsRequired = true, Name=@"class", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
-    public com.lvl6.aoc2.proto.JobType @class
+    private com.lvl6.aoc2.proto.ClassType _classType;
+    [global::ProtoBuf.ProtoMember(2, IsRequired = true, Name=@"classType", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    public com.lvl6.aoc2.proto.ClassType classType
     {
-      get { return _class; }
-      set { _class = value; }
+      get { return _classType; }
+      set { _classType = value; }
     }
 
     private string _name = "";

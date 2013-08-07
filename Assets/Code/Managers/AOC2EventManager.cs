@@ -89,6 +89,8 @@ public static class AOC2EventManager
 		public static Action<int>[] OnChangeResource = new Action<int>[3];
         public static Action OnCameraLockButton;
         public static Action OnCameraSnapButton;
+		
+		public static Action<AOC2Ability, float> OnAbilityStartCool;
 	}
 	
 	/// <summary>
@@ -103,5 +105,10 @@ public static class AOC2EventManager
 		public static Action<AOC2Unit> OnLocalPlayerRoutineUpdate;
 		public static Action<AOC2Delivery> OnLocalPlayerCreateDelivery;
 		public static Action<AOC2Unit, int> OnLocalPlayerTakeDamage;
+	}
+	
+	public static class Cam
+	{
+		public static Action OnCameraChangeOrientation;
 	}
 }

@@ -10,6 +10,8 @@ public class AOC2Ability {
 	
 	public AOC2Values.Abilities.TargetType targetType;
 	
+	public AOC2Values.Animations.Anim animation;
+	
 	/// <summary>
 	/// The cast time.
 	/// Time between player using and attack happening.
@@ -48,13 +50,15 @@ public class AOC2Ability {
 		}
 	}
 	
-	public AOC2Ability(string abName, float cast, float cool, int mana, AOC2Values.Abilities.TargetType target)
+	public AOC2Ability(string abName, float cast, float cool, int mana, AOC2Values.Abilities.TargetType target,
+		AOC2Values.Animations.Anim anim = AOC2Values.Animations.Anim.ATTACK)
 	{
 		name = abName;
 		castTime = cast;
 		coolDown = cool;
 		manaCost = mana;
 		targetType = target;
+		animation = anim;
 	}
  
     public AOC2Ability(AOC2Ability other)
@@ -64,17 +68,26 @@ public class AOC2Ability {
         coolDown = other.coolDown;
         manaCost = other.manaCost;
         targetType = other.targetType;
+		animation = other.animation;
     }
     
 	public IEnumerator Cool (AOC2Unit user)
 	{
 		_onCool = true;
-		yield return new WaitForSeconds(coolDown * AOC2Math.AttackSpeedMod(user.stats.attackSpeed));
+		if (AOC2EventManager.UI.OnAbilityStartCool != null)
+		{
+			AOC2EventManager.UI.OnAbilityStartCool(this, coolDown);
+		}
+		yield return new WaitForSeconds(coolDown);
 		_onCool = false;
 	}
 
-	public virtual bool Use(AOC2Unit user, Vector3 origin, Vector3 target)
+	public virtual bool Use(AOC2Unit user, Vector3 origin, Vector3 target, bool ignoreCooldown = false)
 	{
+		if (ignoreCooldown)
+		{
+			return true;
+		}
 		if (!_onCool)
 		{
 			AOC2ManagerReferences.combatManager.CoolAbility(this, user);

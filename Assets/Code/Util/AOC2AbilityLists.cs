@@ -14,12 +14,13 @@ public static class AOC2AbilityLists {
  
     public static class Generic
     {
-        private const string BASE_MELEE_ATTACK_NAME = "Basic Melee Attack";
+        public const string BASE_MELEE_ATTACK_NAME = "Basic Melee Attack";
         private const float BASE_MELEE_ATTACK_DAMAGE = 1f;
         private const float BASE_MELEE_ATTACK_LIFE = .1f;
         private const float BASE_MELEE_ATTACK_SPEED = 0f;
         private const float BASE_MELEE_ATTACK_CAST = 0f;
-        private const float BASE_MELEE_ATTACK_COOL = .3f;
+        private const float BASE_MELEE_ATTACK_COOL = 1f;
+		private const float BASE_MEELE_ATTACK_FORCE = 2f;
         private const float BASE_MELEE_ATTACK_SIZE = 1f;
         private const bool BASE_MELEE_ATTACK_TARGETTED = true;
         private const int BASE_MELEE_ATTACK_MANA = 0;
@@ -27,12 +28,13 @@ public static class AOC2AbilityLists {
         private const AOC2DeliveryType BASE_MELEE_ATTACK_DELIVERY = AOC2DeliveryType.SPHERE;      
         
         
-        private const string BASE_RANGE_ATTACK_NAME = "Base Range Attack";
+        public const string BASE_RANGE_ATTACK_NAME = "Base Range Attack";
         private const float BASE_RANGE_ATTACK_DAMAGE = 1f;
-        private const float BASE_RANGE_ATTACK_LIFE = .4f;
-        private const float BASE_RANGE_ATTACK_SPEED = 20f;
+        private const float BASE_RANGE_ATTACK_LIFE = .2f;
+        private const float BASE_RANGE_ATTACK_SPEED = 10f;
         private const float BASE_RANGE_ATTACK_CAST = 0f;
-        private const float BASE_RANGE_ATTACK_COOL = .3f;
+		private const float BASE_RANGE_ATTACK_FORCE = 1f;
+        private const float BASE_RANGE_ATTACK_COOL = 1f;
         private const float BASE_RANGE_ATTACK_SIZE = .4f;
         private const bool BASE_RANGE_ATTACK_TARGETTED = true;
         private const int BASE_RANGE_ATTACK_MANA = 0;
@@ -44,6 +46,7 @@ public static class AOC2AbilityLists {
             BASE_MELEE_ATTACK_DAMAGE,
             BASE_MELEE_ATTACK_LIFE, 
             BASE_MELEE_ATTACK_SPEED,
+			BASE_MEELE_ATTACK_FORCE,
             BASE_MELEE_ATTACK_DELIVERY,
             BASE_MELEE_ATTACK_TARGETTED,
             BASE_MELEE_ATTACK_SIZE);
@@ -60,6 +63,7 @@ public static class AOC2AbilityLists {
             BASE_RANGE_ATTACK_DAMAGE,
             BASE_RANGE_ATTACK_LIFE, 
             BASE_RANGE_ATTACK_SPEED,
+			BASE_RANGE_ATTACK_FORCE,
             BASE_RANGE_ATTACK_DELIVERY,
             BASE_RANGE_ATTACK_TARGETTED,
             BASE_RANGE_ATTACK_SIZE);
@@ -88,6 +92,7 @@ public static class AOC2AbilityLists {
 		private const float POWER_ATTACK_SPEED = 0f;
 		private const float POWER_ATTACK_CAST = .3f;
 		private const float POWER_ATTACK_COOL = 5f;
+		private const float POWER_ATTACK_FORCE 	= 3f;
 		private const float POWER_ATTACK_SIZE = 1.5f;
 		private const bool POWER_ATTACK_TARGETTED = true;
 		private const bool POWER_ATTACK_PERSIST = false;
@@ -95,6 +100,7 @@ public static class AOC2AbilityLists {
 		private const int POWER_ATTACK_MANA = 15;
 		private const AOC2Values.Abilities.TargetType POWER_ATTACK_TARGET = AOC2Values.Abilities.TargetType.ENEMY;
 		private const AOC2DeliveryType POWER_ATTACK_DELIVERY = AOC2DeliveryType.SPHERE;
+		private const AOC2Values.Animations.Anim POWER_ATTACK_ANIMATION = AOC2Values.Animations.Anim.ABILITY_ONE;
 		
 		private const string IRON_WILL_NAME = "Iron Will";
 		private const float IRON_WILL_DURATION = 10f;
@@ -105,13 +111,15 @@ public static class AOC2AbilityLists {
 		private const float IRON_WILL_COOL = 20f;
 		private const int IRON_WILL_MANA = 30;
 		private const AOC2Values.Abilities.TargetType IRON_WILL_TARGET = AOC2Values.Abilities.TargetType.SELF;
+		private const AOC2Values.Animations.Anim IRON_WILL_ANIMATION = AOC2Values.Animations.Anim.ABILITY_TWO;
 		
 		private const string CLEAVE_NAME = "Cleave";
 		private const float CLEAVE_DAMAGE = 1.4f;
 		private const float CLEAVE_LIFE = .5f;
 		private const float CLEAVE_SPEED = 0f;
 		private const float CLEAVE_CAST = 0f;
-		private const float CLEAVE_COOL = 1f;
+		private const float CLEAVE_COOL = 10f;
+		private const float CLEAVE_FORCE = 5f;
 		private const float CLEAVE_SIZE = 3f;
 		private const bool CLEAVE_TARGETTED = false;
 		private const bool CLEAVE_PERSIST = true;
@@ -119,11 +127,13 @@ public static class AOC2AbilityLists {
 		private const int CLEAVE_MANA = 35;
 		private const AOC2Values.Abilities.TargetType CLEAVE_TARGET = AOC2Values.Abilities.TargetType.SELF;
 		private const AOC2DeliveryType CLEAVE_DELIVERY = AOC2DeliveryType.DUST_STORM;
+		private const AOC2Values.Animations.Anim CLEAVE_ANIMATION = AOC2Values.Animations.Anim.ABILITY_THREE;
         
 		private static readonly AOC2Attack powerAttack = new AOC2Attack(
 			POWER_ATTACK_DAMAGE,
 			POWER_ATTACK_LIFE,
 			POWER_ATTACK_SPEED,
+			POWER_ATTACK_FORCE,
 			POWER_ATTACK_DELIVERY,
             POWER_ATTACK_TARGETTED,
 			POWER_ATTACK_SIZE,
@@ -136,7 +146,8 @@ public static class AOC2AbilityLists {
 			POWER_ATTACK_CAST, 
 			POWER_ATTACK_COOL,
 			POWER_ATTACK_MANA,
-			POWER_ATTACK_TARGET);
+			POWER_ATTACK_TARGET,
+			POWER_ATTACK_ANIMATION);
 		
 		public static readonly AOC2BuffAbility ironWillAbility = new AOC2BuffAbility(
 			IRON_WILL_NAME,
@@ -147,12 +158,14 @@ public static class AOC2AbilityLists {
 			IRON_WILL_CAST,
 			IRON_WILL_COOL,
 			IRON_WILL_MANA,
-			IRON_WILL_TARGET);
+			IRON_WILL_TARGET,
+			IRON_WILL_ANIMATION);
 		
 		private static readonly AOC2Attack cleaveAttack = new AOC2Attack(
 			CLEAVE_DAMAGE,
 			CLEAVE_LIFE,
 			CLEAVE_SPEED,
+			CLEAVE_FORCE,
 			CLEAVE_DELIVERY,
             CLEAVE_TARGETTED,
 			CLEAVE_SIZE,
@@ -165,7 +178,8 @@ public static class AOC2AbilityLists {
 			CLEAVE_CAST, 
 			CLEAVE_COOL,
 			CLEAVE_MANA,
-			CLEAVE_TARGET);
+			CLEAVE_TARGET,
+			CLEAVE_ANIMATION);
 	}
 	
 	public static class Archer
@@ -175,7 +189,8 @@ public static class AOC2AbilityLists {
         private const float POWER_ATTACK_LIFE = .4f;
         private const float POWER_ATTACK_SPEED = 20f;
         private const float POWER_ATTACK_CAST = 0f;
-        private const float POWER_ATTACK_COOL = .3f;
+        private const float POWER_ATTACK_COOL = 4f;
+		private const float POWER_ATTACK_FORCE = 2f;
         private const float POWER_ATTACK_SIZE = .4f;
         private const bool POWER_ATTACK_TARGETTED = true;
         private const int POWER_ATTACK_MANA = 0;
@@ -197,7 +212,8 @@ public static class AOC2AbilityLists {
 		private const float FAN_SHOT_LIFE = .5f;
 		private const float FAN_SHOT_SPEED = 15f;
 		private const float FAN_SHOT_CAST = .2f;
-		private const float FAN_SHOT_COOL = 4f;
+		private const float FAN_SHOT_COOL = 10f;
+		private const float FAN_SHOT_FORCE = 1.5f;
 		private const float FAN_SHOT_SIZE = .4f;
 		private const bool FAN_SHOT_TARGETTED = false;
 		private const int FAN_SHOT_MANA = 0;
@@ -212,6 +228,7 @@ public static class AOC2AbilityLists {
 			POWER_ATTACK_DAMAGE,
 			POWER_ATTACK_LIFE, 
 			POWER_ATTACK_SPEED,
+			POWER_ATTACK_FORCE,
 			POWER_ATTACK_DELIVERY,
             POWER_ATTACK_TARGETTED,
 			POWER_ATTACK_SIZE);
@@ -239,6 +256,7 @@ public static class AOC2AbilityLists {
 			FAN_SHOT_DAMAGE,
 			FAN_SHOT_LIFE, 
 			FAN_SHOT_SPEED,
+			FAN_SHOT_FORCE,
 			FAN_SHOT_DELIVERY,
             FAN_SHOT_TARGETTED,
 			FAN_SHOT_SIZE,
@@ -258,20 +276,21 @@ public static class AOC2AbilityLists {
 	
     public static class Wizard
     {
-        private const string POWER_ATTACK_NAME = "Lightning Strike";
-        private const float POWER_ATTACK_DAMAGE = 1.25f;
-        private const float POWER_ATTACK_LIFE = .3f;
-        private const float POWER_ATTACK_SPEED = 0f;
-        private const float POWER_ATTACK_CAST = .3f;
-        private const float POWER_ATTACK_COOL = .5f;
-        private const float POWER_ATTACK_SIZE = 1f;
-        private const bool POWER_ATTACK_TARGETTED = true;
-        private const int POWER_ATTACK_MANA = 0;
-		private const bool POWER_ATTACK_PERSIST = true;
-		private const float POWER_ATTACK_RETARGET = 5f;
-        private const AOC2Values.Abilities.TargetType POWER_ATTACK_TARGET = AOC2Values.Abilities.TargetType.ENEMY;
-        private const AOC2DeliveryType POWER_ATTACK_DELIVERY = AOC2DeliveryType.LIGHTNING;
-		private const float POWER_ATTACK_RANGE = 10f;
+        private const string LIGHTNING_STRIKE_NAME = "Lightning Strike";
+        private const float LIGHTNING_STRIKE_DAMAGE = 1.25f;
+        private const float LIGHTNING_STRIKE_LIFE = .3f;
+        private const float LIGHTNING_STRIKE_SPEED = 0f;
+        private const float LIGHTNING_STRIKE_CAST = .3f;
+        private const float LIGHTNING_STRIKE_COOL = 4f;
+		private const float LIGHTNING_STRIKE_FORCE = 1.5f;
+        private const float LIGHTNING_STRIKE_SIZE = 1f;
+        private const bool LIGHTNING_STRIKE_TARGETTED = true;
+        private const int LIGHTNING_STRIKE_MANA = 0;
+		private const bool LIGHTNING_STRIKE_PERSIST = true;
+		private const float LIGHTNING_STRIKE_RETARGET = 5f;
+        private const AOC2Values.Abilities.TargetType LIGHTNING_STRIKE_TARGET = AOC2Values.Abilities.TargetType.ENEMY;
+        private const AOC2DeliveryType LIGHTNING_STRIKE_DELIVERY = AOC2DeliveryType.LIGHTNING;
+		private const float LIGHTNING_STRIKE_RANGE = 5f;
         
         private const string ICE_ARMOR_NAME = "Ice Armor";
         private const float ICE_ARMOR_DURATION = 10f;
@@ -288,33 +307,35 @@ public static class AOC2AbilityLists {
         private const float PROPULSION_LIFE = .5f;
         private const float PROPULSION_SPEED = 15f;
         private const float PROPULSION_CAST = .2f;
-        private const float PROPULSION_COOL = 4f;
-        private const float PROPULSION_SIZE = .4f;
+		private const float PROPULSION_FORCE = 4f;
+        private const float PROPULSION_COOL = 10f;
+        private const float PROPULSION_SIZE = 1f;
         private const bool PROPULSION_TARGETTED = false;
-        private const int PROPULSION_MANA = 0;
+        private const int PROPULSION_MANA = 50;
         private const bool PROPULSION_PERSIST = true;
         private const float PROPULSION_RETARGET = 1f;
         private const AOC2Values.Abilities.TargetType PROPULSION_TARGET = AOC2Values.Abilities.TargetType.ENEMY;
         private const AOC2DeliveryType PROPULSION_DELIVERY = AOC2DeliveryType.STARFALL;
          
-        private static readonly AOC2TargettedAttack powerAttack = new AOC2TargettedAttack(
-			POWER_ATTACK_RANGE,
-            POWER_ATTACK_DAMAGE,
-            POWER_ATTACK_LIFE, 
-            POWER_ATTACK_SPEED,
-            POWER_ATTACK_DELIVERY,
-            POWER_ATTACK_TARGETTED,
-            POWER_ATTACK_SIZE,
-			POWER_ATTACK_PERSIST,
-			POWER_ATTACK_RETARGET);
+        private static readonly AOC2TargettedAttack lightningAttack = new AOC2TargettedAttack(
+			LIGHTNING_STRIKE_RANGE,
+            LIGHTNING_STRIKE_DAMAGE,
+            LIGHTNING_STRIKE_LIFE, 
+            LIGHTNING_STRIKE_SPEED,
+			LIGHTNING_STRIKE_FORCE,
+            LIGHTNING_STRIKE_DELIVERY,
+            LIGHTNING_STRIKE_TARGETTED,
+            LIGHTNING_STRIKE_SIZE,
+			LIGHTNING_STRIKE_PERSIST,
+			LIGHTNING_STRIKE_RETARGET);
      
-        public static readonly AOC2AttackAbility powerAttackAbility = new AOC2AttackAbility(
-            powerAttack,
-            POWER_ATTACK_NAME,
-            POWER_ATTACK_CAST, 
-            POWER_ATTACK_COOL,
-            POWER_ATTACK_MANA,
-            POWER_ATTACK_TARGET);
+        public static readonly AOC2AttackAbility lightningAttackAbility = new AOC2AttackAbility(
+            lightningAttack,
+            LIGHTNING_STRIKE_NAME,
+            LIGHTNING_STRIKE_CAST, 
+            LIGHTNING_STRIKE_COOL,
+            LIGHTNING_STRIKE_MANA,
+            LIGHTNING_STRIKE_TARGET);
            
         public static readonly AOC2BuffAbility iceArmorAbility = new AOC2BuffAbility(
             ICE_ARMOR_NAME,
@@ -331,6 +352,7 @@ public static class AOC2AbilityLists {
             PROPULSION_DAMAGE,
             PROPULSION_LIFE, 
             PROPULSION_SPEED,
+			PROPULSION_FORCE,
             PROPULSION_DELIVERY,
             PROPULSION_TARGETTED,
             PROPULSION_SIZE,
@@ -353,6 +375,7 @@ public static class AOC2AbilityLists {
 		private const float BASE_ATTACK_LIFE = .1f;
 		private const float BASE_ATTACK_SPEED = 0f;
 		private const float BASE_ATTACK_CAST = 0f;
+		private const float BASE_ATTACK_FORCE = 0f;
 		private const float BASE_ATTACK_COOL = 1f;
 		private const float BASE_ATTACK_SIZE = 1f;
 		private const bool BASE_ATTACK_TARGETTED = true;
@@ -364,6 +387,7 @@ public static class AOC2AbilityLists {
 			BASE_ATTACK_DAMAGE,
 			BASE_ATTACK_LIFE, 
 			BASE_ATTACK_SPEED,
+			BASE_ATTACK_FORCE,
 			BASE_ATTACK_DELIVERY,
             BASE_ATTACK_TARGETTED,
 			BASE_ATTACK_SIZE);

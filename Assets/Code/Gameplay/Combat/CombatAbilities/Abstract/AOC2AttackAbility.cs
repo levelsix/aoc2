@@ -13,8 +13,9 @@ public class AOC2AttackAbility : AOC2Ability {
 	}
 	
 	public AOC2AttackAbility(AOC2Attack attack, string abName, float cast, 
-		float cool, int mana, AOC2Values.Abilities.TargetType target)
-		: base(abName, cast, cool, mana, target)
+		float cool, int mana, AOC2Values.Abilities.TargetType target,
+		AOC2Values.Animations.Anim anim = AOC2Values.Animations.Anim.ATTACK)
+		: base(abName, cast, cool, mana, target, anim)
 	{
 		_attack = attack;
 	}
@@ -25,8 +26,31 @@ public class AOC2AttackAbility : AOC2Ability {
         _attack = ability._attack;
     }
 	
-	public override bool Use (AOC2Unit user, Vector3 origin, Vector3 target)
+	/// <summary>
+	/// Use the attack ability. Returns true if the ability was used, false if the ability
+	/// is still on cooldown.
+	/// </summary>
+	/// <param name='user'>
+	/// The unit using the ability
+	/// </param>
+	/// <param name='origin'>
+	/// The origin position of the ability
+	/// </param>
+	/// <param name='target'>
+	/// The target of the ability
+	/// </param>
+	/// <param name='ignoreCooldown'>
+	/// Whether cooldown should be ignored. Used if animations are being used for timing instead
+	/// of coroutines.
+	/// </param>
+	public override bool Use (AOC2Unit user, Vector3 origin, Vector3 target, bool ignoreCooldown = false)
 	{
+		Debug.Log("Using attack ability " + name);
+		if (ignoreCooldown)
+		{
+			_attack.Use(user, origin, target);
+			return true;
+		}
 		if (!_onCool)
 		{
 			_attack.Use(user, origin, target);

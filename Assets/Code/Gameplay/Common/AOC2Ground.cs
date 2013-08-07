@@ -18,6 +18,16 @@ public class AOC2Ground : MonoBehaviour {
 	/// </summary>
 	AOC2Sprite _sprite;
 	
+	void OnEnable()
+	{
+		//AOC2EventManager.Cam.OnCameraChangeOrientation += Start;	
+	}
+	
+	void OnDisable()
+	{
+		//AOC2EventManager.Cam.OnCameraChangeOrientation -= Start;
+	}
+	
 	/// <summary>
 	/// Awake this instance.
 	/// Get internal component references
@@ -33,6 +43,14 @@ public class AOC2Ground : MonoBehaviour {
 	/// </summary>
 	void Start ()
 	{
-		_sprite.MakeBackgroundMesh();
+		//transform.rotation = Camera.main.transform.rotation;
+		
+		float halfWidth = AOC2ManagerReferences.gridManager.worldSize / 2;
+		
+		float dropDist = Mathf.Sqrt(halfWidth * halfWidth / 2);
+		
+		transform.position = new Vector3(halfWidth + dropDist, -halfWidth, halfWidth + dropDist);
+		
+		_sprite.MakeGroundMesh(halfWidth);
 	}
 }

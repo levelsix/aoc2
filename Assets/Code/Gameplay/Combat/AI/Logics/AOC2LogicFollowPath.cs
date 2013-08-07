@@ -12,8 +12,6 @@ public class AOC2LogicFollowPath : AOC2LogicState {
 	
 	Stack<AOC2GridNode> path;
 	
-	AOC2Unit _unit;
-	
 	AOC2LogicMoveTowardTarget followLogic;
 	
 	AOC2ExitTargetInRange newNodeLogic;
@@ -30,39 +28,40 @@ public class AOC2LogicFollowPath : AOC2LogicState {
 			else
 			{
 				_complete = true;
-				return _unit.targetPos.position;
+				return _user.targetPos.position;
 			}
 		}
 	}
 	
 	public AOC2LogicFollowPath(AOC2Unit thisUnit)
-		: base()
+		: base(thisUnit)
 	{
-		_unit = thisUnit;
-		followLogic = new AOC2LogicMoveTowardTarget(_unit);
-		newNodeLogic = new AOC2ExitTargetInRange(null, _unit, AOC2ManagerReferences.gridManager.spaceSize / 2);
+		followLogic = new AOC2LogicMoveTowardTarget(_user);
+		newNodeLogic = new AOC2ExitTargetInRange(null, _user, AOC2ManagerReferences.gridManager.spaceSize / 2);
 	}
 	
 	public override void Init ()
 	{
 		base.Init();
 		
+		_user.currentLogicState = "Path";
+		
 		//Store target position for when we exit
-		destination = _unit.targetPos;
+		destination = _user.targetPos;
 		
 		path = AOC2Pathfind.aStar(
-		 	new AOC2GridNode(AOC2ManagerReferences.gridManager.PointToGridCoords(_unit.aPos.position)),
-			new AOC2GridNode(AOC2ManagerReferences.gridManager.PointToGridCoords(_unit.targetPos.position)));
+		 	new AOC2GridNode(AOC2ManagerReferences.gridManager.PointToGridCoords(_user.aPos.position)),
+			new AOC2GridNode(AOC2ManagerReferences.gridManager.PointToGridCoords(_user.targetPos.position)));
 		
 		followLogic.Init();
-		_unit.targetPos = new AOC2Position(nextNodePos); //Need a new pos to make sure we aren't messing with an old transform
+		_user.targetPos = new AOC2Position(nextNodePos); //Need a new pos to make sure we aren't messing with an old transform
 	}
 	
 	public override void OnExitState ()
 	{
 		base.OnExitState();
 		
-		//_unit.targetPos = destination; 
+		//_user.targetPos = destination; 
 	}
 	
 	public override IEnumerator Logic ()
@@ -71,7 +70,7 @@ public class AOC2LogicFollowPath : AOC2LogicState {
 		{
 			if (newNodeLogic.Test())
 			{
-				_unit.targetPos.position = nextNodePos;
+				_user.targetPos.position = nextNodePos;
 				followLogic.Init();
 			}
 			if(followLogic.logic.MoveNext()){

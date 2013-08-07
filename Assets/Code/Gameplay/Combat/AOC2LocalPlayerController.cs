@@ -1,6 +1,6 @@
 using UnityEngine;
 using System.Collections;
-using com.lvl6.proto;
+using com.lvl6.aoc2.proto;
 
 /// <summary>
 /// @author Rob Giusti
@@ -19,6 +19,11 @@ public class AOC2LocalPlayerController : MonoBehaviour {
 	/// The player component.
 	/// </summary>
 	public AOC2Player player;
+
+	/// <summary>
+	/// The plane that represents the ground; the x- and z-axes at y=0
+	/// </summary>
+	private static readonly Plane GROUND_PLANE = new Plane(Vector3.up, Vector3.zero);
 	
 	/// <summary>
 	/// Awake this instance.
@@ -121,7 +126,7 @@ public class AOC2LocalPlayerController : MonoBehaviour {
 		{
 			player.TargetEnemy(enemyTarget);
 		}
-		else if (HitGround(data.pos))
+		else //if (HitGround(data.pos))
 		{
 			player.TargetGround(AOC2ManagerReferences.gridManager.ScreenToPoint(data.pos));
 		}

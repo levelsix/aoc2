@@ -10,7 +10,6 @@
 // Generated from: EquipmentProto.proto
 // Note: requires additional types generated from: RarityType.proto
 // Note: requires additional types generated from: EquipmentType.proto
-// Note: requires additional types generated from: JobType.proto
 namespace com.lvl6.aoc2.proto
 {
   [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"EquipmentProto")]
@@ -103,13 +102,6 @@ namespace com.lvl6.aoc2.proto
     {
       get { return _rarity; }
       set { _rarity = value; }
-    }
-    private com.lvl6.aoc2.proto.JobType _job;
-    [global::ProtoBuf.ProtoMember(11, IsRequired = true, Name=@"job", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
-    public com.lvl6.aoc2.proto.JobType job
-    {
-      get { return _job; }
-      set { _job = value; }
     }
     private global::ProtoBuf.IExtension extensionObject;
     global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)

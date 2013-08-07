@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System;
 using System.Collections.Generic;
-using com.lvl6.proto;
+using com.lvl6.aoc2.proto;
 
 /// <summary>
 /// @author Rob Giusti
@@ -142,13 +142,13 @@ public class AOC2BuildingManager : MonoBehaviour
     /// </summary>
     /// <param name="proto">The prefab for the building we want to build</param>
     /// <returns>The building, placed on the grid</returns>
-    private AOC2Building MakeBuilding(FullStructProto proto)
+    private AOC2Building MakeBuilding(StructureProto proto)
     {
         int x, y;
         do
         {
-            x = (int)(UnityEngine.Random.value * (AOC2ManagerReferences.gridManager.gridSize + 1 - proto.xLength));
-            y = (int)(UnityEngine.Random.value * (AOC2ManagerReferences.gridManager.gridSize + 1 - proto.yLength));
+            x = (int)(UnityEngine.Random.value * (AOC2ManagerReferences.gridManager.gridSize + 1 - proto.size.x));
+            y = (int)(UnityEngine.Random.value * (AOC2ManagerReferences.gridManager.gridSize + 1 - proto.size.y));
         } while (!AOC2ManagerReferences.gridManager.HasSpaceForBuilding(proto, x, y));
 
         Vector3 position = new Vector3(AOC2ManagerReferences.gridManager.spaceSize * x, 0, 
@@ -160,24 +160,23 @@ public class AOC2BuildingManager : MonoBehaviour
         return building;
     }
 	
-	private AOC2Building MakeNewBuildingFromProto(FullStructProto proto)
+	private AOC2Building MakeNewBuildingFromProto(StructureProto proto)
 	{
         //TODO: Figure out prefab/size from proto
 		AOC2Building building = MakeBuilding(proto);
         
-        FullUserStructProto userProt = new FullUserStructProto();
+        UserStructProto userProt = new UserStructProto();
         //userProt.userStructProto.userId = 
-        userProt.userStructId = getNextId;
+        //userProt.userStructId = getNextId;
         userProt.lastCollectTime = AOC2Math.UnixTimeStamp(DateTime.UtcNow);
         //coords?
-        userProt.level = 0;
-        userProt.purchaseTime = userProt.lastCollectTime;
+		userProt.structLevel = 1;
+        userProt.contents = 0;
+        userProt.startUpgradeTime = userProt.lastCollectTime;
         userProt.lastUpgradeTime = userProt.lastCollectTime;
-        userProt.isComplete = false;
+        userProt.isUpgrading = false;
         
-        userProt.fullStruct = proto;
-        
-		building.Init(userProt);
+		//building.Init(userProt);
 		return building;
 	}
 	
@@ -191,7 +190,7 @@ public class AOC2BuildingManager : MonoBehaviour
 	/// <param name='proto'>
 	/// The prefab for the building to be made
 	/// </param>
-	private AOC2Building MakeBuildingCenter(FullStructProto proto)
+	private AOC2Building MakeBuildingCenter(StructureProto proto)
 	{
 		AOC2GridNode coords = AOC2ManagerReferences.gridManager.ScreenToPoint(new Vector3(Screen.width/2, Screen.height/2));
 		coords = FindSpaceInRange(proto, coords, 0);
@@ -225,7 +224,7 @@ public class AOC2BuildingManager : MonoBehaviour
 	/// <param name='range'>
 	/// Range.
 	/// </param>
-	public AOC2GridNode FindSpaceInRange(FullStructProto proto, AOC2GridNode startPos, int range)
+	public AOC2GridNode FindSpaceInRange(StructureProto proto, AOC2GridNode startPos, int range)
 	{
 		if (range > 36)
 		{
@@ -266,7 +265,7 @@ public class AOC2BuildingManager : MonoBehaviour
 	/// <param name='y'>
 	/// Y derivation
 	/// </param>
-	public AOC2GridNode CheckSpaces(FullStructProto proto, AOC2GridNode basePos, int x, int y)
+	public AOC2GridNode CheckSpaces(StructureProto proto, AOC2GridNode basePos, int x, int y)
 	{
 		if (AOC2ManagerReferences.gridManager.HasSpaceForBuilding(proto, basePos + new AOC2GridNode(x,y)))
 		{

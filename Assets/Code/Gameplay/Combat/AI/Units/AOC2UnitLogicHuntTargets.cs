@@ -7,7 +7,7 @@ using System.Collections;
 public class AOC2UnitLogicHuntTargets : AOC2UnitLogic {
 	
 	/// <summary>
-	/// The range that this Goblin will chase enemies within
+	/// The range that this unit will chase enemies within
 	/// </summary>
 	public float range = 10;
 	
@@ -25,13 +25,18 @@ public class AOC2UnitLogicHuntTargets : AOC2UnitLogic {
 		_unit = GetComponent<AOC2Unit>();
 	}
 	
+	void Start()
+	{
+		_unit.Deactivate();
+	}
+	
 	/// <summary>
 	/// Start this instance.
 	/// </summary>
 	public override void Init ()
 	{	
-		AOC2LogicState doNothing = new AOC2LogicDoNothing();
-		AOC2LogicState chase = new AOC2LogicMoveTowardTarget(_unit);
+		AOC2LogicState doNothing = new AOC2LogicDoNothing(_unit);
+		AOC2LogicState chase = new AOC2LogicNavigateTowardTarget(_unit);
 		AOC2LogicState basicAttack = new AOC2LogicUseAbility(_unit, _unit.basicAttackAbility);
 		
 		doNothing.AddExit(new AOC2ExitPlayerInRange(chase, _unit, range));
@@ -41,7 +46,7 @@ public class AOC2UnitLogicHuntTargets : AOC2UnitLogic {
 		
 		basicAttack.AddExit(new AOC2ExitNoPlayerWithinRange(chase, _unit, _unit.basicAttackAbility.range));
 		
-		logic = new AOC2HFSMLogic(doNothing);
+		logic = new AOC2HFSMLogic(doNothing, _unit);
 		
 		base.Init();
 	}

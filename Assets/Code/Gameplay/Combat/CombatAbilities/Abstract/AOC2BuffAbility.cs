@@ -17,8 +17,8 @@ public class AOC2BuffAbility : AOC2Ability {
 	AOC2Values.UnitStat _stat;
 	
 	public AOC2BuffAbility(string name, float duration, float amount, AOC2Values.UnitStat stat, bool flat, float cast, float cool,
-		int mana, AOC2Values.Abilities.TargetType target)
-		: base(name, cast, cool, mana, target)
+		int mana, AOC2Values.Abilities.TargetType target, AOC2Values.Animations.Anim anim = AOC2Values.Animations.Anim.ATTACK)
+		: base(name, cast, cool, mana, target, anim)
 	{
 		_duration = duration;
 		_amount = amount;
@@ -35,10 +35,15 @@ public class AOC2BuffAbility : AOC2Ability {
         _flat = ability._flat;
     }
 	
-	public override bool Use (AOC2Unit user, Vector3 origin, Vector3 target)
+	public override bool Use (AOC2Unit user, Vector3 origin, Vector3 target, bool ignoreCooldown = false)
 	{
-		if (!_onCool){
+		if (!_onCool || ignoreCooldown)
+		{
 			AOC2ManagerReferences.combatManager.RunBuff(user, this);
+			if (!_onCool)
+			{
+				AOC2ManagerReferences.combatManager.CoolAbility(this, user);
+			}
 			return true;
 		}
 		return false;

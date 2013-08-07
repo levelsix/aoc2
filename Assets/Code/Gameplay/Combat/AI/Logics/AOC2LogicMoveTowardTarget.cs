@@ -15,31 +15,31 @@ public class AOC2LogicMoveTowardTarget : AOC2LogicState {
 	private const float MIN_MOVE_DIST_SQR = .005f;
 	
 	/// <summary>
-	/// The unit.
-	/// </summary>
-	private AOC2Unit _unit = null;
-	
-	/// <summary>
 	/// Initializes a new instance of the <see cref="AOC2LogicMoveTowardTarget"/> class.
 	/// </summary>
 	/// <param name='thisUnit'>
 	/// This unit.
 	/// </param>
 	public AOC2LogicMoveTowardTarget(AOC2Unit thisUnit)
-		: base()
+		: base(thisUnit)
 	{
-		_unit = thisUnit;
 	}
 	
+	public override void OnExitState()
+	{
+		_user.model.SetAnimationFlag(AOC2Values.Animations.Anim.WALK, false);
+	}
+
 	/// <summary>
 	/// Moves this unit towards its target.
 	/// </summary>
 	public override IEnumerator Logic ()
 	{
+		_user.model.SetAnimationFlag(AOC2Values.Animations.Anim.WALK, true);
 		while (true)
 		{
-			_unit.Move(_unit.targetPos.position - _unit.aPos.position);
-			_complete = AOC2Math.GroundDistanceSqr(_unit.aPos.position, _unit.targetPos.position) < MIN_MOVE_DIST_SQR;
+			_user.Move(_user.targetPos.position - _user.aPos.position);
+			_complete = AOC2Math.GroundDistanceSqr(_user.aPos.position, _user.targetPos.position) < MIN_MOVE_DIST_SQR;
 			yield return null;
 		}
 	}

@@ -4,7 +4,7 @@ using System.Collections;
 public class AOC2AbilityButtonPanel : MonoBehaviour {
 	
 	[SerializeField]
-	protected AOC2SetAttackButton abilityButtonPrefab;
+	protected AOC2SetAbilityButton abilityButtonPrefab;
 	
 	[SerializeField]
 	protected float yOffset = 150;
@@ -36,12 +36,12 @@ public class AOC2AbilityButtonPanel : MonoBehaviour {
 	void OnPlayerSpawn(AOC2Unit unit)
 	{
 		AOC2Player player = unit.GetComponent<AOC2Player>();
-		AOC2SetAttackButton button;
+		AOC2SetAbilityButton button;
 		Transform butTrans;
 		for (int i = 0; i < player.abilities.Length; i++) 
 		{
 			button = Instantiate(abilityButtonPrefab)
-				as AOC2SetAttackButton;
+				as AOC2SetAbilityButton;
 			
 			butTrans = button.transform;
 			butTrans.parent = trans;

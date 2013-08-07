@@ -1,6 +1,6 @@
 using UnityEngine;
 using System.Collections;
-using com.lvl6.proto;
+using com.lvl6.aoc2.proto;
 
 /// <summary>
 /// @author Rob Giusti
@@ -26,24 +26,6 @@ public class AOC2UnitStats {
 	/// default values.
 	/// </summary>
 	public AOC2UnitStats(){}
-	
-	/// <summary>
-	/// Initializes a new instance of the <see cref="AOC2UnitStats"/> class
-	/// using a serializable protocol
-	/// </summary>
-	/// <param name='proto'>
-	/// Unit stats protocol instance to create this object from
-	/// </param>
-	public AOC2UnitStats(UnitStatsProto proto)
-	{
-		strength = proto.strength;
-		defense = proto.defense;
-		resistance = proto.resistance;
-		moveSpeed = proto.moveSpeed;
-		attackSpeed = proto.attackSpeed;
-		maxMana = proto.maxMana;
-		maxHealth = proto.maxHealth;
-	}
 	
 	/// <summary>
 	/// Indexer using an enum so that we can access

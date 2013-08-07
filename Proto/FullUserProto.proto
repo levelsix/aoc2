@@ -1,5 +1,5 @@
 
-import "JobType.proto";
+import "ClassType.proto";
 
 package com.lvl6.aoc2.proto;
 
@@ -13,7 +13,7 @@ message FullUserProto {
 	optional int32 gold = 5;
 	optional int32 tonic = 6;
 	optional int32 gems = 7;
-	required JobType job = 8;
+	required ClassType classType = 8;
 	optional int32 lastHealth = 9;
 	optional int32 maxHealth = 10;
 	optional int64 lastHealthRegen = 11;

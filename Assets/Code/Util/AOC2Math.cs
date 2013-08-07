@@ -1,11 +1,11 @@
 using UnityEngine;
 using System.Collections;
 using System;
-using com.lvl6.proto;
+using com.lvl6.aoc2.proto;
 
 public static class AOC2Math {
 	
-	const int secondsPerGem = 400;
+	const int SECONDS_PER_GEM = 400;
 	
 	/// <summary>
 	/// Gets the square of the ground distance (y-axis ignored)
@@ -36,7 +36,7 @@ public static class AOC2Math {
     /// </param>
 	public static int GemsForTime(long time)
 	{
-		return (int)Mathf.Ceil((float)(time / secondsPerGem));
+		return (int)Mathf.Ceil((float)(time / SECONDS_PER_GEM));
 	}
 	
     /// <summary>
@@ -65,7 +65,7 @@ public static class AOC2Math {
     /// </param>
     public static Color ProtoToColor(ColorProto proto)
     {
-        return new Color(proto.red, proto.green, proto.blue);
+        return new Color(proto.r, proto.g, proto.b);
     }
     
     /// <summary>
@@ -84,6 +84,6 @@ public static class AOC2Math {
     
     public static float ResistanceMod(int resistance)
     {
-        return (100f - resistance) / 100f;  
+        return (100f - resistance) / 100f;
     }
 }

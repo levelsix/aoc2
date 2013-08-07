@@ -44,6 +44,8 @@ public class AOC2Delivery : AOC2Particle {
 	/// </summary>
 	public float retarget;
 	
+	public float force;
+	
 	/// <summary>
 	/// The collision list.
 	/// Holds recently hit units. Don't hit them again
@@ -67,7 +69,7 @@ public class AOC2Delivery : AOC2Particle {
 	}
 	
 	// Use this for initialization
-	public void Init (int dam, float spd, float life, Vector3 dir, bool pers, float ret, AOC2Unit targ = null) 
+	public void Init (int dam, float spd, float frce, float life, Vector3 dir, bool pers, float ret, AOC2Unit targ = null) 
 	{
 		gameObject.SetActive(true);
 		
@@ -76,6 +78,7 @@ public class AOC2Delivery : AOC2Particle {
 		direction = dir;
 		retarget = ret;
 		persist = pers;
+		force = frce;
 		
 		target = targ;
 		

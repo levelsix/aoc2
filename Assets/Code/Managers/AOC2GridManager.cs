@@ -1,6 +1,6 @@
 using UnityEngine;
 using System.Collections;
-using com.lvl6.proto;
+using com.lvl6.aoc2.proto;
 
 public class AOC2GridManager : MonoBehaviour {
 	
@@ -107,11 +107,11 @@ public class AOC2GridManager : MonoBehaviour {
     /// <param name="x">X position to check the grid at</param>
     /// <param name="y">Y position to check the grid at</param>
     /// <returns>Whether the grid has space for this building at the given space</returns>
-    public bool HasSpaceForBuilding(FullStructProto proto, int x, int y)
+    public bool HasSpaceForBuilding(StructureProto proto, int x, int y)
     {
-        for (int i = 0; i < proto.xLength; i++)
+        for (int i = 0; i < proto.size.x; i++)
         {
-            for (int j = 0; j < proto.yLength; j++)
+            for (int j = 0; j < proto.size.y; j++)
             {
 				if (!OnGrid(x+i, y+j))
 				{
@@ -133,7 +133,7 @@ public class AOC2GridManager : MonoBehaviour {
     /// <param name="proto">Building to use for checking for space</param>
     /// <param name="coords">Position to check the grid at</param>
     /// <returns>Whether the grid has space for this building at the given space</returns>
-	public bool HasSpaceForBuilding(FullStructProto proto, AOC2GridNode coords)
+	public bool HasSpaceForBuilding(StructureProto proto, AOC2GridNode coords)
 	{
 		return HasSpaceForBuilding (proto, coords.x, coords.z);	
 	}
@@ -224,14 +224,14 @@ public class AOC2GridManager : MonoBehaviour {
     /// <param name="building">The building to be added</param>
     /// <param name="x">The left-most x position in grid coordinates</param>
     /// <param name="y">The lowest y positing in grid coordinates</param>
-    public void AddBuilding(AOC2Building building, int x, int y, FullStructProto proto)
+    public void AddBuilding(AOC2Building building, int x, int y, StructureProto proto)
     {
         _grid[x, y] = building;
         building.groundPos = new Vector2(x, y);
 
-        for (int i = 0; i < proto.xLength; i++)
+        for (int i = 0; i < proto.size.x; i++)
         {
-            for (int j = 0; j < proto.yLength; j++)
+            for (int j = 0; j < proto.size.y; j++)
             {
                 _grid[x + i, y + j] = building;
             }

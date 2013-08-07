@@ -11,16 +11,23 @@ using System.Collections.Generic;
 public class AOC2CombatManager : MonoBehaviour {
 	
 	/// <summary>
-	/// The players.
+	/// The players and all helper units.
+	/// Serialized to view for debug purposes in editor.
 	/// </summary>
-	public List<AOC2Unit> _allies;
+	[SerializeField]
+	private List<AOC2Unit> _allies;
 	
 	/// <summary>
 	/// The enemies.
+	/// Serialized to view for debug purposes in editor.
 	/// </summary>
-	public List<AOC2Unit> _enemies;
+	[SerializeField]
+	private List<AOC2Unit> _enemies;
 	
 	public AOC2UnitSpawner[] _spawners;
+	
+	[SerializeField]
+	Transform targetMarker;
 	
 	private int _currWave = 0;
 	
@@ -42,8 +49,8 @@ public class AOC2CombatManager : MonoBehaviour {
 	
 	void Start()
 	{
-		BuildSpawners();
-		SpawnNewWave(0);
+		//BuildSpawners();
+		//SpawnNewWave(0);
 	}
 	
 	/// <summary>
@@ -129,7 +136,7 @@ public class AOC2CombatManager : MonoBehaviour {
 		_enemies.Remove(unit);
 		if (_enemies.Count == 0)
 		{
-			AOC2EventManager.Combat.OnEnemiesClear();
+			//AOC2EventManager.Combat.OnEnemiesClear();
 		}
 	}
 	
@@ -177,7 +184,20 @@ public class AOC2CombatManager : MonoBehaviour {
 	
 	#region Targetting Utilities
 	
-	public AOC2Unit GetClosestFromList(AOC2Unit toThis, List<AOC2Unit> list)
+	public void TargetUnit(AOC2Unit unit)
+	{
+		targetMarker.parent = unit.transform;
+		targetMarker.localPosition = Vector3.zero;
+		targetMarker.gameObject.SetActive(true);
+	}
+	
+	public void TargetNone()
+	{
+		targetMarker.parent = transform;
+		targetMarker.gameObject.SetActive(false);
+	}
+	
+	public AOC2Unit GetClosestFromList(Vector3 pos, List<AOC2Unit> list)
 	{
 		AOC2Unit closest = null;
 		float dist = float.NaN;
@@ -186,11 +206,11 @@ public class AOC2CombatManager : MonoBehaviour {
 			if (closest == null)
 			{
 				closest = list[i];
-				dist = AOC2Math.GroundDistanceSqr(toThis.aPos.position, closest.aPos.position);
+				dist = AOC2Math.GroundDistanceSqr(pos, closest.aPos.position);
 			}
 			else
 			{
-				float checkDist = AOC2Math.GroundDistanceSqr(toThis.aPos.position, list[i].aPos.position);
+				float checkDist = AOC2Math.GroundDistanceSqr(pos, list[i].aPos.position);
 				if (checkDist < dist)
 				{
 					closest = list[i];
@@ -199,6 +219,11 @@ public class AOC2CombatManager : MonoBehaviour {
 			}
 		}
 		return closest;
+	}
+	
+	public AOC2Unit GetClosestFromList(AOC2Unit toThis, List<AOC2Unit> list)
+	{
+		return GetClosestFromList(toThis.aPos.position, list);
 	}
 	
 	/// <summary>
@@ -216,6 +241,11 @@ public class AOC2CombatManager : MonoBehaviour {
 		return GetClosestFromList(toThis, _allies);
 	}
 	
+	public AOC2Unit GetClosestPlayer(Vector3 pos)
+	{
+		return GetClosestFromList(pos, _allies);
+	}
+	
 	public AOC2Unit GetClosestEnemy(AOC2Unit toThis)
 	{
 		return GetClosestFromList(toThis, _enemies);
@@ -230,15 +260,20 @@ public class AOC2CombatManager : MonoBehaviour {
 	/// <param name='toThis'>
 	/// The unit that we're trying to find the closest
 	/// player to
-	/// </param
+	/// </param>
 	public AOC2Unit GetClosestPlayerInRange(AOC2Unit toThis, float range)
+	{
+		return GetClosestPlayerInRange(toThis.aPos.position, range);
+	}
+	
+	public AOC2Unit GetClosestPlayerInRange(Vector3 pos, float range)
 	{
 		//Faster to square the range than root the distance
 		float sqrRange = range * range;
 		
-		AOC2Unit closest = GetClosestPlayer(toThis);
+		AOC2Unit closest = GetClosestPlayer(pos);
 		
-		if (closest != null && AOC2Math.GroundDistanceSqr(toThis.aPos.position, closest.aPos.position) < sqrRange)
+		if (closest != null && AOC2Math.GroundDistanceSqr(pos, closest.aPos.position) < sqrRange)
 		{
 			return closest;
 		}
@@ -269,7 +304,7 @@ public class AOC2CombatManager : MonoBehaviour {
 	{
 		for (int i = 0; i < _spawners.Length; i++) 
 		{
-			_spawners[i].SpawnWave(wave);
+			//_spawners[i].SpawnWave(wave);
 		}
 	}
 	

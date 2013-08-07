@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 // Generated from: FullUserProto.proto
-// Note: requires additional types generated from: JobType.proto
+// Note: requires additional types generated from: ClassType.proto
 namespace com.lvl6.aoc2.proto
 {
   [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"FullUserProto")]
@@ -79,12 +79,12 @@ namespace com.lvl6.aoc2.proto
       get { return _gems; }
       set { _gems = value; }
     }
-    private com.lvl6.aoc2.proto.JobType _job;
-    [global::ProtoBuf.ProtoMember(8, IsRequired = true, Name=@"job", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
-    public com.lvl6.aoc2.proto.JobType job
+    private com.lvl6.aoc2.proto.ClassType _classType;
+    [global::ProtoBuf.ProtoMember(8, IsRequired = true, Name=@"classType", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    public com.lvl6.aoc2.proto.ClassType classType
     {
-      get { return _job; }
-      set { _job = value; }
+      get { return _classType; }
+      set { _classType = value; }
     }
 
     private int _lastHealth = default(int);

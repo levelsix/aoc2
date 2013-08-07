@@ -86,12 +86,12 @@ public class AOC2ControlManager : MonoBehaviour
 	/// <summary>
 	/// Max time between taps for it to count as a double-tap
 	/// </summary>
-	const float DOUBLE_TAP_TIME = .3f;
+	const float DOUBLE_TAP_TIME = .5f;
 	
 	/// <summary>
 	/// Max distance between taps for it to count as a double-tap
 	/// </summary>
-	const float DOULBE_TAP_DIST_SQR = 25f;
+	const float DOULBE_TAP_DIST_SQR = 400f;
 		
 	/// <summary>
 	/// Gets the avgerage of all current touches
@@ -155,6 +155,7 @@ public class AOC2ControlManager : MonoBehaviour
 	{
 		if (touchPile.Count > 0)
 		{
+			Debug.Log("Recycled tap");
 			AOC2TouchData temp = touchPile[0];
 			touchPile.RemoveAt(0);
 			temp.init(pos);
@@ -162,6 +163,7 @@ public class AOC2ControlManager : MonoBehaviour
 		}
 		else
 		{
+			Debug.Log("New tap");
 			return new AOC2TouchData(pos);
 		}
 	}
@@ -188,6 +190,7 @@ public class AOC2ControlManager : MonoBehaviour
 			if (touch.phase == TouchPhase.Began)
 			{
 				touches[touch.fingerId] = GetTouch(touch.position);
+				touches[touch.fingerId].id = touch.fingerId;
 				touches[touch.fingerId].ui = HitsUI(touch.position);				
 			}
 			
@@ -196,7 +199,10 @@ public class AOC2ControlManager : MonoBehaviour
 			{
 				//Process tap/flick
 				ProcessRelease(touches[touch.fingerId]);
-				PoolTouch (touches[touch.fingerId]);
+				if (touches[touch.fingerId] != recentTap)
+				{
+					PoolTouch (touches[touch.fingerId]);
+				}
 				touches.Remove(touch.fingerId);
 			}
 			//If it's not an ending touch, update it and possibly process it as a hold
@@ -253,13 +259,15 @@ public class AOC2ControlManager : MonoBehaviour
 	{
 		if (!touch.stationary)
 		{
-			if (AOC2EventManager.Controls.OnKeepDrag[touch.countIndex] != null){
+			if (AOC2EventManager.Controls.OnKeepDrag[touch.countIndex] != null)
+			{
 				AOC2EventManager.Controls.OnKeepDrag[touch.countIndex](touch);
 			}
 		}
 		else
 		{
-			if (AOC2EventManager.Controls.OnKeepHold[touch.countIndex] != null){
+			if (AOC2EventManager.Controls.OnKeepHold[touch.countIndex] != null)
+			{
 				AOC2EventManager.Controls.OnKeepHold[touch.countIndex](touch);
 			}
 		}
@@ -282,12 +290,14 @@ public class AOC2ControlManager : MonoBehaviour
 		{
 			if (!touch.stationary)
 			{
-				if (AOC2EventManager.Controls.OnFlick[touch.countIndex] != null){
+				if (AOC2EventManager.Controls.OnFlick[touch.countIndex] != null)
+				{
 					AOC2EventManager.Controls.OnFlick[touch.countIndex](touch);
 				}
 			}
 			else
 			{
+				
 				//Try to double-tap
 				if (CheckDoubleTap(touch) && AOC2EventManager.Controls.OnDoubleTap[touch.countIndex] != null)
 				{
@@ -305,13 +315,15 @@ public class AOC2ControlManager : MonoBehaviour
 		{
 			if (!touch.stationary)
 			{
-				if (AOC2EventManager.Controls.OnReleaseDrag[touch.countIndex] != null){
+				if (AOC2EventManager.Controls.OnReleaseDrag[touch.countIndex] != null)
+				{
 					AOC2EventManager.Controls.OnReleaseDrag[touch.countIndex](touch);
 				}
 			}
 			else
 			{
-				if (AOC2EventManager.Controls.OnReleaseHold[touch.countIndex] != null){
+				if (AOC2EventManager.Controls.OnReleaseHold[touch.countIndex] != null)
+				{
 					AOC2EventManager.Controls.OnReleaseHold[touch.countIndex](touch);
 				}
 			}
@@ -364,6 +376,7 @@ public class AOC2ControlManager : MonoBehaviour
 	{
 		recentTap = data;
 		yield return new WaitForSeconds(DOUBLE_TAP_TIME);
+		PoolTouch(data);
 		if (recentTap == data)
 		{
 			recentTap = null;

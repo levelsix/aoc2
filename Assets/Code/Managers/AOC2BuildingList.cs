@@ -1,6 +1,6 @@
 using UnityEngine;
 using System.Collections;
-using com.lvl6.proto;
+using com.lvl6.aoc2.proto;
 
 /// <summary>
 /// @author Rob Giusti
@@ -9,13 +9,13 @@ using com.lvl6.proto;
 /// </summary>
 public class AOC2BuildingList {
 	
-	public FullStructProto townHall = new FullStructProto();
-	public FullStructProto goldColl = new FullStructProto();
-	public FullStructProto goldStor = new FullStructProto();
-	public FullStructProto tonicColl = new FullStructProto();
-	public FullStructProto tonicStor = new FullStructProto();
-	public FullStructProto blackSmith = new FullStructProto();
-	public FullStructProto wizard = new FullStructProto();
+	public StructureProto townHall = new StructureProto();
+	public StructureProto goldColl = new StructureProto();
+	public StructureProto goldStor = new StructureProto();
+	public StructureProto tonicColl = new StructureProto();
+	public StructureProto tonicStor = new StructureProto();
+	public StructureProto blackSmith = new StructureProto();
+	public StructureProto wizard = new StructureProto();
 	
 	private static AOC2BuildingList _buildingList;
 	
@@ -31,17 +31,14 @@ public class AOC2BuildingList {
 	private AOC2BuildingList()
 	{
 		goldColl.name = "Gold Collector";
-		goldColl.income = 500;
-		goldColl.minutesToBuild = 10;
-		goldColl.minutesToUpgradeBase = 10;
-		goldColl.price = 100;
+		goldColl.function = StructureProto.StructureFunction.INCOME;
+		goldColl.functionResource = ResourceType.GOLD;
+		goldColl.functionValue = 500;
+		goldColl.buildTime = 10;
+		goldColl.buildCost = 100;
 		
-		goldColl.minLevel.Add(0);
-		goldColl.minLevel.Add(0);
-		goldColl.minLevel.Add(1);
-		
-		goldColl.xLength = 2;
-		goldColl.yLength = 2;
+		goldColl.size.x = 2;
+		goldColl.size.y = 2;
 	}
 	
 }

@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System;
-using com.lvl6.proto;
+using com.lvl6.aoc2.proto;
 
 /// <summary>
 /// @author Rob Giusti

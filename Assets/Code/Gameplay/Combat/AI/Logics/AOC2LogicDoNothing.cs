@@ -12,7 +12,17 @@ using System.Collections;
 /// end state for most logics.
 /// </summary>
 public class AOC2LogicDoNothing : AOC2LogicState {
-
+	
+	public AOC2LogicDoNothing(AOC2Unit user) : base(user)
+	{
+	}
+	
+	public override void Init ()
+	{
+		_user.model.SetAnimationFlag(AOC2Values.Animations.Anim.IDLE, true);
+		base.Init ();
+	}
+	
 	public override IEnumerator Logic ()
 	{
 		while (true)

@@ -14,14 +14,11 @@ namespace com.lvl6.aoc2.proto
     public enum MonsterType
     {
             
-      [global::ProtoBuf.ProtoEnum(Name=@"GOBLIN", Value=0)]
-      GOBLIN = 0,
+      [global::ProtoBuf.ProtoEnum(Name=@"ROCK_KING", Value=1)]
+      ROCK_KING = 1,
             
-      [global::ProtoBuf.ProtoEnum(Name=@"TROLL", Value=1)]
-      TROLL = 1,
-            
-      [global::ProtoBuf.ProtoEnum(Name=@"DRAGON", Value=2)]
-      DRAGON = 2
+      [global::ProtoBuf.ProtoEnum(Name=@"SKELETON", Value=2)]
+      SKELETON = 2
     }
   
 }

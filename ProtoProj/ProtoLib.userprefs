@@ -1,17 +1,14 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Release" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="../Proto/Event.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="ProtoProj/AssemblyInfo.cs">
     <Files>
       <File FileName="ProtoProj/AssemblyInfo.cs" Line="4" Column="28" />
-      <File FileName="../Proto/Info.cs" Line="280" Column="50" />
-      <File FileName="../Proto/Event.cs" Line="242" Column="84" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
-          <Node name="ProtoLib" expanded="True">
+          <Node name="ProtoLib" expanded="True" selected="True">
             <Node name="References" expanded="True" />
-            <Node name="Event.cs" selected="True" />
           </Node>
         </State>
       </Pad>

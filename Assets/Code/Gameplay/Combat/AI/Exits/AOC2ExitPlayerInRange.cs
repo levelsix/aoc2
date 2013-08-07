@@ -49,6 +49,7 @@ public class AOC2ExitPlayerInRange : AOC2ExitLogicState {
 		if (targ != null)
 		{
 			_thisUnit.targetPos = targ.aPos;
+			_thisUnit.Activate();
 			return true;
 		}
 		return false;

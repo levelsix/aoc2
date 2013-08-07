@@ -1,7 +1,7 @@
 using UnityEngine;
 using System;
 using System.Collections;
-using com.lvl6.proto;
+using com.lvl6.aoc2.proto;
 
 /// <summary>
 /// @author Rob Giusti
@@ -15,15 +15,14 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 	
 	#region Public
 	
-	/// <summary>
-	/// The protocol buffer that this unit was created from
-	/// </summary>
-    public UnitProto proto;
-	
+	public string currentLogicState = "";
+
 	/// <summary>
 	/// The stats of this unit.
 	/// </summary>
 	public AOC2UnitStats stats;
+
+	public NavMeshAgent nav;
 	
 	/// <summary>
 	/// Gets the full power of this unit,
@@ -87,6 +86,16 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 	/// Transform wrapper that allows us to 
 	/// </summary>
 	public AOC2Position aPos;
+	
+	/// <summary>
+	/// The can be knocked back flag
+	/// </summary>
+	public bool canBeKnockedBack = true;
+	
+	/// <summary>
+	/// The can be hit flag
+	/// </summary>
+	public bool canBeHit = true;
     
     /// <summary>
     /// The basic attack ability.
@@ -95,6 +104,10 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
     public AOC2Ability basicAttackAbility;
     
     public bool ranged;
+	
+	public bool _activated = false;
+	
+	public const float MIN_MOVE_DIST = .1f;
 	
 	#region Action Delegates
 	
@@ -108,9 +121,31 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 	/// </summary>
 	public Action OnDeath;
 	
+	/// <summary>
+	/// The event, triggered by the animation system, which an
+	/// ability logic can tie into to properly time attacks
+	/// </summary>
 	public Action OnUseAbility;
 	
+	/// <summary>
+	/// The event, triggered by the animation system, which AI
+	/// logic can tie into to properly time itself
+	/// </summary>
+	public Action OnAnimationEnd;
+	
 	public Action OnPathfind;
+	
+	/// <summary>
+	/// The activation event, used to turn on animations and AI logic
+	/// for this unit
+	/// </summary>
+	public Action OnActivate;
+	
+	/// <summary>
+	/// The deactivation event, used to turn off animations and AI logic
+	/// for this unit
+	/// </summary>
+	public Action OnDeactivate;
 	
 	#endregion
 	
@@ -132,6 +167,30 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 			if (_prefab == null)
 			{
 				_prefab = value;
+			}
+		}
+	}
+	
+	public bool activated
+	{
+		get
+		{
+			return _activated;
+		}
+		set
+		{
+			_activated = value;
+			nav.enabled = value;
+			if (_activated)
+			{
+				if (OnActivate != null)
+				{
+					OnActivate();
+				}
+			}
+			else if (OnDeactivate != null)
+			{
+				OnDeactivate();
 			}
 		}
 	}
@@ -167,6 +226,8 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 	private AOC2UnitLogic _logic;
     
     private Transform _trans;
+	
+	public AOC2Model model;
 	
 	#endregion
 	
@@ -215,8 +276,18 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 	void Awake()
 	{
 		_logic = GetComponent<AOC2UnitLogic>();
-		aPos = new AOC2Position(transform);
         _trans = transform;
+		aPos = new AOC2Position(_trans);
+        nav = GetComponent<NavMeshAgent>();
+		if (model == null)
+		{
+			model = GetComponent<AOC2Model>();
+		}
+	}
+	
+	void Start()
+	{
+		nav.speed = stats.moveSpeed;
 	}
 	
 	/// <summary>
@@ -257,45 +328,8 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 			gameObject.layer = AOC2Values.Layers.PLAYER;
 		}
 		
-		_trans.Translate(0, _trans.localScale.y / 2, 0);
+		//_trans.Translate(0, _trans.localScale.y / 2, 0);
 	}
-        
-    /// <summary>
-    /// Initialize this instance, using a UnitProto.
-    /// Sets health, layer, and initializes the logic
-    /// </summary>
-    public void Init(UnitProto _proto)
-    {
-        proto = _proto;
-        
-        stats = new AOC2UnitStats(_proto.stats);
-        health = stats.maxHealth;
-        mana = stats.maxMana;
-        
-        name = _proto.name;
-     
-        DebugTint(AOC2Math.ProtoToColor(proto.color));
-        
-        _trans.localScale = new Vector3(_proto.size, _proto.size, _proto.size);
-		
-		_trans.Translate(0, _proto.size / 2, 0);
-            
-        if (_logic != null)
-        {
-            _logic.Init();
-        }
-         
-        if (_proto.enemy)
-        {
-            gameObject.layer = AOC2Values.Layers.ENEMY;
-            AOC2EventManager.Combat.OnSpawnEnemy(this);
-        }
-        else
-        {
-            gameObject.layer = AOC2Values.Layers.PLAYER;
-            AOC2EventManager.Combat.OnSpawnPlayer(this);
-        }
-    }
 	
 	/// <summary>
 	/// Debugs tint.
@@ -305,12 +339,10 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 	/// </param>
 	public void DebugTint(Color color)
 	{
-		Mesh mesh = GetComponent<MeshFilter>().mesh;
-		Color[] colorArr = new Color[mesh.vertices.Length];
-		for (int i = 0; i < mesh.vertices.Length; i++) {
-			colorArr[i] = color;
+		if (model != null)
+		{
+			model.Tint(color);
 		}
-		mesh.colors = colorArr;
 	}
 	
 	#endregion
@@ -333,15 +365,38 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 			{
 				Die();
 			}
-			else if (OnDamage != null)
+			else 
 			{
-				OnDamage(damage);
+				if (canBeKnockedBack)
+				{
+					Knockback(deliv);
+				}
+				if (OnDamage != null)
+				{
+					OnDamage(damage);
+				}
 			}
 		}
 		else
 		{
-			Debug.Log("High defense, attack blocked!");
+			//Debug.Log("High defense, attack blocked!");
 		}
+	}
+	
+	public void Knockback(AOC2Delivery delivery)
+	{
+		//Debug.Log("Knockback");
+		
+		Vector3 knockbackDir = delivery.direction;
+		if (knockbackDir == Vector3.zero)
+		{
+			knockbackDir = (aPos.position - delivery.transform.position).normalized;
+		}
+		
+		AOC2LogicState knockbackLogic = new AOC2LogicKnockedBack(this, delivery.force, knockbackDir);
+		knockbackLogic.AddExit(new AOC2ExitWhenComplete(knockbackLogic, _logic.logic.current));
+		
+		//_logic.SetLogic(knockbackLogic);
 	}
 	
 	/// <summary>
@@ -383,25 +438,62 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 	#region Movement
 	
 	/// <summary>
-	/// Move in the specified direction.
+	/// Move in the specified direction, at the specified speed
 	/// </summary>
 	/// <param name='direction'>
 	/// Direction.
 	/// </param>
-	public void Move(Vector3 direction)
+	public bool Move(Vector3 direction, float speed, bool turnForward = true)
 	{		
 		direction.y = 0;
 		
 		direction.Normalize();
 		
-		aPos.position += direction * stats.moveSpeed * Time.deltaTime;
+		if (model != null && turnForward)
+		{
+			model.transform.forward = direction;
+		}
+		
+		if (AOC2Math.GroundDistanceSqr(aPos.position, targetPos.position) < MIN_MOVE_DIST)
+		{
+			aPos.position = targetPos.position;
+			return true;
+		}
+		
+		aPos.position += direction * speed * Time.deltaTime;
+		return false;
 	}
 	
-	public void Sprint(Vector3 direction)
+	/// <summary>
+	/// Move in the specified direction at this unit's base speed
+	/// </summary>
+	/// <param name='direction'>
+	/// Direction.
+	/// </param>
+	public bool Move(Vector3 direction)
 	{
-		direction.Normalize();
-		
-		aPos.position += direction * stats.moveSpeed * sprintMod * Time.deltaTime;
+		return Move(direction, stats.moveSpeed);
+	}
+	
+	/// <summary>
+	/// Sprint in the specified direction.
+	/// </summary>
+	/// <param name='direction'>
+	/// Direction.
+	/// </param>
+	public bool Sprint(Vector3 direction)
+	{
+		return Move(direction, sprintMod * stats.moveSpeed);
+	}
+	
+	public void Activate()
+	{
+		activated = true;
+	}
+	
+	public void Deactivate()
+	{
+		activated = false;
 	}
 	
 	#endregion
@@ -409,7 +501,7 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 	#region Collision [Empty]
 	
 
-	
+
 	#endregion
 	
 	#endregion

@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using com.lvl6.proto;
+using com.lvl6.aoc2.proto;
 
 public class AOC2ResourceManager : MonoBehaviour {
 	

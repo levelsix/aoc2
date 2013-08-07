@@ -1,6 +1,6 @@
 
-–
-EquipmentProto.protocom.lvl6.aoc2.protoRarityType.protoEquipmentType.protoJobType.proto"¥
+Ü
+EquipmentProto.protocom.lvl6.aoc2.protoRarityType.protoEquipmentType.proto"ú
 EquipmentProto
 equipID (
 level (0
@@ -13,5 +13,4 @@ durability (
 addMana (
 name	 (	/
 rarity
- (2.com.lvl6.aoc2.proto.RarityType)
-job (2.com.lvl6.aoc2.proto.JobTypeBB	Equipment
+ (2.com.lvl6.aoc2.proto.RarityTypeBB	Equipment

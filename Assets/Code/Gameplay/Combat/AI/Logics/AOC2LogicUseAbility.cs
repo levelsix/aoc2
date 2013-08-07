@@ -9,11 +9,6 @@ using System.Collections;
 public class AOC2LogicUseAbility : AOC2LogicState {
 	
 	/// <summary>
-	/// The unit.
-	/// </summary>
-	private AOC2Unit _unit;
-	
-	/// <summary>
 	/// The ability.
 	/// </summary>
 	private AOC2Ability _ability;
@@ -33,10 +28,43 @@ public class AOC2LogicUseAbility : AOC2LogicState {
 	/// Enemy flag.
 	/// </param>
 	public AOC2LogicUseAbility(AOC2Unit unit, AOC2Ability abil)
-		: base()
+		: base(unit)
 	{
 		_ability = abil;
-		_unit = unit;
+	}
+
+	public override void OnExitState()
+	{
+		_user.model.SetAnimationFlag(_ability.animation, false);
+		
+		base.OnExitState();
+	}
+	
+	public override void Init ()
+	{
+		_user.currentLogicState = "Use Ability";
+		
+		if (_user.model.usesTriggers)
+		{
+			_user.model.SetAnimationFlag(_ability.animation, true);
+			_user.model.SetAnimSpeed(1f + _user.stats.attackSpeed/100f);
+			//canBeInterrupt = false;
+		}
+		
+		base.Init();
+	}
+	
+	public override void OnAbilityUseFrame ()
+	{
+		_ability.Use(_user, _user.aPos.position, _user.targetPos.position);
+		base.OnAbilityUseFrame();
+	}
+	
+	public override void OnAnimationEnd ()
+	{
+		_complete = true;
+		//canBeInterrupt = true;
+		base.OnAnimationEnd();
 	}
 	
 	/// <summary>
@@ -44,26 +72,29 @@ public class AOC2LogicUseAbility : AOC2LogicState {
 	/// Uses the given ability, including waiting for cast time.
 	/// </summary>
 	public override IEnumerator Logic ()
-	{
-		while(true)
-		{	
-            while(_ability.onCool)
-            {
-                yield return null;  
-            }
-            
-			//Wait for the cast time if there is one
-			if (_ability.castTime > 0)
+	{	
+		if (!_user.model.usesTriggers)
+		{
+			while(true)
 			{
-				yield return new WaitForSeconds(_ability.castTime * AOC2Math.AttackSpeedMod(_unit.stats.attackSpeed));
+	            while(_ability.onCool)
+	            {
+	                yield return null;  
+	            }
+	            
+				//Wait for the cast time if there is one
+				if (_ability.castTime > 0)
+				{
+					yield return new WaitForSeconds(_ability.castTime * AOC2Math.AttackSpeedMod(_user.stats.attackSpeed));
+				}
+				
+				while(!_ability.Use(_user, _user.aPos.position, _user.targetPos.position))
+				{
+					yield return null;
+				}
+				
+				_complete = true;
 			}
-			
-			while(!_ability.Use(_unit, _unit.aPos.position, _unit.targetPos.position))
-			{
-				yield return null;
-			}
-			
-			_complete = true;
 		}
 	}
 	

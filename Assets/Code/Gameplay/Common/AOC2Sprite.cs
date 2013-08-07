@@ -1,6 +1,6 @@
 using UnityEngine;
 using System.Collections;
-using com.lvl6.proto;
+using com.lvl6.aoc2.proto;
 
 [RequireComponent (typeof(MeshFilter))]
 [RequireComponent (typeof(MeshRenderer))]
@@ -90,13 +90,24 @@ public class AOC2Sprite : MonoBehaviour {
 	/// </summary>
 	public void MakeBackgroundMesh()
 	{
-		Quaternion rotation = Camera.main.transform.rotation;
 		
 		Vector3[] vertices = {
-			rotation * new Vector3(-height/2, -height/2),
-			rotation * new Vector3(-height/2, height/2),
-			rotation * new Vector3(height/2, height/2),
-			rotation * new Vector3(height/2, -height/2)
+			new Vector3(-height/2, -height/2),
+			new Vector3(-height/2, height/2),
+			new Vector3(height/2, height/2),
+			new Vector3(height/2, -height/2)
+		};
+		
+		MakeSpriteMesh(vertices);
+	}
+	
+	public void MakeGroundMesh(float halfWidth)
+	{
+		Vector3[] vertices = {
+			new Vector3(-halfWidth, 0, -halfWidth),
+			new Vector3(-halfWidth, 0, halfWidth),
+			new Vector3(halfWidth, 0, halfWidth),
+			new Vector3(halfWidth, 0, -halfWidth)
 		};
 		
 		MakeSpriteMesh(vertices);
