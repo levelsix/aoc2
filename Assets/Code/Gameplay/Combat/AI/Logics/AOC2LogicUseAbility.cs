@@ -48,7 +48,14 @@ public class AOC2LogicUseAbility : AOC2LogicState {
 		{
 			_user.model.SetAnimationFlag(_ability.animation, true);
 			_user.model.SetAnimSpeed(1f + _user.stats.attackSpeed/100f);
-			//canBeInterrupt = false;
+			canBeInterrupt = false;
+		}
+		
+		Vector3 dir = (_user.targetPos.position - _user.aPos.position).normalized;
+		
+		if (dir != Vector3.zero)
+		{
+			_user.trans.forward = dir;
 		}
 		
 		base.Init();
@@ -63,7 +70,7 @@ public class AOC2LogicUseAbility : AOC2LogicState {
 	public override void OnAnimationEnd ()
 	{
 		_complete = true;
-		//canBeInterrupt = true;
+		canBeInterrupt = true;
 		base.OnAnimationEnd();
 	}
 	

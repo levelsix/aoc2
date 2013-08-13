@@ -92,8 +92,6 @@ public class AOC2BuildingCamera : MonoBehaviour, AOC2Placeable
 	/// </param>
 	virtual public void MoveRelative(AOC2TouchData touch)
 	{
-		Debug.Log("Move rel");
-		
 		Vector3 movement = touch.delta;
 		
         //Turn the mouse difference in screen coordinates to world coordinates

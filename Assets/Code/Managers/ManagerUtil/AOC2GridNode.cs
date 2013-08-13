@@ -60,10 +60,10 @@ public class AOC2GridNode : IComparable {
 		}
 	}
 	
-	public Vector2 worldPos{
+	public Vector3 worldPos{
 		get
 		{
-			return new Vector2(x * AOC2ManagerReferences.gridManager.spaceSize,
+			return new Vector3(x * AOC2ManagerReferences.gridManager.spaceSize, 0,
 				z * AOC2ManagerReferences.gridManager.spaceSize);
 		}
 	}

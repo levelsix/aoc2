@@ -43,7 +43,7 @@ public class AOC2Particle : MonoBehaviour, AOC2Poolable {
 		}
 	}
 	
-	public void Awake()
+	virtual public void Awake()
 	{
 		emitters = GetComponentsInChildren<ParticleEmitter>();
 	}

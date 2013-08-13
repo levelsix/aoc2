@@ -110,5 +110,11 @@ public static class AOC2EventManager
 	public static class Cam
 	{
 		public static Action OnCameraChangeOrientation;
+		
+		public static Action<AOC2PointCameraLocation> OnPlayerEnterCameraArea;
+		public static Action<AOC2PointCameraLocation> OnPlayerExitCameraArea;
+		
+		public static Action<AOC2CameraObject> OnEnableCameraObject;
+		public static Action<AOC2CameraObject> OnDisableCameraObject;
 	}
 }

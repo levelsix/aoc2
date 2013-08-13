@@ -23,11 +23,22 @@ public abstract class AOC2LogicState {
 	
 	protected AOC2Unit _user;
 	
+	/// <summary>
+	/// The priority of this state.
+	/// States with a higher priority number can
+	/// break out of this state even when !canBeInterrupt
+	/// </summary>
+	public int priority = 0;
+	
 	virtual public bool Complete
 	{
 		get
 		{
 			return _complete;
+		}
+		set
+		{
+			_complete = value;
 		}
 	}
 	
@@ -67,6 +78,7 @@ public abstract class AOC2LogicState {
 	{
 		_user.OnUseAbility -= OnAbilityUseFrame;
 		_user.OnAnimationEnd -= OnAnimationEnd;
+		canBeInterrupt = true;
 	}
 	
 	/// <summary>
@@ -101,7 +113,7 @@ public abstract class AOC2LogicState {
 	{
 		for (int i = 0; i < exits.Count; i++) 
 		{
-			if (exits[i].Test())
+			if ((canBeInterrupt || exits[i].state.priority > priority) && exits[i].Test())
 			{
 				return exits[i].state;
 			}

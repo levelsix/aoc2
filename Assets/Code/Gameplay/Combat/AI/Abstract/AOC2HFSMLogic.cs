@@ -31,22 +31,19 @@ public class AOC2HFSMLogic : AOC2LogicState {
 		{
 			if (current != null)
 			{
-				//First, check for exits
-				if (current.canBeInterrupt){
-					AOC2LogicState change = current.GetExit();
-					while (change != null)
-					{
-						//Clean up the old state
-						current.OnExitState();
-						
-						//Set up the returned state for the next frame
-						current = change;
-						current.Init();
-						
-						//Keep checking if we need to immediately change
-						//state
-						change = current.GetExit();
-					}
+				AOC2LogicState change = current.GetExit();
+				while (change != null)
+				{
+					//Clean up the old state
+					current.OnExitState();
+					
+					//Set up the returned state for the next frame
+					current = change;
+					current.Init();
+					
+					//Keep checking if we need to immediately change
+					//state
+					change = current.GetExit();
 				}
 				
 				if (current.logic.MoveNext())

@@ -154,8 +154,8 @@ public class AOC2Sprite : MonoBehaviour {
 	/// </param>
 	public void SetColor(Color color)
 	{
-		Color[] colors = {color, color, color, color};
-		_mesh.colors = colors;
+		//Color[] colors = {color, color, color, color};
+		//_mesh.colors = colors;
 	}
 	
 	#endregion

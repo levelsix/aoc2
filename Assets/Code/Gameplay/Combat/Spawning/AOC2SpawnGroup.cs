@@ -24,13 +24,13 @@ public class AOC2SpawnGroup : AOC2Spawnable {
 	/// <param name='origin'>
 	/// Origin.
 	/// </param>
-	public override void Spawn (Vector3 origin)
+	public override void Spawn (Vector3 origin, Transform parent = null)
 	{
 		Vector3 offset;
 		for (int i = 0; i < contents.Length; i++) 
 		{
 			offset = new Vector3(Mathf.Sin(2*Mathf.PI*i/contents.Length), 0, Mathf.Cos(2*Mathf.PI*i/contents.Length)) * area;
-			contents[i].Spawn(origin + offset);
+			contents[i].Spawn(origin + offset, parent);
 		}
 	}
 }

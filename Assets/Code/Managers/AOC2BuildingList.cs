@@ -37,6 +37,8 @@ public class AOC2BuildingList {
 		goldColl.buildTime = 10;
 		goldColl.buildCost = 100;
 		
+		goldColl.size = new CoordinateProto();
+		
 		goldColl.size.x = 2;
 		goldColl.size.y = 2;
 	}

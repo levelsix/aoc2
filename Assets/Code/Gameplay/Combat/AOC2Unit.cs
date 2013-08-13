@@ -21,14 +21,14 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 	/// The stats of this unit.
 	/// </summary>
 	public AOC2UnitStats stats;
-
+	
 	public NavMeshAgent nav;
 	
 	/// <summary>
 	/// Gets the full power of this unit,
 	/// for attacks.
 	/// Strength + Weapon Power
-	/// TODO: Add weapon defense
+	/// TODO: Add weapon power
 	/// </summary>
 	public int power{
 		get
@@ -225,7 +225,7 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 	/// </summary>
 	private AOC2UnitLogic _logic;
     
-    private Transform _trans;
+    public Transform trans;
 	
 	public AOC2Model model;
 	
@@ -249,10 +249,14 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 	/// <param name='origin'>
 	/// Position to spawn at
 	/// </param>
-	override public void Spawn(Vector3 origin)
+	override public void Spawn(Vector3 origin, Transform parent = null)
 	{
 		AOC2Unit unit = AOC2ManagerReferences.poolManager.Get(this, origin) as AOC2Unit;
 		unit.Init();
+		if (parent != null)
+		{
+			unit.trans.parent = parent;
+		}
 	}
 	
 	/// <summary>
@@ -276,8 +280,8 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 	void Awake()
 	{
 		_logic = GetComponent<AOC2UnitLogic>();
-        _trans = transform;
-		aPos = new AOC2Position(_trans);
+        trans = transform;
+		aPos = new AOC2Position(trans);
         nav = GetComponent<NavMeshAgent>();
 		if (model == null)
 		{
@@ -360,10 +364,13 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 		int damage = (int) (((deliv.damage) - (defense * BASE_DEFENSE_MOD)) * AOC2Math.ResistanceMod(stats.resistance));
 		if (damage > 0){
 			health -= damage;
+			
+			//DamageTextPopup(damage);
+			
 			//Debug.Log("Damage: " + deliv.damage + ", Taken: " + damage);
 			if (health <= 0)
 			{
-				Die();
+				StartCoroutine(Die());
 			}
 			else 
 			{
@@ -383,45 +390,57 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 		}
 	}
 	
+	void DamageTextPopup(float amount)
+	{
+		AOC2DamageText text = AOC2ManagerReferences.poolManager.Get(AOC2ManagerReferences.combatPrefabs.damageText, trans.position) 
+			as AOC2DamageText;
+		text.Init(this, amount);
+	}
+	
 	public void Knockback(AOC2Delivery delivery)
 	{
 		//Debug.Log("Knockback");
+		float force = delivery.force - mass;
 		
-		Vector3 knockbackDir = delivery.direction;
-		if (knockbackDir == Vector3.zero)
+		if (force > 0)
 		{
-			knockbackDir = (aPos.position - delivery.transform.position).normalized;
+			Vector3 knockbackDir = delivery.direction;
+			if (knockbackDir == Vector3.zero)
+			{
+				knockbackDir = (aPos.position - delivery.transform.position).normalized;
+			}
+			
+			AOC2LogicState knockbackLogic = new AOC2LogicKnockedBack(this, delivery.force, knockbackDir);
+			knockbackLogic.AddExit(new AOC2ExitWhenComplete(knockbackLogic, _logic.logic.current));
+			
+			_logic.SetLogic(knockbackLogic);
 		}
-		
-		AOC2LogicState knockbackLogic = new AOC2LogicKnockedBack(this, delivery.force, knockbackDir);
-		knockbackLogic.AddExit(new AOC2ExitWhenComplete(knockbackLogic, _logic.logic.current));
-		
-		//_logic.SetLogic(knockbackLogic);
 	}
 	
 	/// <summary>
 	/// Kill this instance.
 	/// </summary>
-	public void Die()
+	public IEnumerator Die()
 	{
 		//TODO: Play death animation
+		yield return null;
 		if (gameObject.activeSelf){
-        Pool();
-		
-        if (OnDeath != null)
-        {
-            OnDeath();
-        }
-        
-		if (isEnemy)
-		{
-			AOC2EventManager.Combat.OnEnemyDeath(this);
-		}
-		else
-		{
-			AOC2EventManager.Combat.OnPlayerDeath(this);
-		}
-		
+	        Pool();
+			
+	        if (OnDeath != null)
+	        {
+	            OnDeath();
+	        }
+	        
+			if (isEnemy)
+			{
+				AOC2EventManager.Combat.OnEnemyDeath(this);
+			}
+			else
+			{
+				AOC2EventManager.Combat.OnPlayerDeath(this);
+			}
+			
 		}
 	}
 	

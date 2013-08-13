@@ -13,7 +13,6 @@ public class AOC2NetworkTest : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 	
-		Debug.Log("Testing Rabbit");
 		ConnectionFactory factory = new ConnectionFactory();
 		factory.HostName = "robot.lvl6.com";
 		factory.UserName = "lvl6client";
@@ -30,14 +29,12 @@ public class AOC2NetworkTest : MonoBehaviour {
 			Debug.LogError("Connection exception: " + e);
 			gameObject.SetActive(false);
 		}
-		
-		Debug.Log("connction created");
+
 		
 		IModel channel = null;
 		try
 		{
 			channel = connection.CreateModel();
-			Debug.Log("Channel");
 			gameObject.SetActive(true);
 		}
 		catch (Exception e)

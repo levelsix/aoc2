@@ -11,6 +11,13 @@ public class AOC2Targetter : MonoBehaviour {
 	
 	bool targetMode;
 	
+	enum TargetMode 
+	{
+		UNDETERMINED,
+		GROUND,
+		ENEMY
+	}
+	
 	Camera cam;
 	Transform camTrans;
 	
@@ -43,7 +50,7 @@ public class AOC2Targetter : MonoBehaviour {
 	void OnKeepDrag(AOC2TouchData data)
 	{
 		trans.position = cam.ScreenToWorldPoint(data.pos);
-		trans.up = camTrans.forward;
+		trans.up = cam.ScreenPointToRay(data.pos).direction;
 		
 		if (!targetMode)
 		{

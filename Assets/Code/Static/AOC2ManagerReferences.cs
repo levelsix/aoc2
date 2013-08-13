@@ -16,7 +16,9 @@ public static class AOC2ManagerReferences {
 	public static AOC2PoolManager poolManager;
 	public static AOC2CombatManager combatManager;
 	public static AOC2ResourceManager resourceManager;
+	public static AOC2CameraManager cameraManager;
 	
 	public static AOC2DeliveryList deliveryList;
 	
+	public static AOC2CombatPrefabs combatPrefabs;
 }

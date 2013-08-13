@@ -27,7 +27,7 @@ public class AOC2SpawnTable : AOC2Spawnable {
 	/// <exception cref='Exception'>
 	/// Is thrown when the lengths of contents and chances don't match
 	/// </exception>
-	public override void Spawn (Vector3 origin)
+	public override void Spawn (Vector3 origin, Transform parent = null)
 	{
 		if (chances.Length != contents.Length)
 		{
@@ -44,7 +44,7 @@ public class AOC2SpawnTable : AOC2Spawnable {
 		{
 			if (num < chances[i])
 			{
-				contents[i].Spawn(origin);
+				contents[i].Spawn(origin, parent);
 				return;
 			}
 			num -= chances[i];

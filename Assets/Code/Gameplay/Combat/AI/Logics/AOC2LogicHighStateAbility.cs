@@ -37,12 +37,13 @@ public class AOC2LogicHighStateAbility : AOC2HFSMLogic {
 		
 		_useAbility.AddExit(new AOC2ExitNotOther(new AOC2ExitTargetInRange(null, _user, _ability.range), _moveInRange));
 		
-		current = _baseState = _useAbility;
+		current = _baseState = _moveInRange;
 		
 	}
 	
 	public override void Init ()
 	{
+		_useAbility.Complete = false;
 		_user.currentLogicState = "LogicHighState";
 		base.Init ();
 	}

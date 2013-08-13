@@ -146,7 +146,7 @@ public class AOC2ResourceCollector : MonoBehaviour {
 		CalcContents();
 		
 		//Set the popup's activity to whether this has enough to collect
-		//hasResourcesPopup.SetActive(contents + overflow > MIN_TO_COLLECT);
+		hasResourcesPopup.SetActive(contents + overflow > MIN_TO_COLLECT);
 	}
 	
 	/// <summary>

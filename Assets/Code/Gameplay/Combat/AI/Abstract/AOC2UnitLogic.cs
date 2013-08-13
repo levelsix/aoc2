@@ -20,14 +20,14 @@ public abstract class AOC2UnitLogic : MonoBehaviour {
 		StartCoroutine(logic.Logic());
 	}
 	
-	public void SetLogic(AOC2LogicState state)
+	virtual public void SetLogic(AOC2LogicState state)
 	{
 		if (logic.current == null)
 		{
 			state.Init();
 			logic.current = state;
 		}
-		else if (logic.current.canBeInterrupt)
+		else if (logic.current.canBeInterrupt || state.priority > logic.priority)
 		{
 			logic.current.OnExitState();
 			state.Init();

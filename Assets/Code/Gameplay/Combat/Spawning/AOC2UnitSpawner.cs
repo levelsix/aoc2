@@ -45,7 +45,7 @@ public class AOC2UnitSpawner : MonoBehaviour {
 		{
 			foreach (AOC2Spawnable item in spawns) 
 			{
-				item.Spawn(_trans.position);
+				item.Spawn(_trans.position, _trans);
 			}
 			hasSpawned = true;
 		}

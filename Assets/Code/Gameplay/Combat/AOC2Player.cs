@@ -134,6 +134,7 @@ public class AOC2Player : AOC2UnitLogic {
 		
 		sprintLogic = new AOC2LogicCombatRoll(unit, rollDist, .3f, rollSpeed);
 		sprintLogic.AddExit(new AOC2ExitWhenComplete(sprintLogic, doNothing));
+		sprintLogic.priority = 2;
 		
 		abilityLogics = new AOC2LogicState[abilities.Length];
 		
@@ -141,6 +142,7 @@ public class AOC2Player : AOC2UnitLogic {
 		for (int i = 0; i < abilityLogics.Length; i++) {
 			abilityLogics[i] = new AOC2LogicHighStateAbility(unit, abilities[i]);
 			abilityLogics[i].AddExit(new AOC2ExitWhenComplete(abilityLogics[i], doNothing));
+			abilityLogics[i].priority = 1;
 		}
 		
 		logic = new AOC2HFSMLogic(basicAttackMoveLogic, unit);
@@ -252,5 +254,11 @@ public class AOC2Player : AOC2UnitLogic {
 	{
 		Gizmos.color = Color.green;
 		Gizmos.DrawSphere(unit.targetPos.position, 1f);
+	}
+	
+	public override void SetLogic (AOC2LogicState state)
+	{
+		//Debug.Log("Setting player logic to " + state.GetType().Name);
+		base.SetLogic (state);
 	}
 }

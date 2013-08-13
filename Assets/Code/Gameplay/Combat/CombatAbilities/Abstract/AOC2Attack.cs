@@ -131,7 +131,11 @@ public class AOC2Attack {
 		
 		DoUserAnimation(user);
 		
-		user.transform.forward = dir;
+		//If there is a direction (i.e. not a self-targetting ability), turn towards it
+		if (dir != Vector3.zero)
+		{
+			user.transform.forward = dir;
+		}
 	}
 	
 	protected void InitDelivery(AOC2Delivery deliv, AOC2Unit user, Vector3 dir)

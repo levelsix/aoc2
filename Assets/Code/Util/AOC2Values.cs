@@ -30,6 +30,7 @@ public static class AOC2Values
 		public static int TOUCH_ENEMY = 18; 
 		
 		public static int UI = 20;
+		public static int GAME_UI = 21;
 	}
     
     public static class Scene

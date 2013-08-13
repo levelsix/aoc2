@@ -65,7 +65,7 @@ public class AOC2BuffAbility : AOC2Ability {
             amount = target.stats[(int)_stat] * _amount;
         }
 		target.stats[(int)_stat] += (int)amount;;
-		Debug.Log("Buff: " + target.stats[(int)_stat]);
+		//Debug.Log("Buff: " + target.stats[(int)_stat]);
 		yield return new WaitForSeconds(_duration);
 		target.stats[(int)_stat] -= (int)amount;;
 	}

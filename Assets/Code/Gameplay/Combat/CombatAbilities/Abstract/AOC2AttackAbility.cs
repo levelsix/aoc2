@@ -8,7 +8,7 @@ public class AOC2AttackAbility : AOC2Ability {
 	
 	public override float range {
 		get {
-			return _attack.range;
+			return _attack.range + base.range;
 		}
 	}
 	
@@ -45,7 +45,7 @@ public class AOC2AttackAbility : AOC2Ability {
 	/// </param>
 	public override bool Use (AOC2Unit user, Vector3 origin, Vector3 target, bool ignoreCooldown = false)
 	{
-		Debug.Log("Using attack ability " + name);
+		//Debug.Log("Using attack ability " + name);
 		if (ignoreCooldown)
 		{
 			_attack.Use(user, origin, target);

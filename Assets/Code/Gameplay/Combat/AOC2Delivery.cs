@@ -62,7 +62,7 @@ public class AOC2Delivery : AOC2Particle {
 	/// Awake this instance.
 	/// Instantiate the collision list
 	/// </summary>
-	void Awake()
+	public override void Awake()
 	{
 		collList = new List<AOC2Unit>();
 		particleGen = GetComponent<AOC2ParticleGenerator>();

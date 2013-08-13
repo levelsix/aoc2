@@ -25,11 +25,8 @@ public class AOC2LocalPlayerController : MonoBehaviour {
 	/// The player component.
 	/// </summary>
 	public AOC2Player player;
-
-	/// <summary>
-	/// The plane that represents the ground; the x- and z-axes at y=0
-	/// </summary>
-	private static readonly Plane GROUND_PLANE = new Plane(Vector3.up, Vector3.zero);
+	
+	public Transform moveCursor;
 	
 	const int QUEUE_MAX = 5;
 	
@@ -156,7 +153,9 @@ public class AOC2LocalPlayerController : MonoBehaviour {
 	/// </param>
 	public void SetGroundTarget(Vector3 screenPos)
 	{
-		player.TargetGround (AOC2ManagerReferences.gridManager.ScreenToPoint (screenPos));
+		Vector3 movePoint = AOC2ManagerReferences.gridManager.ScreenToGround(screenPos);
+		player.TargetGround (AOC2ManagerReferences.gridManager.ScreenToPoint(screenPos));
+		moveCursor.position = movePoint;
 	}
 	
 	/// <summary>

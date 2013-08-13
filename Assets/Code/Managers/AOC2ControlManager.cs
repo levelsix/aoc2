@@ -479,7 +479,7 @@ public class AOC2ControlManager : MonoBehaviour
 	bool HitsUI(Vector2 screenPos)
 	{
 		Ray ray = uiCamera.ScreenPointToRay(screenPos);
-		return Physics.Raycast(ray, uiCamera.far - uiCamera.near, 1 << AOC2Values.Layers.UI);
+		return Physics.Raycast(ray, uiCamera.farClipPlane - uiCamera.nearClipPlane, 1 << AOC2Values.Layers.UI);
 	}
 	
 }
