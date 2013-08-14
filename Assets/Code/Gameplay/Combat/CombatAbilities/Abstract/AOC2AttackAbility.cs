@@ -8,7 +8,7 @@ public class AOC2AttackAbility : AOC2Ability {
 	
 	public override float range {
 		get {
-			return _attack.range + base.range;
+			return _attack.range;
 		}
 	}
 	
@@ -46,12 +46,12 @@ public class AOC2AttackAbility : AOC2Ability {
 	public override bool Use (AOC2Unit user, Vector3 origin, Vector3 target, bool ignoreCooldown = false)
 	{
 		//Debug.Log("Using attack ability " + name);
-		if (ignoreCooldown)
+		if (ignoreCooldown && user.UseMana(manaCost))
 		{
 			_attack.Use(user, origin, target);
 			return true;
 		}
-		if (!_onCool)
+		if (!_onCool && user.UseMana(manaCost))
 		{
 			_attack.Use(user, origin, target);
 			AOC2ManagerReferences.combatManager.CoolAbility(this, user);

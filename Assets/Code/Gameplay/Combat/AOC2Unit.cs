@@ -24,6 +24,16 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 	
 	public NavMeshAgent nav;
 	
+	public AOC2DoubleLerpBar healthBarPrefab;
+	
+	[HideInInspector]
+	public AOC2DoubleLerpBar healthBar;
+	
+	/// <summary>
+	/// The Health Bar Offset, multiplied by size
+	/// </summary>
+	public Vector3 healthBarOffset;
+	
 	/// <summary>
 	/// Gets the full power of this unit,
 	/// for attacks.
@@ -74,7 +84,7 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 	/// <summary>
 	/// The target position.
 	/// </summary>
-	public AOC2Position targetPos;
+	public AOC2Position targetPos = null;
 	
 	/// <summary>
 	/// The target unit.
@@ -146,6 +156,13 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 	/// for this unit
 	/// </summary>
 	public Action OnDeactivate;
+	
+	/// <summary>
+	/// Action triggered after this unit inits itself.
+	/// Synchronizes initialization with other components that need to initialize
+	/// themselves.
+	/// </summary>
+	public Action OnInit;
 	
 	#endregion
 	
@@ -229,6 +246,13 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 	
 	public AOC2Model model;
 	
+	/// <summary>
+	/// The local controller.
+	/// Mainly, just check != null to see if certain events should
+	/// be triggered
+	/// </summary>
+	public AOC2LocalPlayerController localController;
+	
 	#endregion
 	
 	#region Constants
@@ -283,6 +307,7 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
         trans = transform;
 		aPos = new AOC2Position(trans);
         nav = GetComponent<NavMeshAgent>();
+		localController = GetComponent<AOC2LocalPlayerController>();
 		if (model == null)
 		{
 			model = GetComponent<AOC2Model>();
@@ -294,6 +319,14 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 		nav.speed = stats.moveSpeed;
 	}
 	
+	void Update()
+	{
+		if (healthBar != null)
+		{
+			healthBar.trans.position = trans.position + healthBarOffset;
+		}
+	}
+	
 	/// <summary>
 	/// Debug: Init without proto
 	/// Initialize this instance.
@@ -301,6 +334,8 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 	/// </summary>
 	public void Init()
 	{
+		targetPos = new AOC2Position(aPos.position);
+		
         DebugTint(tint);
         
         if (ranged)
@@ -349,6 +384,24 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 		}
 	}
 	
+	public bool UseMana(int amount)
+	{
+		if (mana < amount)
+		{
+			//TODO UI & Sound on failed mana use
+			
+			return false;
+		}
+		mana -= amount;
+		
+		if (localController != null && AOC2EventManager.Combat.OnPlayerManaChange != null)
+		{
+			AOC2EventManager.Combat.OnPlayerManaChange(this);
+		}
+		
+		return true;
+	}
+	
 	#endregion
 	
 	#region Death Logic
@@ -365,7 +418,11 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 		if (damage > 0){
 			health -= damage;
 			
-			//DamageTextPopup(damage);
+			DamageTextPopup(damage);
+			if (healthBarPrefab != null)
+			{
+				ManageHealthBar(damage);
+			}
 			
 			//Debug.Log("Damage: " + deliv.damage + ", Taken: " + damage);
 			if (health <= 0)
@@ -392,9 +449,26 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 	
 	void DamageTextPopup(float amount)
 	{
-		AOC2DamageText text = AOC2ManagerReferences.poolManager.Get(AOC2ManagerReferences.combatPrefabs.damageText, trans.position) 
+		AOC2DamageText text = AOC2ManagerReferences.gameUIManager.GrabUIRef(AOC2ManagerReferences.combatPrefabs.damageText, trans.position) 
 			as AOC2DamageText;
 		text.Init(this, amount);
+	}
+	
+	void ManageHealthBar(float amount)
+	{
+		if (healthBar == null)
+		{
+			healthBar = AOC2ManagerReferences.gameUIManager.GrabUIRef(healthBarPrefab, trans.position) as AOC2DoubleLerpBar;
+			healthBar.Init();
+			healthBar.OnPool += OnHealthBarPool;
+		}
+		healthBar.SetAmounts((health+amount)/stats.maxHealth, ((float)health)/stats.maxHealth);
+	}
+	
+	void OnHealthBarPool()
+	{
+		healthBar.OnPool -= OnHealthBarPool;
+		healthBar = null;
 	}
 	
 	public void Knockback(AOC2Delivery delivery)

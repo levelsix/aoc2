@@ -32,7 +32,7 @@ public class AOC2HFSMLogic : AOC2LogicState {
 			if (current != null)
 			{
 				AOC2LogicState change = current.GetExit();
-				while (change != null)
+				if (change != null)
 				{
 					//Clean up the old state
 					current.OnExitState();
@@ -43,7 +43,7 @@ public class AOC2HFSMLogic : AOC2LogicState {
 					
 					//Keep checking if we need to immediately change
 					//state
-					change = current.GetExit();
+					//change = current.GetExit();
 				}
 				
 				if (current.logic.MoveNext())

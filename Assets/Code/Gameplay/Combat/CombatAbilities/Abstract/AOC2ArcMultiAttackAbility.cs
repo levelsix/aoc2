@@ -76,7 +76,7 @@ public class AOC2ArcMultiAttackAbility : AOC2AttackAbility {
 	/// </param>
 	public override bool Use (AOC2Unit user, Vector3 origin, Vector3 target, bool ignoreCooldown = false)
 	{
-		if (!_onCool || ignoreCooldown)
+		if ((!_onCool || ignoreCooldown) && user.UseMana(manaCost))
 		{
 			float angle = Mathf.Atan2(target.z - origin.z, target.x - origin.x);
 			float minAngle = angle - _arc/2;

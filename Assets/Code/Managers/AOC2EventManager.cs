@@ -61,6 +61,7 @@ public static class AOC2EventManager
 		public static Action<AOC2Unit> OnPlayerDeath;
 		
 		public static Action<AOC2Unit> OnPlayerHealthChange;
+		public static Action<AOC2Unit> OnPlayerManaChange;
 		
 		public static Action OnEnemiesClear;
 		public static Action OnPlayerVictory;

@@ -37,7 +37,7 @@ public class AOC2BuffAbility : AOC2Ability {
 	
 	public override bool Use (AOC2Unit user, Vector3 origin, Vector3 target, bool ignoreCooldown = false)
 	{
-		if (!_onCool || ignoreCooldown)
+		if ((!_onCool || ignoreCooldown) && user.UseMana(manaCost))
 		{
 			AOC2ManagerReferences.combatManager.RunBuff(user, this);
 			if (!_onCool)

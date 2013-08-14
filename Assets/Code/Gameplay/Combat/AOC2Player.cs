@@ -110,33 +110,42 @@ public class AOC2Player : AOC2UnitLogic {
 	/// </summary>
 	public override void Init ()
 	{
+		//Set up all logic states first, so that all pointers in exit states are valid
 		AOC2LogicState doNothing = new AOC2LogicDoNothing(unit);
-        
-        AOC2LogicState useBaseAttack = new AOC2LogicUseAbility(unit, unit.basicAttackAbility);
-        basicAttackMoveLogic = new AOC2LogicNavigateTowardTarget(unit);
-        
+		moveLogic = new AOC2LogicNavigateTowardTarget(unit);
+		
+        //AOC2LogicState useBaseAttack = new AOC2LogicUseAbility(unit, unit.basicAttackAbility);
+        //basicAttackMoveLogic = new AOC2LogicNavigateTowardTarget(unit);
+		
+		AOC2LogicState basicAttackLogic = new AOC2LogicHighStateAbility(unit, unit.basicAttackAbility);
+		
+		sprintLogic = new AOC2LogicCombatRoll(unit, rollDist, .3f, rollSpeed);
+		abilityLogics = new AOC2LogicState[abilities.Length];
+		
         AOC2ExitLogicState noTarget = new AOC2ExitNotOther(new AOC2ExitPlayerHasTarget(this, null), doNothing);
         
-        doNothing.AddExit(new AOC2ExitPlayerHasTarget(this, basicAttackMoveLogic));
+        doNothing.AddExit(new AOC2ExitPlayerHasTarget(this, basicAttackLogic));
+		doNothing.AddExit(new AOC2ExitNotOther(new AOC2ExitTargetInRange(moveLogic, unit, MIN_MOVE_DIST), moveLogic));
         
+		basicAttackLogic.AddExit(noTarget);
+		basicAttackLogic.AddExit(new AOC2ExitWhenComplete(basicAttackLogic, basicAttackLogic));
+		
+		/*
         basicAttackMoveLogic.AddExit(new AOC2ExitTargetInRange(useBaseAttack, unit, unit.basicAttackAbility.range));
         basicAttackMoveLogic.AddExit(noTarget);
         
         useBaseAttack.AddExit(new AOC2ExitNotOther(new AOC2ExitTargetInRange(null, unit, unit.basicAttackAbility.range), basicAttackMoveLogic));
         useBaseAttack.AddExit(noTarget);
 		useBaseAttack.AddExit(new AOC2ExitWhenComplete(useBaseAttack, useBaseAttack)); //Loop autoattack once animation hits
+		*/
 		
-		moveLogic = new AOC2LogicNavigateTowardTarget(unit);
 		moveLogic.AddExit(new AOC2ExitWhenComplete(moveLogic, doNothing));
 		
 		//sprintLogic = new AOC2LogicSprint(unit);
 		//sprintLogic.AddExit(new AOC2ExitTargetInRange(doNothing, unit, MIN_MOVE_DIST));
 		
-		sprintLogic = new AOC2LogicCombatRoll(unit, rollDist, .3f, rollSpeed);
 		sprintLogic.AddExit(new AOC2ExitWhenComplete(sprintLogic, doNothing));
 		sprintLogic.priority = 2;
-		
-		abilityLogics = new AOC2LogicState[abilities.Length];
 		
 		//Set up the logic for each ability
 		for (int i = 0; i < abilityLogics.Length; i++) {
@@ -145,7 +154,7 @@ public class AOC2Player : AOC2UnitLogic {
 			abilityLogics[i].priority = 1;
 		}
 		
-		logic = new AOC2HFSMLogic(basicAttackMoveLogic, unit);
+		logic = new AOC2HFSMLogic(doNothing, unit);
 		
 		base.Init();
 	}
@@ -242,7 +251,7 @@ public class AOC2Player : AOC2UnitLogic {
 	{
 		unit.targetPos = new AOC2Position(pos);
 		
-		SetLogic(moveLogic);
+		//SetLogic(moveLogic);
 	}
 	
 	public void UseTravelAbility()

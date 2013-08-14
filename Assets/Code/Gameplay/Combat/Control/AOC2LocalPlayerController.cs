@@ -49,6 +49,7 @@ public class AOC2LocalPlayerController : MonoBehaviour {
 	protected void Start ()
 	{
 		AOC2EventManager.Combat.OnPlayerHealthChange(unit);
+		AOC2EventManager.Combat.OnPlayerManaChange(unit);
 		targetter.localPlayerController = this;
 	}
 	
@@ -120,8 +121,7 @@ public class AOC2LocalPlayerController : MonoBehaviour {
 	void OnDoubleTap(AOC2TouchData data)
 	{
 		player.unit.targetPos = new AOC2Position(AOC2ManagerReferences.gridManager.ScreenToGround(data.pos, true));
-			
-		//player.UseAbility(0); //Index 0 should be travel ability
+		
 		player.UseTravelAbility();
 	}
 	
@@ -139,7 +139,7 @@ public class AOC2LocalPlayerController : MonoBehaviour {
 		{
 			player.TargetEnemy(enemyTarget);
 		}
-		else //if (HitGround(data.pos))
+		else
 		{
 			SetGroundTarget(data.pos);
 		}
@@ -153,9 +153,19 @@ public class AOC2LocalPlayerController : MonoBehaviour {
 	/// </param>
 	public void SetGroundTarget(Vector3 screenPos)
 	{
+		ClearTargets();
+		
 		Vector3 movePoint = AOC2ManagerReferences.gridManager.ScreenToGround(screenPos);
 		player.TargetGround (AOC2ManagerReferences.gridManager.ScreenToPoint(screenPos));
+		moveCursor.gameObject.SetActive(true);
 		moveCursor.position = movePoint;
+	}
+	
+	void ClearTargets()
+	{
+		player.attackTarget = null;
+		targetQueue.Clear();
+		AOC2ManagerReferences.combatManager.TargetNone();
 	}
 	
 	/// <summary>
@@ -196,11 +206,11 @@ public class AOC2LocalPlayerController : MonoBehaviour {
 		{
 			player.TargetEnemy(targetQueue[0]);
 			targetQueue.RemoveAt(0);
+			moveCursor.gameObject.SetActive(false);
 		}
 		else
 		{
-			player.attackTarget = null;
-			AOC2ManagerReferences.combatManager.TargetNone();
+			ClearTargets();
 		}
 	}
 	

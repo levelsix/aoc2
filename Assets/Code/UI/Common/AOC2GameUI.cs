@@ -19,7 +19,7 @@ public class AOC2GameUI : MonoBehaviour {
 		mainCam = Camera.main.transform;
 	}
 	
-	void LateUpdate()
+	void Start()
 	{
 		trans.forward = mainCam.forward;
 	}

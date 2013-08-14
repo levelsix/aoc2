@@ -11,7 +11,7 @@ public class AOC2PopupManager : MonoBehaviour {
 	AOC2Popup popupPrefab;
 	
 	[SerializeField]
-	UIPanel popupPanel;
+	Transform popupGroup;
 	
 	/// <summary>
 	/// The stack of current popup menus.
@@ -59,7 +59,7 @@ public class AOC2PopupManager : MonoBehaviour {
 		
 		Transform popT = pop.transform;
 		
-		popT.parent = popupPanel.transform;
+		popT.parent = popupGroup;
 		popT.localScale = Vector3.one;
 		popT.localPosition = Vector3.zero;
 		

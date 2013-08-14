@@ -84,11 +84,11 @@ public class AOC2Ability {
 
 	public virtual bool Use(AOC2Unit user, Vector3 origin, Vector3 target, bool ignoreCooldown = false)
 	{
-		if (ignoreCooldown)
+		if (ignoreCooldown && user.UseMana(manaCost))
 		{
 			return true;
 		}
-		if (!_onCool)
+		if (!_onCool && user.UseMana(manaCost))
 		{
 			AOC2ManagerReferences.combatManager.CoolAbility(this, user);
 			return true;

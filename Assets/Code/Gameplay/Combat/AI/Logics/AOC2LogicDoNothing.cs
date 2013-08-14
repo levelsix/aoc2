@@ -19,6 +19,7 @@ public class AOC2LogicDoNothing : AOC2LogicState {
 	
 	public override void Init ()
 	{
+		_user.currentLogicState = "Idle";
 		_user.model.SetAnimationFlag(AOC2Values.Animations.Anim.IDLE, true);
 		base.Init ();
 	}
