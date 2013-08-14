@@ -1,9 +1,0 @@
-package com.lvl6.aoc2.proto;
-
-option java_outer_classname = "AlterLevel";
-
-message AlterLevelProto {
-	optional int32 level = 1;
-	optional int32 structID = 2;
-	optional int32 structLevel = 3;
-}
