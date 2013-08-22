@@ -1,8 +1,9 @@
 
 import "ClassType.proto";
 
-package com.lvl6.aoc2.proto;
+package proto;
 
+option java_package = "com.lvl6.aoc2.noneventprotos";
 option java_outer_classname = "FullUser";
 
 message FullUserProto {
@@ -23,4 +24,11 @@ message FullUserProto {
 	optional int32 gameCenterID = 15;
 	optional int64 dateCreated = 16;
 	optional int32 clanID = 17;
+}
+
+message MinimumUserProto {
+	optional string userID = 1;
+	optional string gameCenterId = 2;
+	optional string udid = 3;
+	optional string name = 4;
 }

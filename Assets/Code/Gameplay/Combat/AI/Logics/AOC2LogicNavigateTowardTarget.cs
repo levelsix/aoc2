@@ -42,7 +42,7 @@ public class AOC2LogicNavigateTowardTarget : AOC2LogicState {
 		_user.currentLogicState = "Navigate";
 		//_unit.nav.SetDestination(_unit.targetPos.position);
 		
-		_user.nav.speed = _user.stats.moveSpeed;
+		_user.nav.speed = _user.GetStat(AOC2Values.UnitStat.MOVE_SPEED);
 		
 		_user.nav.Resume();
 		_user.model.SetAnimationFlag(AOC2Values.Animations.Anim.WALK, true);

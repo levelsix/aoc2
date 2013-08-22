@@ -86,12 +86,12 @@ public class AOC2ControlManager : MonoBehaviour
 	/// <summary>
 	/// Max time between taps for it to count as a double-tap
 	/// </summary>
-	const float DOUBLE_TAP_TIME = .5f;
+	const float DOUBLE_TAP_TIME = .8f;
 	
 	/// <summary>
 	/// Max distance between taps for it to count as a double-tap
 	/// </summary>
-	const float DOULBE_TAP_DIST_SQR = 400f;
+	const float DOULBE_TAP_DIST_SQR = 800f;
 		
 	/// <summary>
 	/// Gets the avgerage of all current touches

@@ -1,11 +1,12 @@
 
-Æ
-RoomRewardProto.protocom.lvl6.aoc2.proto"‰
+Ö
+RoomRewardProto.protoproto"‰
 RoomRewardProto
 	dungeonID (
 roomID (
 chestID (
 chestDropChance (
 equipIDs (
-equipDropChance (BB
+equipDropChance (B*
+com.lvl6.aoc2.noneventprotosB
 RoomReward

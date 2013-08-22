@@ -2,7 +2,7 @@ using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using com.lvl6.aoc2.proto;
+using proto;
 
 /// <summary>
 /// @author Rob Giusti
@@ -38,12 +38,14 @@ public static class AOC2Values
         public enum Scenes
         {
             BUILDING_TEST_SCENE,
-            COMBAT_TEST_SCENE
+            COMBAT_TEST_SCENE,
+			DUNGEON_TEST_SCENE
         }
         public static Dictionary<Scenes, string> sceneDict = new Dictionary<Scenes, string>()
         {
             {Scenes.BUILDING_TEST_SCENE, "BuildingTestScene"},
-            {Scenes.COMBAT_TEST_SCENE, "CombatTestScene"}
+            {Scenes.COMBAT_TEST_SCENE, "CombatTestScene"},
+			{Scenes.DUNGEON_TEST_SCENE, "DungeonTestScene"}
         };
         
         public static void ChangeScene(Scenes scene)
@@ -102,7 +104,7 @@ public static class AOC2Values
 		public static Dictionary<MonsterType, Dictionary<Anim, string>> anims = new Dictionary<MonsterType, Dictionary<Anim, string>>()
 			{
 				{
-					MonsterType.ROCK_KING, new Dictionary<Anim, string>()
+					MonsterType.DRAGON, new Dictionary<Anim, string>()
 					{
 						{Anim.IDLE, "Idle"},
 						{Anim.WALK, "Walk"},
@@ -117,7 +119,7 @@ public static class AOC2Values
 					}
 				},
 				{
-					MonsterType.SKELETON, new Dictionary<Anim, string>()
+					MonsterType.GOBLIN, new Dictionary<Anim, string>()
 					{
 						{Anim.IDLE, "idle"},
 						{Anim.WALK, "walk"},

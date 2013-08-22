@@ -1,6 +1,6 @@
 using UnityEngine;
 using System.Collections;
-using com.lvl6.aoc2.proto;
+using proto;
 
 /// <summary>
 /// @author Rob Giusti
@@ -28,6 +28,36 @@ public class AOC2UnitStats {
 	public AOC2UnitStats(){}
 	
 	/// <summary>
+	/// Gets the <see cref="AOC2UnitStats"/> with the specified stat.
+	/// </summary>
+	/// <param name='stat'>
+	/// Stat.
+	/// </param>
+	public int this[AOC2Values.UnitStat stat]
+	{
+		get
+		{
+			return GetStat(stat);
+		}
+		set
+		{
+			SetStat(stat, value);
+		}
+	}
+	
+	public int this[SpellProto.UnitStat stat]
+	{
+		get
+		{
+			return GetStat((AOC2Values.UnitStat)stat);
+		}
+		set
+		{
+			SetStat(stat, value);
+		}
+	}
+	
+	/// <summary>
 	/// Indexer using an enum so that we can access
 	/// a particular stat just by knowing which stat
 	/// we want to access
@@ -39,56 +69,87 @@ public class AOC2UnitStats {
 	{
 		get
 		{
-			AOC2Values.UnitStat stat = (AOC2Values.UnitStat) i;
-			switch(stat)
-			{
-				case AOC2Values.UnitStat.STRENGTH:
-					return strength;
-				case AOC2Values.UnitStat.DEFENSE:
-					return defense;
-				case AOC2Values.UnitStat.RESISTANCE:
-					return resistance;
-				case AOC2Values.UnitStat.MOVE_SPEED:
-					return moveSpeed;
-				case AOC2Values.UnitStat.ATTACK_SPEED:
-					return attackSpeed;
-				case AOC2Values.UnitStat.MANA:
-					return maxMana;
-				case AOC2Values.UnitStat.HEALTH:
-					return maxHealth;
-				default:
-					return 0;
-			}
+			return GetStat((AOC2Values.UnitStat)i);
 		}
 		set
 		{
-			AOC2Values.UnitStat stat = (AOC2Values.UnitStat) i;
-			switch(stat)
-			{
-				case AOC2Values.UnitStat.STRENGTH:
-					strength = value; 
-					break;
-				case AOC2Values.UnitStat.DEFENSE:
-					defense = value; 
-					break;
-				case AOC2Values.UnitStat.RESISTANCE:
-					resistance = value; 
-					break;
-				case AOC2Values.UnitStat.MOVE_SPEED:
-					moveSpeed = value; 
-					break;
-				case AOC2Values.UnitStat.ATTACK_SPEED:
-					attackSpeed = value; 
-					break;
-				case AOC2Values.UnitStat.MANA:
-					maxMana = value; 
-					break;
-				case AOC2Values.UnitStat.HEALTH:
-					maxHealth = value; 
-					break;
-				default:
-					break;
-			}
+			SetStat((AOC2Values.UnitStat)i, value);
+		}
+	}
+	
+	/// <summary>
+	/// Gets the stat according to the enum
+	/// </summary>
+	/// <returns>
+	/// The stat.
+	/// </returns>
+	/// <param name='stat'>
+	/// Stat.
+	/// </param>
+	int GetStat(AOC2Values.UnitStat stat)
+	{			
+		switch(stat)
+		{
+			case AOC2Values.UnitStat.STRENGTH:
+				return strength;
+			case AOC2Values.UnitStat.DEFENSE:
+				return defense;
+			case AOC2Values.UnitStat.RESISTANCE:
+				return resistance;
+			case AOC2Values.UnitStat.MOVE_SPEED:
+				return moveSpeed;
+			case AOC2Values.UnitStat.ATTACK_SPEED:
+				return attackSpeed;
+			case AOC2Values.UnitStat.MANA:
+				return maxMana;
+			case AOC2Values.UnitStat.HEALTH:
+				return maxHealth;
+			default:
+				return 0;
+		}
+	}
+	
+	void SetStat(SpellProto.UnitStat stat, int val)
+	{
+		SetStat((AOC2Values.UnitStat)stat, val);
+	}
+	
+	/// <summary>
+	/// Sets the stat.
+	/// </summary>
+	/// <param name='stat'>
+	/// Stat.
+	/// </param>
+	/// <param name='val'>
+	/// Value.
+	/// </param>
+	void SetStat(AOC2Values.UnitStat stat, int val)
+	{
+		switch(stat)
+		{
+			case AOC2Values.UnitStat.STRENGTH:
+				strength = val; 
+				break;
+			case AOC2Values.UnitStat.DEFENSE:
+				defense = val; 
+				break;
+			case AOC2Values.UnitStat.RESISTANCE:
+				resistance = val; 
+				break;
+			case AOC2Values.UnitStat.MOVE_SPEED:
+				moveSpeed = val; 
+				break;
+			case AOC2Values.UnitStat.ATTACK_SPEED:
+				attackSpeed = val; 
+				break;
+			case AOC2Values.UnitStat.MANA:
+				maxMana = val; 
+				break;
+			case AOC2Values.UnitStat.HEALTH:
+				maxHealth = val; 
+				break;
+			default:
+				break;
 		}
 	}
 	

@@ -13,7 +13,9 @@ public enum AOC2DeliveryType
 
 public class AOC2DeliveryList : MonoBehaviour {
 
-	public AOC2Delivery[] Deliveries;
+	public AOC2Particle[] deliveries;
+	
+	public AOC2Delivery baseDelivery;
 	
 	void Awake()
 	{

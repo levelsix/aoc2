@@ -1,8 +1,13 @@
 using UnityEngine;
 using System.Collections;
 using System;
-using com.lvl6.aoc2.proto;
+using proto;
+using System.Collections.Generic;
 
+/// <summary>
+/// @author Rob Giusti
+/// An assortment of useful math and utility functions that are used by multiple classes
+/// </summary>
 public static class AOC2Math {
 	
 	const int SECONDS_PER_GEM = 400;
@@ -79,11 +84,84 @@ public static class AOC2Math {
     /// </param>
     public static float AttackSpeedMod(int attackSpeed)
     {
-        return (100f / (100f+attackSpeed));
+        return (100f / attackSpeed);
     }
     
+	/// <summary>
+	/// Calculates the damage multiplier based on the given resistance value
+	/// </summary>
+	/// <returns>
+	/// The damage multiplier, between zero and one
+	/// </returns>
+	/// <param name='resistance'>
+	/// Resistance stat
+	/// </param>
     public static float ResistanceMod(int resistance)
     {
-        return (100f - resistance) / 100f;
+        return (100f - (resistance - 100f)) / 100f;
     }
+	
+	/// <summary>
+	/// Merges a pair of dictionaries.
+	/// Whatever values in the target that are greater than the destination
+	/// will be copied over.
+	/// Used at the beginning of a level to determine how many of each enemy type
+	/// need to be warmed by the pre-spawner
+	/// </summary>
+	/// <param name='destination'>
+	/// Dictionary that is accumulating merged data
+	/// </param>
+	/// <param name='target'>
+	/// Dictionary that the destination is receiving information from
+	/// </param>
+	/// <typeparam name='T'>
+	/// The index type of the dictionary key
+	/// </typeparam>
+	public static void MergeDicts<T>(Dictionary<T, int> destination, Dictionary<T, int> target)
+	{
+		foreach (KeyValuePair<T, int> item in target) 
+		{
+			if (!destination.ContainsKey(item.Key))
+			{
+				destination[item.Key] = item.Value;
+			}
+			else
+			{
+				if (item.Value > destination[item.Key])
+				{
+					destination[item.Key] = item.Value;
+				}
+			}
+		}
+	}
+	
+	/// <summary>
+	/// Combines two dictionaries together.
+	/// For every shared key, the values are added together and stored in the destination. 
+	/// Each key that is unique to the target will be added to the destination.
+	/// Used to tally up spawn counts for spawn groups.
+	/// </summary>
+	/// <param name='destination'>
+	/// Dictionary collecting the values
+	/// </param>
+	/// <param name='target'>
+	/// Dictionary being added to destination
+	/// </param>
+	/// <typeparam name='T'>
+	/// The index type of the dictionary key 
+	/// </typeparam>
+	public static void AddDicts<T>(Dictionary<T, int> destination, Dictionary<T, int> target)
+	{
+		foreach (KeyValuePair<T, int> item in target) 
+		{
+			if (!destination.ContainsKey(item.Key))
+			{
+				destination[item.Key] = item.Value;
+			}
+			else
+			{
+				destination[item.Key] += item.Value;
+			}
+		}
+	}
 }

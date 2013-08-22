@@ -2,8 +2,9 @@
 import "ClassType.proto";
 import "ResourceType.proto";
 
-package com.lvl6.aoc2.proto;
+package proto;
 
+option java_package = "com.lvl6.aoc2.noneventprotos";
 option java_outer_classname = "Spell";
 
 message SpellProto {
@@ -11,29 +12,99 @@ message SpellProto {
 	required ClassType classType = 2;
 	optional string name = 3;
 
-	optional FunctionType function = 4;
+	optional SpellFunctionType function = 4;
 
-	optional int32 strength = 5;
-	optional int32 manaCost = 6;
-	optional int32 duration = 7;
-	optional int32 speed = 8;
-	optional bool targetted = 9;
-	optional float size = 10;
-	optional float castTime = 11;
-	optional float coolDown = 12;
-	optional float range = 13;
+	optional SpellTargetType targetType = 5;
 
-	optional int32 levelReq = 14;
-	optional int32 spellLvl = 15;
-	optional int32 researchCost = 16;
-	optional int32 researchTime = 17;
-	required ResourceType researchResource = 18;
+	optional SpellDirectionType directionType = 7;
 
-	enum FunctionType {
-		ATTACK = 0;
-		FLAT_BUFF = 1;
-		SCALE_BUFF = 2;
-		HEAL_SELF = 3;
-		HEAL_OTHER = 4;
+	optional float strength = 8;
+
+	optional float force = 9; //Physics knockback. Negative force will "pull"
+
+	optional int32 manaCost = 10;
+
+	//This is the amount of time over which the
+	//particles will be generated.
+	//If zero, all particles will be generated immediately
+	optional float deliveryDuration = 11;
+
+	//The number of attack particles (i.e. Hitboxes) created in one attack
+	optional int32 numberParticles = 12;
+
+	//The speed of each particle. 
+	optional float particleSpeed = 13;
+
+	optional float particleDuration = 14;
+
+	//The number of targets that a single delivery particle can make 
+	//contact with.
+	optional int32 hitsPerParticle = 15;
+
+	optional float deliverySpeed = 16;
+
+	optional bool targetted = 17;
+	optional float size = 18;
+	optional float castTime = 19;
+	optional float coolDown = 20;
+
+	//The amount of time 
+	optional float retargetTime = 21;
+
+	//The range from the user that this spell can be cast.
+	//If the target is PERSONAL and (particleSpeed * particleDuration) < range
+	//Then the user will dash into functional range upon use
+	optional float range = 22;
+
+	//If an Arc attack, the angle of the arc
+	optional float angle = 23;
+
+	//The maximum deviation from the delivery location that 
+	//particles can spawn
+	optional float area = 24;
+
+	optional int32 levelReq = 25;
+	optional int32 spellLvl = 26;
+	optional int32 researchCost = 27;
+	optional int32 researchTime = 28;
+	required ResourceType researchResource = 29;
+
+	optional SpellParticleType particleType = 30;
+
+	//The stat that an ATTACK is based on, or a BUFF affects
+	optional UnitStat stat = 31;
+
+	enum SpellFunctionType {
+		ATTACK = 0; //Particles deal damage
+		BUFF = 1; //Particles 
+		HEAL = 2;
+	}
+
+	enum SpellTargetType {
+		SELF = 0; //Origin and target are caster
+		PERSONAL = 1; //Origin is the caster
+		TARGETTED = 2; //Origin is the target
+	}
+
+	enum SpellDirectionType {
+		STRAIGHT = 0; //Direction from origin to target
+		ARC = 1; //Direction based on origin to target, plus/minus up to angle
+		SCATTERED = 2; //Random direction, for each particle
+	}
+
+	enum SpellParticleType {
+		SPHERE = 0;
+		LIGHTNING = 1;
+		STARFALL = 2;
+	}
+
+	enum UnitStat {
+		STRENGTH = 0;
+		DEFENSE = 1;
+		RESISTANCE = 2;
+		MOVE_SPEED = 3;
+		ATTACK_SPEED = 4;
+		MANA = 5;
+		HEALTH = 6;
 	}
 }

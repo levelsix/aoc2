@@ -49,8 +49,27 @@ public class AOC2CombatManager : MonoBehaviour {
 	
 	void Start()
 	{
-		//BuildSpawners();
+		BuildSpawners();
+		WarmPools();
 		//SpawnNewWave(0);
+	}
+	
+	/// <summary>
+	/// Figures out how many of each unit we're going to need, then pre-warms
+	/// the pools
+	/// </summary>
+	void WarmPools()
+	{
+		Dictionary<AOC2Spawnable, int> spawns = new Dictionary<AOC2Spawnable, int>();
+		foreach (AOC2UnitSpawner item in _spawners) 
+		{
+			AOC2Math.MergeDicts<AOC2Spawnable>(spawns, item.GetSpawnDict());
+		}
+		
+		foreach (KeyValuePair<AOC2Spawnable, int> item in spawns) 
+		{
+			AOC2ManagerReferences.poolManager.Warm(item.Key as AOC2Poolable, item.Value);
+		}
 	}
 	
 	/// <summary>
@@ -59,6 +78,7 @@ public class AOC2CombatManager : MonoBehaviour {
 	/// </summary>
 	void BuildSpawners()
 	{
+		
 		Object[] objs = FindObjectsOfType(typeof(AOC2UnitSpawner));
 		_spawners = new AOC2UnitSpawner[objs.Length];
 		for (int i = 0; i < objs.Length; i++) 
@@ -293,11 +313,6 @@ public class AOC2CombatManager : MonoBehaviour {
 	public void CoolAbility(AOC2Ability ability, AOC2Unit user)
 	{
 		StartCoroutine(ability.Cool(user));
-	}
-	
-	public void RunBuff(AOC2Unit user, AOC2BuffAbility ability)
-	{
-		StartCoroutine(ability.Buff(user));
 	}
 	
 	void SpawnNewWave(int wave)

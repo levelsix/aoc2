@@ -1,16 +1,17 @@
 
-Ü
-EquipmentProto.protocom.lvl6.aoc2.protoRarityType.protoEquipmentType.proto"ú
+Ð
+EquipmentProto.protoprotoRarityType.protoEquipmentType.proto"Þ
 EquipmentProto
-equipID (
-level (0
-type (2".com.lvl6.aoc2.proto.EquipmentType
+equipID (	
+level ("
+type (2.proto.EquipmentType
 
 durability (
 attack (
 defense (
 	addHealth (
 addMana (
-name	 (	/
+name	 (	!
 rarity
- (2.com.lvl6.aoc2.proto.RarityTypeBB	Equipment
+ (2.proto.RarityTypeB)
+com.lvl6.aoc2.noneventprotosB	Equipment

@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 /// <summary>
 /// @author Rob Giusti
@@ -11,6 +12,8 @@ public class AOC2UnitSpawner : MonoBehaviour {
 	public float range = 15;
 	
 	public List<AOC2Spawnable> spawns;
+	
+	public List<AOC2Unit> currSpawns = new List<AOC2Unit>();
 	
 	public Color debugColor = Color.blue;
 	
@@ -26,9 +29,31 @@ public class AOC2UnitSpawner : MonoBehaviour {
 	
 	public bool hasSpawned = false;
 	
+	public bool defeated = false;
+	
+	public Action OnDefeat;
+	
 	void Awake()
 	{
 		_trans = transform;
+	}
+	
+	void OnEnable()
+	{
+		AOC2EventManager.Combat.OnEnemyDeath += OnEnemyDeath;
+		if (prev != null)
+		{
+			prev.OnDefeat += Spawn;
+		}
+	}
+	
+	void OnDisable()
+	{
+		AOC2EventManager.Combat.OnEnemyDeath -= OnEnemyDeath;
+		if (prev != null)
+		{
+			prev.OnDefeat -= Spawn;
+		}
 	}
 	
 	public void SpawnWave(int wave)
@@ -49,11 +74,15 @@ public class AOC2UnitSpawner : MonoBehaviour {
 			}
 			hasSpawned = true;
 		}
+		foreach (AOC2Unit item in GetComponentsInChildren<AOC2Unit>()) 
+		{
+			currSpawns.Add(item);
+		}
 	}
 	
 	void Update()
 	{
-		if (!hasSpawned && (prev == null || prev.hasSpawned) && PlayerInRange())
+		if (!hasSpawned && (prev == null || prev.defeated) && PlayerInRange())
 		{
 			Spawn();
 		}
@@ -76,6 +105,33 @@ public class AOC2UnitSpawner : MonoBehaviour {
 		Gizmos.color = debugColor;
 		
 		Gizmos.DrawWireSphere (transform.position, range);
+	}
+	
+	void OnEnemyDeath(AOC2Unit enemy)
+	{
+		if (hasSpawned)
+		{
+			currSpawns.Remove(enemy);
+			if (currSpawns.Count == 0)
+			{
+				defeated = true;
+				if (OnDefeat != null)
+				{
+					OnDefeat();
+				}
+				gameObject.SetActive(false);
+			}
+		}
+	}
+	
+	public Dictionary<AOC2Spawnable, int> GetSpawnDict()
+	{
+		Dictionary<AOC2Spawnable, int> dict = new Dictionary<AOC2Spawnable, int>();
+		foreach (AOC2Spawnable item in spawns) 
+		{
+			AOC2Math.MergeDicts<AOC2Spawnable>(dict, item.GetCounts());
+		}
+		return dict;
 	}
 	
 }

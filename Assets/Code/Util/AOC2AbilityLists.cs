@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using proto;
 
 /// <summary>
 /// @author Rob Giusti
@@ -10,395 +11,322 @@ using System.Collections;
 /// we can make changes to abilities without having
 /// to patch the entire game.
 /// </summary>
-public static class AOC2AbilityLists {
+public class AOC2AbilityLists : MonoBehaviour{
  
-    public static class Generic
-    {
-        public const string BASE_MELEE_ATTACK_NAME = "Basic Melee Attack";
-        private const float BASE_MELEE_ATTACK_DAMAGE = 1f;
-        private const float BASE_MELEE_ATTACK_LIFE = .1f;
-        private const float BASE_MELEE_ATTACK_SPEED = 0f;
-        private const float BASE_MELEE_ATTACK_CAST = 0f;
-        private const float BASE_MELEE_ATTACK_COOL = 1f;
-		private const float BASE_MEELE_ATTACK_FORCE = 2f;
-        private const float BASE_MELEE_ATTACK_SIZE = 1f;
-        private const bool BASE_MELEE_ATTACK_TARGETTED = true;
-        private const int BASE_MELEE_ATTACK_MANA = 0;
-        private const AOC2Values.Abilities.TargetType BASE_MELEE_ATTACK_TARGET = AOC2Values.Abilities.TargetType.ENEMY;
-        private const AOC2DeliveryType BASE_MELEE_ATTACK_DELIVERY = AOC2DeliveryType.SPHERE;      
-        
-        
-        public const string BASE_RANGE_ATTACK_NAME = "Base Range Attack";
-        private const float BASE_RANGE_ATTACK_DAMAGE = 1f;
-        private const float BASE_RANGE_ATTACK_LIFE = .2f;
-        private const float BASE_RANGE_ATTACK_SPEED = 10f;
-        private const float BASE_RANGE_ATTACK_CAST = 0f;
-		private const float BASE_RANGE_ATTACK_FORCE = 1f;
-        private const float BASE_RANGE_ATTACK_COOL = 1f;
-        private const float BASE_RANGE_ATTACK_SIZE = .4f;
-        private const bool BASE_RANGE_ATTACK_TARGETTED = true;
-        private const int BASE_RANGE_ATTACK_MANA = 0;
-        private const AOC2Values.Abilities.TargetType BASE_RANGE_ATTACK_TARGET = AOC2Values.Abilities.TargetType.ENEMY;
-        private const AOC2DeliveryType BASE_RANGE_ATTACK_DELIVERY = AOC2DeliveryType.SPHERE;
-        
-        
-        private static readonly AOC2Attack baseAttack = new AOC2Attack(
-            BASE_MELEE_ATTACK_DAMAGE,
-            BASE_MELEE_ATTACK_LIFE, 
-            BASE_MELEE_ATTACK_SPEED,
-			BASE_MEELE_ATTACK_FORCE,
-            BASE_MELEE_ATTACK_DELIVERY,
-            BASE_MELEE_ATTACK_TARGETTED,
-            BASE_MELEE_ATTACK_SIZE);
-        
-        public static readonly AOC2AttackAbility baseMeleeAttackAbility = new AOC2AttackAbility(
-            baseAttack,
-            BASE_MELEE_ATTACK_NAME,
-            BASE_MELEE_ATTACK_CAST, 
-            BASE_MELEE_ATTACK_COOL,
-            BASE_MELEE_ATTACK_MANA,
-            BASE_MELEE_ATTACK_TARGET);        
-        
-        private static readonly AOC2Attack baseRangeAttack = new AOC2Attack(
-            BASE_RANGE_ATTACK_DAMAGE,
-            BASE_RANGE_ATTACK_LIFE, 
-            BASE_RANGE_ATTACK_SPEED,
-			BASE_RANGE_ATTACK_FORCE,
-            BASE_RANGE_ATTACK_DELIVERY,
-            BASE_RANGE_ATTACK_TARGETTED,
-            BASE_RANGE_ATTACK_SIZE);
-        
-        public static readonly AOC2AttackAbility baseRangeAttackAbility = new AOC2AttackAbility(
-            baseRangeAttack,
-            BASE_RANGE_ATTACK_NAME,
-            BASE_RANGE_ATTACK_CAST, 
-            BASE_RANGE_ATTACK_COOL,
-            BASE_RANGE_ATTACK_MANA,
-            BASE_RANGE_ATTACK_TARGET);
-    }
+	static bool defined = false;
+	
+	public static class Generic {
+	
+		public static SpellProto baseMeleeAttackProto = new SpellProto();
+		
+		public static SpellProto baseRangeAttackProto = new SpellProto();
+			
+	}
+	
+	void Awake()
+	{
+		AOC2ManagerReferences.abilityList = this;
+		
+		if (!defined)
+		{
+			
+			#region Generic
+			
+			#region Basic Melee
+			Generic.baseMeleeAttackProto.name = "Basic Melee Attack";
+			Generic.baseMeleeAttackProto.classType = ClassType.ALL;
+			Generic.baseMeleeAttackProto.function = SpellProto.SpellFunctionType.ATTACK;
+			Generic.baseMeleeAttackProto.targetType = SpellProto.SpellTargetType.PERSONAL;
+			Generic.baseMeleeAttackProto.directionType = SpellProto.SpellDirectionType.STRAIGHT;
+			Generic.baseMeleeAttackProto.strength = 1f;
+			Generic.baseMeleeAttackProto.force = 2f;
+			Generic.baseMeleeAttackProto.manaCost = 0;
+			Generic.baseMeleeAttackProto.deliveryDuration = 0f;
+			Generic.baseMeleeAttackProto.numberParticles = 1;
+			Generic.baseMeleeAttackProto.particleSpeed = 0f;
+			Generic.baseMeleeAttackProto.particleDuration = .1f;
+			Generic.baseMeleeAttackProto.hitsPerParticle = 1;
+			Generic.baseMeleeAttackProto.deliverySpeed = 0f;
+			Generic.baseMeleeAttackProto.targetted = true;
+			Generic.baseMeleeAttackProto.size = 1f;
+			Generic.baseMeleeAttackProto.castTime = .3f;
+			Generic.baseMeleeAttackProto.coolDown = 1f;
+			Generic.baseMeleeAttackProto.stat = SpellProto.UnitStat.STRENGTH;
+			#endregion
+			#region Basic Range
+			Generic.baseRangeAttackProto.name = "Basic Range Attack";
+			Generic.baseRangeAttackProto.classType = ClassType.ALL;
+			Generic.baseRangeAttackProto.function = SpellProto.SpellFunctionType.ATTACK;
+			Generic.baseRangeAttackProto.targetType = SpellProto.SpellTargetType.PERSONAL;
+			Generic.baseRangeAttackProto.directionType = SpellProto.SpellDirectionType.STRAIGHT;
+			Generic.baseRangeAttackProto.strength = 1f;
+			Generic.baseRangeAttackProto.force = 1f;
+			Generic.baseRangeAttackProto.manaCost = 0;
+			Generic.baseRangeAttackProto.deliveryDuration = 0f;
+			Generic.baseRangeAttackProto.numberParticles = 1;
+			Generic.baseRangeAttackProto.particleSpeed = 10f;
+			Generic.baseRangeAttackProto.particleDuration = .5f;
+			Generic.baseRangeAttackProto.hitsPerParticle = 1;
+			Generic.baseRangeAttackProto.deliverySpeed = 0f;
+			Generic.baseRangeAttackProto.targetted = true;
+			Generic.baseRangeAttackProto.size = .5f;
+			Generic.baseRangeAttackProto.castTime = .2f;
+			Generic.baseRangeAttackProto.coolDown = 1f;
+			Generic.baseRangeAttackProto.stat = SpellProto.UnitStat.STRENGTH;
+			#endregion
+			
+			#endregion
+			
+			#region Warrior
+			
+			#region Power Attack
+			Warrior.powerAttackProto.name = "Power Attack";
+			Warrior.powerAttackProto.classType = ClassType.WARRIOR;
+			Warrior.powerAttackProto.function = SpellProto.SpellFunctionType.ATTACK;
+			Warrior.powerAttackProto.targetType = SpellProto.SpellTargetType.PERSONAL;
+			Warrior.powerAttackProto.directionType = SpellProto.SpellDirectionType.STRAIGHT;
+			Warrior.powerAttackProto.strength = 1.65f;
+			Warrior.powerAttackProto.manaCost = 15;
+			Warrior.powerAttackProto.force = 3f;
+			Warrior.powerAttackProto.deliveryDuration = 0f;
+			Warrior.powerAttackProto.numberParticles = 1;
+			Warrior.powerAttackProto.particleSpeed = 0f;
+			Warrior.powerAttackProto.particleDuration = 0.3f;
+			Warrior.powerAttackProto.hitsPerParticle = 1;
+			Warrior.powerAttackProto.deliverySpeed = 0f;
+			Warrior.powerAttackProto.targetted = true;
+			Warrior.powerAttackProto.size = 1.5f;
+			Warrior.powerAttackProto.castTime = 0.3f;
+			Warrior.powerAttackProto.coolDown = 5f;
+			Warrior.powerAttackProto.stat = SpellProto.UnitStat.STRENGTH;
+			#endregion
+			#region Iron Will
+			Warrior.ironWillProto.name = "Iron Will";
+			Warrior.ironWillProto.classType = ClassType.WARRIOR;
+			Warrior.ironWillProto.function = SpellProto.SpellFunctionType.BUFF;
+			Warrior.ironWillProto.targetType = SpellProto.SpellTargetType.SELF;
+			Warrior.ironWillProto.directionType = SpellProto.SpellDirectionType.STRAIGHT;
+			Warrior.ironWillProto.strength = .2f;
+			Warrior.ironWillProto.manaCost = 30;
+			Warrior.ironWillProto.force = 0f;
+			Warrior.ironWillProto.deliveryDuration = 10f;
+			Warrior.ironWillProto.numberParticles = 1;
+			Warrior.ironWillProto.particleSpeed = 0;
+			Warrior.ironWillProto.particleDuration = 0.3f;
+			Warrior.ironWillProto.hitsPerParticle = 1;
+			Warrior.ironWillProto.deliverySpeed = 0;
+			Warrior.ironWillProto.targetted = true;
+			Warrior.ironWillProto.size = 1f;
+			Warrior.ironWillProto.castTime = 0.5f;
+			Warrior.ironWillProto.coolDown = 20f;
+			Warrior.ironWillProto.stat = SpellProto.UnitStat.RESISTANCE;
+			#endregion
+			#region Cleave
+			Warrior.cleaveProto.name = "Cleave";
+			Warrior.cleaveProto.classType = ClassType.WARRIOR;
+			Warrior.cleaveProto.function = SpellProto.SpellFunctionType.ATTACK;
+			Warrior.cleaveProto.targetType = SpellProto.SpellTargetType.SELF;
+			Warrior.cleaveProto.directionType = SpellProto.SpellDirectionType.STRAIGHT;
+			Warrior.cleaveProto.strength = 1.3f;
+			Warrior.cleaveProto.manaCost = 35;
+			Warrior.cleaveProto.force = 5f;
+			Warrior.cleaveProto.deliveryDuration = 10f;
+			Warrior.cleaveProto.numberParticles = 1;
+			Warrior.cleaveProto.particleSpeed = 0;
+			Warrior.cleaveProto.particleDuration = 0.3f;
+			Warrior.cleaveProto.hitsPerParticle = 10;
+			Warrior.cleaveProto.deliverySpeed = 0;
+			Warrior.cleaveProto.targetted = false;
+			Warrior.cleaveProto.size = 3;
+			Warrior.cleaveProto.castTime = 0f;
+			Warrior.cleaveProto.coolDown = 10f;
+			Warrior.cleaveProto.retargetTime = 1f;
+			Warrior.cleaveProto.stat = SpellProto.UnitStat.STRENGTH;
+			#endregion
+			
+			#endregion
+			
+			#region Archer
+			
+			#region Power Shot
+			Archer.powerShotProto.name = "Power Shot";
+			Archer.powerShotProto.stat = SpellProto.UnitStat.STRENGTH;
+			Archer.powerShotProto.function = SpellProto.SpellFunctionType.ATTACK;
+			Archer.powerShotProto.targetType = SpellProto.SpellTargetType.PERSONAL;
+			Archer.powerShotProto.directionType = SpellProto.SpellDirectionType.STRAIGHT;
+			Archer.powerShotProto.strength = 1.25f;
+			Archer.powerShotProto.manaCost = 10;
+			Archer.powerShotProto.force = 3;
+			Archer.powerShotProto.deliveryDuration = 0;
+			Archer.powerShotProto.deliverySpeed = 0;
+			Archer.powerShotProto.particleDuration = 0.4f;
+			Archer.powerShotProto.particleSpeed = 20f;
+			Archer.powerShotProto.numberParticles = 1;
+			Archer.powerShotProto.size = 0.5f;
+			Archer.powerShotProto.castTime = .3f;
+			Archer.powerShotProto.coolDown = 4;
+			Archer.powerShotProto.targetted = true;
+			#endregion
+			#region Marksman
+			Archer.marksmanProto.name = "Marksman";
+			Archer.marksmanProto.stat = SpellProto.UnitStat.ATTACK_SPEED;
+			Archer.marksmanProto.function = SpellProto.SpellFunctionType.BUFF;
+			Archer.marksmanProto.targetType = SpellProto.SpellTargetType.SELF;
+			Archer.marksmanProto.directionType = SpellProto.SpellDirectionType.STRAIGHT;
+			Archer.marksmanProto.strength = 20;
+			Archer.marksmanProto.manaCost = 30;
+			Archer.marksmanProto.force = 3;
+			Archer.marksmanProto.deliveryDuration = 0;
+			Archer.marksmanProto.particleDuration = .1f;
+			Archer.marksmanProto.numberParticles = 1;
+			Archer.marksmanProto.size = .1f;
+			Archer.marksmanProto.castTime = .5f;
+			Archer.marksmanProto.coolDown = 20f;
+			Archer.marksmanProto.targetted = true;
+			#endregion
+			#region Fan Shot
+			Archer.fanShotProto.name = "Fan of Arrows";
+			Archer.fanShotProto.stat = SpellProto.UnitStat.STRENGTH;
+			Archer.fanShotProto.function = SpellProto.SpellFunctionType.ATTACK;
+			Archer.fanShotProto.targetType = SpellProto.SpellTargetType.PERSONAL;
+			Archer.fanShotProto.directionType = SpellProto.SpellDirectionType.ARC;
+			Archer.fanShotProto.strength = 1.1f;
+			Archer.fanShotProto.manaCost = 35;
+			Archer.fanShotProto.force = 1.5f;
+			Archer.fanShotProto.deliveryDuration = .5f;
+			Archer.fanShotProto.particleDuration = .5f;
+			Archer.fanShotProto.particleSpeed = 15;
+			Archer.fanShotProto.numberParticles = 7;
+			Archer.fanShotProto.size = .3f;
+			Archer.fanShotProto.castTime = .2f;
+			Archer.fanShotProto.coolDown = 10;
+			Archer.fanShotProto.angle = 120;
+			Archer.fanShotProto.retargetTime = 1;
+			Archer.fanShotProto.hitsPerParticle = 1;
+			#endregion
+			#region Arrow Rain
+			Archer.arrowRainProto.name = "Rain of Arrows";
+			Archer.arrowRainProto.stat = SpellProto.UnitStat.STRENGTH;
+			Archer.arrowRainProto.function = SpellProto.SpellFunctionType.ATTACK;
+			Archer.arrowRainProto.targetType = SpellProto.SpellTargetType.SELF;
+			Archer.arrowRainProto.directionType = SpellProto.SpellDirectionType.STRAIGHT;
+			Archer.arrowRainProto.strength = 1.3f;
+			Archer.arrowRainProto.manaCost = 20;
+			Archer.arrowRainProto.force = 1;
+			Archer.arrowRainProto.deliveryDuration = 1;
+			Archer.arrowRainProto.particleDuration = .2f;
+			Archer.arrowRainProto.numberParticles = 20;
+			Archer.arrowRainProto.size = .2f;
+			Archer.arrowRainProto.area = 5;
+			Archer.arrowRainProto.castTime = .5f;
+			Archer.arrowRainProto.coolDown = 10;
+			Archer.arrowRainProto.retargetTime = .5f;
+			#endregion
+			
+			#endregion
+			
+			#region Wizard
+			
+			#region Lightning Strike
+			Wizard.lightningStrikeProto.name = "Lightning Strike";
+			Wizard.lightningStrikeProto.stat = SpellProto.UnitStat.STRENGTH;
+			Wizard.lightningStrikeProto.function = SpellProto.SpellFunctionType.ATTACK;
+			Wizard.lightningStrikeProto.targetType = SpellProto.SpellTargetType.TARGETTED;
+			Wizard.lightningStrikeProto.targetted = true;
+			Wizard.lightningStrikeProto.strength = 1.8f;
+			Wizard.lightningStrikeProto.manaCost = 10;
+			Wizard.lightningStrikeProto.force = 1.5f;
+			Wizard.lightningStrikeProto.particleDuration = 0.3f;
+			Wizard.lightningStrikeProto.numberParticles = 1;
+			Wizard.lightningStrikeProto.size = 1;
+			Wizard.lightningStrikeProto.castTime = .3f;
+			Wizard.lightningStrikeProto.coolDown = 4;
+			Wizard.lightningStrikeProto.range = 5;
+			Wizard.lightningStrikeProto.particleType = SpellProto.SpellParticleType.LIGHTNING;
+			#endregion
+			#region Ice Armor
+			Wizard.iceArmorProto.name = "Ice Armor";
+			Wizard.iceArmorProto.stat = SpellProto.UnitStat.DEFENSE;
+			Wizard.iceArmorProto.function = SpellProto.SpellFunctionType.BUFF;
+			Wizard.iceArmorProto.targetType = SpellProto.SpellTargetType.SELF;
+			Wizard.iceArmorProto.targetted = true;
+			Wizard.iceArmorProto.strength = 40;
+			Wizard.iceArmorProto.manaCost = 30;
+			Wizard.iceArmorProto.deliveryDuration = 10;
+			Wizard.iceArmorProto.particleDuration = .1f;
+			Wizard.iceArmorProto.size = .1f;
+			Wizard.iceArmorProto.numberParticles = 1;
+			Wizard.iceArmorProto.castTime = .5f;
+			Wizard.iceArmorProto.coolDown = 20;
+			#endregion
+			#region Propulsion
+			Wizard.propulsionProto.name = "Propulsion";
+			Wizard.propulsionProto.stat = SpellProto.UnitStat.STRENGTH;
+			Wizard.propulsionProto.function = SpellProto.SpellFunctionType.ATTACK;
+			Wizard.propulsionProto.targetType = SpellProto.SpellTargetType.PERSONAL;
+			Wizard.propulsionProto.targetted = false;
+			Wizard.propulsionProto.directionType = SpellProto.SpellDirectionType.STRAIGHT;
+			Wizard.propulsionProto.strength = 1.6f;
+			Wizard.propulsionProto.manaCost = 50;
+			Wizard.propulsionProto.force = 4;
+			Wizard.propulsionProto.deliveryDuration = .5f;
+			Wizard.propulsionProto.deliverySpeed = 15;
+			Wizard.propulsionProto.particleDuration = .3f;
+			Wizard.propulsionProto.numberParticles = 8;
+			Wizard.propulsionProto.size = 1;
+			Wizard.propulsionProto.castTime = .2f;
+			Wizard.propulsionProto.coolDown = 10;
+			Wizard.propulsionProto.retargetTime = 1f;
+			Wizard.propulsionProto.particleType = SpellProto.SpellParticleType.STARFALL;
+			#endregion
+			#region Ball Lightning
+			Wizard.ballLightningProto.name = "Ball Lightning";
+			Wizard.ballLightningProto.stat = SpellProto.UnitStat.STRENGTH;
+			Wizard.ballLightningProto.function = SpellProto.SpellFunctionType.ATTACK;
+			Wizard.ballLightningProto.targetted = false;
+			Wizard.ballLightningProto.targetType = SpellProto.SpellTargetType.PERSONAL;
+			Wizard.ballLightningProto.directionType = SpellProto.SpellDirectionType.SCATTERED;
+			Wizard.ballLightningProto.strength = 1.2f;
+			Wizard.ballLightningProto.manaCost = 30;
+			Wizard.ballLightningProto.force = 1;
+			Wizard.ballLightningProto.deliveryDuration = 1;
+			Wizard.ballLightningProto.deliverySpeed = 10;
+			Wizard.ballLightningProto.particleDuration = .2f;
+			Wizard.ballLightningProto.particleSpeed = 8;
+			Wizard.ballLightningProto.numberParticles = 20;
+			Wizard.ballLightningProto.size = 1;
+			Wizard.ballLightningProto.castTime = .3f;
+			Wizard.ballLightningProto.coolDown = 8;
+			Wizard.ballLightningProto.hitsPerParticle = 1;
+			#endregion
+			
+			#endregion
+			
+			defined = true;
+		}
+	}
     
 	public static class Warrior
 	{
-		public static AOC2Ability[] abilities =
-		{
-			powerAttackAbility,
-			ironWillAbility,
-			cleaveAbility
-		};
-		
-		private const string POWER_ATTACK_NAME = "Power Attack";
-		private const float POWER_ATTACK_DAMAGE = 1.65f;
-		private const float POWER_ATTACK_LIFE = .3f;
-		private const float POWER_ATTACK_SPEED = 0f;
-		private const float POWER_ATTACK_CAST = .3f;
-		private const float POWER_ATTACK_COOL = 5f;
-		private const float POWER_ATTACK_FORCE 	= 3f;
-		private const float POWER_ATTACK_SIZE = 1.5f;
-		private const bool POWER_ATTACK_TARGETTED = true;
-		private const bool POWER_ATTACK_PERSIST = false;
-		private const float POWER_ATTACK_RETARGET = 1f;
-		private const int POWER_ATTACK_MANA = 15;
-		private const AOC2Values.Abilities.TargetType POWER_ATTACK_TARGET = AOC2Values.Abilities.TargetType.ENEMY;
-		private const AOC2DeliveryType POWER_ATTACK_DELIVERY = AOC2DeliveryType.SPHERE;
-		private const AOC2Values.Animations.Anim POWER_ATTACK_ANIMATION = AOC2Values.Animations.Anim.ABILITY_ONE;
-		
-		private const string IRON_WILL_NAME = "Iron Will";
-		private const float IRON_WILL_DURATION = 10f;
-		private const float IRON_WILL_SCALE = 0.2f;
-        private const bool IRON_WILL_FLAT = false;
-		private const AOC2Values.UnitStat IRON_WILL_STAT = AOC2Values.UnitStat.DEFENSE;
-		private const float IRON_WILL_CAST = 0.5f;
-		private const float IRON_WILL_COOL = 20f;
-		private const int IRON_WILL_MANA = 30;
-		private const AOC2Values.Abilities.TargetType IRON_WILL_TARGET = AOC2Values.Abilities.TargetType.SELF;
-		private const AOC2Values.Animations.Anim IRON_WILL_ANIMATION = AOC2Values.Animations.Anim.ABILITY_TWO;
-		
-		private const string CLEAVE_NAME = "Cleave";
-		private const float CLEAVE_DAMAGE = 1.4f;
-		private const float CLEAVE_LIFE = .5f;
-		private const float CLEAVE_SPEED = 0f;
-		private const float CLEAVE_CAST = 0f;
-		private const float CLEAVE_COOL = 10f;
-		private const float CLEAVE_FORCE = 5f;
-		private const float CLEAVE_SIZE = 3f;
-		private const bool CLEAVE_TARGETTED = false;
-		private const bool CLEAVE_PERSIST = true;
-		private const float CLEAVE_RETARGET = 1f;
-		private const int CLEAVE_MANA = 35;
-		private const AOC2Values.Abilities.TargetType CLEAVE_TARGET = AOC2Values.Abilities.TargetType.SELF;
-		private const AOC2DeliveryType CLEAVE_DELIVERY = AOC2DeliveryType.DUST_STORM;
-		private const AOC2Values.Animations.Anim CLEAVE_ANIMATION = AOC2Values.Animations.Anim.ABILITY_THREE;
-        
-		private static readonly AOC2Attack powerAttack = new AOC2Attack(
-			POWER_ATTACK_DAMAGE,
-			POWER_ATTACK_LIFE,
-			POWER_ATTACK_SPEED,
-			POWER_ATTACK_FORCE,
-			POWER_ATTACK_DELIVERY,
-            POWER_ATTACK_TARGETTED,
-			POWER_ATTACK_SIZE,
-			POWER_ATTACK_PERSIST,
-			POWER_ATTACK_RETARGET);
-		
-		public static readonly AOC2AttackAbility powerAttackAbility = new AOC2AttackAbility(
-			powerAttack,
-			POWER_ATTACK_NAME,
-			POWER_ATTACK_CAST, 
-			POWER_ATTACK_COOL,
-			POWER_ATTACK_MANA,
-			POWER_ATTACK_TARGET,
-			POWER_ATTACK_ANIMATION);
-		
-		public static readonly AOC2BuffAbility ironWillAbility = new AOC2BuffAbility(
-			IRON_WILL_NAME,
-			IRON_WILL_DURATION,
-			IRON_WILL_SCALE,
-			IRON_WILL_STAT,
-            IRON_WILL_FLAT,
-			IRON_WILL_CAST,
-			IRON_WILL_COOL,
-			IRON_WILL_MANA,
-			IRON_WILL_TARGET,
-			IRON_WILL_ANIMATION);
-		
-		private static readonly AOC2Attack cleaveAttack = new AOC2Attack(
-			CLEAVE_DAMAGE,
-			CLEAVE_LIFE,
-			CLEAVE_SPEED,
-			CLEAVE_FORCE,
-			CLEAVE_DELIVERY,
-            CLEAVE_TARGETTED,
-			CLEAVE_SIZE,
-			CLEAVE_PERSIST,
-			CLEAVE_RETARGET);
-		
-		public static readonly AOC2AttackAbility cleaveAbility = new AOC2AttackAbility(
-			cleaveAttack,
-			CLEAVE_NAME,
-			CLEAVE_CAST, 
-			CLEAVE_COOL,
-			CLEAVE_MANA,
-			CLEAVE_TARGET,
-			CLEAVE_ANIMATION);
+		public static SpellProto powerAttackProto = new SpellProto();
+		public static SpellProto ironWillProto = new SpellProto();
+		public static SpellProto cleaveProto = new SpellProto();
 	}
 	
 	public static class Archer
 	{
-        private const string POWER_ATTACK_NAME = "Power Attack";
-        private const float POWER_ATTACK_DAMAGE = 1.25f;
-        private const float POWER_ATTACK_LIFE = .4f;
-        private const float POWER_ATTACK_SPEED = 20f;
-        private const float POWER_ATTACK_CAST = 0f;
-        private const float POWER_ATTACK_COOL = 4f;
-		private const float POWER_ATTACK_FORCE = 2f;
-        private const float POWER_ATTACK_SIZE = .4f;
-        private const bool POWER_ATTACK_TARGETTED = true;
-        private const int POWER_ATTACK_MANA = 0;
-        private const AOC2Values.Abilities.TargetType POWER_ATTACK_TARGET = AOC2Values.Abilities.TargetType.ENEMY;
-        private const AOC2DeliveryType POWER_ATTACK_DELIVERY = AOC2DeliveryType.SPHERE;
-        
-        private const string MARKSMAN_NAME = "Marksman";
-        private const float MARKSMAN_DURATION = 10f;
-        private const float MARKSMAN_SCALE = 20f;
-        private const bool MARKSMAN_FLAT = true;
-        private const AOC2Values.UnitStat MARKSMAN_STAT = AOC2Values.UnitStat.ATTACK_SPEED;
-        private const float MARKSMAN_CAST = 0.5f;
-        private const float MARKSMAN_COOL = 20f;
-        private const int MARKSMAN_MANA = 30;
-        private const AOC2Values.Abilities.TargetType MARKSMAN_TARGET = AOC2Values.Abilities.TargetType.SELF;
-		
-		private const string FAN_SHOT_NAME = "Fan of Arrows";
-		private const float FAN_SHOT_DAMAGE = 1.4f;
-		private const float FAN_SHOT_LIFE = .5f;
-		private const float FAN_SHOT_SPEED = 15f;
-		private const float FAN_SHOT_CAST = .2f;
-		private const float FAN_SHOT_COOL = 10f;
-		private const float FAN_SHOT_FORCE = 1.5f;
-		private const float FAN_SHOT_SIZE = .4f;
-		private const bool FAN_SHOT_TARGETTED = false;
-		private const int FAN_SHOT_MANA = 0;
-		private const bool FAN_SHOT_PERSIST = true;
-		private const float FAN_SHOT_RETARGET = 1f;
-		private const AOC2Values.Abilities.TargetType FAN_SHOT_TARGET = AOC2Values.Abilities.TargetType.ENEMY;
-		private const AOC2DeliveryType FAN_SHOT_DELIVERY = AOC2DeliveryType.SPHERE;
-		private const int FAN_SHOT_BULLETS = 7;
-		private const float FAN_SHOT_ARC = 45f;
-		
-		private static readonly AOC2Attack powerAttack = new AOC2Attack(
-			POWER_ATTACK_DAMAGE,
-			POWER_ATTACK_LIFE, 
-			POWER_ATTACK_SPEED,
-			POWER_ATTACK_FORCE,
-			POWER_ATTACK_DELIVERY,
-            POWER_ATTACK_TARGETTED,
-			POWER_ATTACK_SIZE);
-		
-		public static readonly AOC2AttackAbility powerAttackAbility = new AOC2AttackAbility(
-			powerAttack,
-			POWER_ATTACK_NAME,
-			POWER_ATTACK_CAST, 
-			POWER_ATTACK_COOL,
-			POWER_ATTACK_MANA,
-			POWER_ATTACK_TARGET);
-		      
-        public static readonly AOC2BuffAbility marksmanAbility = new AOC2BuffAbility(
-            MARKSMAN_NAME,
-            MARKSMAN_DURATION,
-            MARKSMAN_SCALE,
-            MARKSMAN_STAT,
-            MARKSMAN_FLAT,
-            MARKSMAN_CAST,
-            MARKSMAN_COOL,
-            MARKSMAN_MANA,
-            MARKSMAN_TARGET);
-        
-		private static readonly AOC2Attack fanAttack = new AOC2Attack(
-			FAN_SHOT_DAMAGE,
-			FAN_SHOT_LIFE, 
-			FAN_SHOT_SPEED,
-			FAN_SHOT_FORCE,
-			FAN_SHOT_DELIVERY,
-            FAN_SHOT_TARGETTED,
-			FAN_SHOT_SIZE,
-			FAN_SHOT_PERSIST,
-			FAN_SHOT_RETARGET);
-		
-		public static readonly AOC2ArcMultiAttackAbility fanAttackAbility = new AOC2ArcMultiAttackAbility(
-			fanAttack,
-			FAN_SHOT_NAME,
-			FAN_SHOT_CAST, 
-			FAN_SHOT_COOL,
-			FAN_SHOT_MANA,
-			FAN_SHOT_TARGET,
-			FAN_SHOT_BULLETS,
-			FAN_SHOT_ARC);
+		public static SpellProto powerShotProto = new SpellProto();
+		public static SpellProto marksmanProto = new SpellProto();
+		public static SpellProto fanShotProto = new SpellProto();
+		public static SpellProto arrowRainProto = new SpellProto();
 	}
 	
     public static class Wizard
     {
-        private const string LIGHTNING_STRIKE_NAME = "Lightning Strike";
-        private const float LIGHTNING_STRIKE_DAMAGE = 1.25f;
-        private const float LIGHTNING_STRIKE_LIFE = .3f;
-        private const float LIGHTNING_STRIKE_SPEED = 0f;
-        private const float LIGHTNING_STRIKE_CAST = .3f;
-        private const float LIGHTNING_STRIKE_COOL = 4f;
-		private const float LIGHTNING_STRIKE_FORCE = 1.5f;
-        private const float LIGHTNING_STRIKE_SIZE = 1f;
-        private const bool LIGHTNING_STRIKE_TARGETTED = true;
-        private const int LIGHTNING_STRIKE_MANA = 0;
-		private const bool LIGHTNING_STRIKE_PERSIST = true;
-		private const float LIGHTNING_STRIKE_RETARGET = 5f;
-        private const AOC2Values.Abilities.TargetType LIGHTNING_STRIKE_TARGET = AOC2Values.Abilities.TargetType.ENEMY;
-        private const AOC2DeliveryType LIGHTNING_STRIKE_DELIVERY = AOC2DeliveryType.LIGHTNING;
-		private const float LIGHTNING_STRIKE_RANGE = 5f;
-        
-        private const string ICE_ARMOR_NAME = "Ice Armor";
-        private const float ICE_ARMOR_DURATION = 10f;
-        private const float ICE_ARMOR_SCALE = 20f;
-        private const bool ICE_ARMOR_FLAT = true;
-        private const AOC2Values.UnitStat ICE_ARMOR_STAT = AOC2Values.UnitStat.RESISTANCE;
-        private const float ICE_ARMOR_CAST = 0.5f;
-        private const float ICE_ARMOR_COOL = 20f;
-        private const int ICE_ARMOR_MANA = 30;
-        private const AOC2Values.Abilities.TargetType ICE_ARMOR_TARGET = AOC2Values.Abilities.TargetType.SELF;
-     
-        private const string PROPULSION_NAME = "Propulsion";
-        private const float PROPULSION_DAMAGE = 1.4f;
-        private const float PROPULSION_LIFE = .5f;
-        private const float PROPULSION_SPEED = 15f;
-        private const float PROPULSION_CAST = .2f;
-		private const float PROPULSION_FORCE = 4f;
-        private const float PROPULSION_COOL = 10f;
-        private const float PROPULSION_SIZE = 1f;
-        private const bool PROPULSION_TARGETTED = false;
-        private const int PROPULSION_MANA = 50;
-        private const bool PROPULSION_PERSIST = true;
-        private const float PROPULSION_RETARGET = 1f;
-        private const AOC2Values.Abilities.TargetType PROPULSION_TARGET = AOC2Values.Abilities.TargetType.ENEMY;
-        private const AOC2DeliveryType PROPULSION_DELIVERY = AOC2DeliveryType.STARFALL;
-         
-        private static readonly AOC2TargettedAttack lightningAttack = new AOC2TargettedAttack(
-			LIGHTNING_STRIKE_RANGE,
-            LIGHTNING_STRIKE_DAMAGE,
-            LIGHTNING_STRIKE_LIFE, 
-            LIGHTNING_STRIKE_SPEED,
-			LIGHTNING_STRIKE_FORCE,
-            LIGHTNING_STRIKE_DELIVERY,
-            LIGHTNING_STRIKE_TARGETTED,
-            LIGHTNING_STRIKE_SIZE,
-			LIGHTNING_STRIKE_PERSIST,
-			LIGHTNING_STRIKE_RETARGET);
-     
-        public static readonly AOC2AttackAbility lightningAttackAbility = new AOC2AttackAbility(
-            lightningAttack,
-            LIGHTNING_STRIKE_NAME,
-            LIGHTNING_STRIKE_CAST, 
-            LIGHTNING_STRIKE_COOL,
-            LIGHTNING_STRIKE_MANA,
-            LIGHTNING_STRIKE_TARGET);
-           
-        public static readonly AOC2BuffAbility iceArmorAbility = new AOC2BuffAbility(
-            ICE_ARMOR_NAME,
-            ICE_ARMOR_DURATION,
-            ICE_ARMOR_SCALE,
-            ICE_ARMOR_STAT,
-            ICE_ARMOR_FLAT,
-            ICE_ARMOR_CAST,
-            ICE_ARMOR_COOL,
-            ICE_ARMOR_MANA,
-            ICE_ARMOR_TARGET);
-        
-        private static readonly AOC2Attack propulsionAttack = new AOC2Attack(
-            PROPULSION_DAMAGE,
-            PROPULSION_LIFE, 
-            PROPULSION_SPEED,
-			PROPULSION_FORCE,
-            PROPULSION_DELIVERY,
-            PROPULSION_TARGETTED,
-            PROPULSION_SIZE,
-            PROPULSION_PERSIST,
-            PROPULSION_RETARGET);
-     
-        public static readonly AOC2AttackAbility propulsionAbility = new AOC2AttackAbility(
-            propulsionAttack,
-            PROPULSION_NAME,
-        	PROPULSION_CAST, 
-            PROPULSION_COOL,
-            PROPULSION_MANA,
-            PROPULSION_TARGET);
+		public static SpellProto lightningStrikeProto = new SpellProto();
+		public static SpellProto iceArmorProto = new SpellProto();
+		public static SpellProto propulsionProto = new SpellProto();
+		public static SpellProto ballLightningProto = new SpellProto();
     }
-    
-	public static class Enemy
-	{
-		private const string BASE_ATTACK_NAME = "Base Attack";
-		private const float BASE_ATTACK_DAMAGE = 1f;
-		private const float BASE_ATTACK_LIFE = .1f;
-		private const float BASE_ATTACK_SPEED = 0f;
-		private const float BASE_ATTACK_CAST = 0f;
-		private const float BASE_ATTACK_FORCE = 0f;
-		private const float BASE_ATTACK_COOL = 1f;
-		private const float BASE_ATTACK_SIZE = 1f;
-		private const bool BASE_ATTACK_TARGETTED = true;
-		private const int BASE_ATTACK_MANA = 0;
-		private const AOC2Values.Abilities.TargetType BASE_ATTACK_TARGET = AOC2Values.Abilities.TargetType.ENEMY;
-		private const AOC2DeliveryType BASE_ATTACK_DELIVERY = AOC2DeliveryType.SPHERE;
-				
-		private static readonly AOC2Attack baseAttack = new AOC2Attack(
-			BASE_ATTACK_DAMAGE,
-			BASE_ATTACK_LIFE, 
-			BASE_ATTACK_SPEED,
-			BASE_ATTACK_FORCE,
-			BASE_ATTACK_DELIVERY,
-            BASE_ATTACK_TARGETTED,
-			BASE_ATTACK_SIZE);
-		
-		public static readonly AOC2AttackAbility baseAttackAbility = new AOC2AttackAbility(
-			baseAttack,
-			BASE_ATTACK_NAME,
-			BASE_ATTACK_CAST, 
-			BASE_ATTACK_COOL,
-			BASE_ATTACK_MANA,
-			BASE_ATTACK_TARGET);
-	}
 	
 }

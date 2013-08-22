@@ -1,0 +1,18 @@
+
+ä
+RetrieveStaticDataProto.protoprotoFullUserProto.proto"Å
+RetrieveStaticDataRequestProto$
+mup (2.proto.MinimumUserProto
+
+hp (
+mana (
+attack (
+defense ("í
+RetrieveStaticDataResponseProto$
+mup (2.proto.MinimumUserProto
+userHp (
+userMana (
+
+userAttack (
+userDefense (B4
+com.lvl6.aoc2.eventprotosBRetrieveStaticDataProto

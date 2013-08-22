@@ -6,7 +6,7 @@ public class AOC2CombatCamera : AOC2BuildingCamera {
 	/// <summary>
 	/// The unit that the camera is locked to.
 	/// </summary>
-	public AOC2Unit lockUnit;
+	public Transform lockUnit;
     
     public bool locked = false;
     
@@ -14,13 +14,22 @@ public class AOC2CombatCamera : AOC2BuildingCamera {
     
     public float minRotate = 20;
 	
+	const float MIN_MOVE_AMT = 1f;
+	
+	Plane camPlane;
+	
+	public void Start()
+	{
+		camPlane = new Plane(Vector3.up, trans.position);
+	}
+	
 	override protected void OnEnable()
 	{
 		if (lockUnit != null)
 		{
 			LockCameraToUnit(lockUnit);
 		}
-		AOC2EventManager.Combat.OnSpawnPlayer += LockCameraToUnit;
+		//AOC2EventManager.Combat.OnSpawnPlayer += LockCameraToUnit;
 		AOC2EventManager.Combat.OnPlayerDeath += Unlock;
 		AOC2EventManager.Controls.OnKeepDrag[0] += MoveRelative;
         AOC2EventManager.UI.OnCameraLockButton += OnLockCameraButton;
@@ -31,7 +40,7 @@ public class AOC2CombatCamera : AOC2BuildingCamera {
 	
 	override protected void OnDisable()
 	{
-		AOC2EventManager.Combat.OnSpawnPlayer -= LockCameraToUnit;
+		//AOC2EventManager.Combat.OnSpawnPlayer -= LockCameraToUnit;
 		AOC2EventManager.Combat.OnPlayerDeath -= Unlock;
 		AOC2EventManager.Controls.OnKeepDrag[0] -= MoveRelative;
         AOC2EventManager.UI.OnCameraLockButton -= OnLockCameraButton;
@@ -76,7 +85,7 @@ public class AOC2CombatCamera : AOC2BuildingCamera {
 		}
     }
 	
-	protected void LockCameraToUnit(AOC2Unit unit)
+	public void LockCameraToUnit(Transform unit)
 	{
 		lockUnit = unit;
 		
@@ -91,12 +100,22 @@ public class AOC2CombatCamera : AOC2BuildingCamera {
 		//_trans.parent = unit.transform;
 	}
     
-    void SnapToUnit(AOC2Unit unit)
+    void SnapToUnit(Transform unit)
     {
+		/*
         Vector3 gPos = AOC2ManagerReferences.gridManager.ScreenToGround(new Vector3(Screen.width/2, Screen.height/2));
-        Vector3 trnsltn = (unit.aPos.position - gPos);
+        Vector3 trnsltn = (unit.position - gPos);
         trnsltn.y = 0;
-        trans.position += trnsltn;
+		trans.position += trnsltn;
+		*/
+		
+		Ray ray = new Ray(unit.position, -trans.forward); //Cast a ray from the unit towards the camera plane
+		float dist;
+		if (camPlane.Raycast(ray, out dist))
+		{
+			trans.position = ray.GetPoint(dist);
+		}
+		
     }
     
     void OnLockCameraButton()
@@ -119,15 +138,19 @@ public class AOC2CombatCamera : AOC2BuildingCamera {
         }
     }
 	
-	/// <summary>
-	/// Cheats.
-	/// </summary>
-	void Update()
+	void LateUpdate()
 	{
 		if (locked)
 		{
 			SnapToUnit(lockUnit);
 		}
+	}
+	
+	/// <summary>
+	/// Cheats.
+	/// </summary>
+	void Update()
+	{
 
 		if (Input.GetKeyDown(KeyCode.T))
 		{

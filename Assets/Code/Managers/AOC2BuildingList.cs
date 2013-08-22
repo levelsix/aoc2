@@ -1,6 +1,6 @@
 using UnityEngine;
 using System.Collections;
-using com.lvl6.aoc2.proto;
+using proto;
 
 /// <summary>
 /// @author Rob Giusti

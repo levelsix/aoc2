@@ -137,7 +137,7 @@ public class AOC2DoubleLerpBar : MonoBehaviour, AOC2Poolable {
 	}
 	
 	// Use this for initialization
-	void OnEnable () 
+	public virtual void OnEnable () 
 	{
 		StartCoroutine(RunCoroutine());
 	}
@@ -240,7 +240,10 @@ public class AOC2DoubleLerpBar : MonoBehaviour, AOC2Poolable {
 			yield return null;
 		}
 		
-		routine = FadeOut();
+		if (fade)
+		{
+			routine = FadeOut();
+		}
 	}
 	
 	/// <summary>

@@ -3,6 +3,7 @@ using System.Collections;
 
 public class AOC2PointCameraLocation : MonoBehaviour {
 	
+	[SerializeField]
 	float range;
 	
 	/// <summary>

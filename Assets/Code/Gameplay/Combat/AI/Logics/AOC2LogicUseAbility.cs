@@ -37,17 +37,19 @@ public class AOC2LogicUseAbility : AOC2LogicState {
 	{
 		_user.model.SetAnimationFlag(_ability.animation, false);
 		
+		_complete = false;
+		
 		base.OnExitState();
 	}
 	
 	public override void Init ()
 	{
-		_user.currentLogicState = "Use Ability";
+		_user.currentLogicState = _ability.name;
 		
 		if (_user.model.usesTriggers)
 		{
 			_user.model.SetAnimationFlag(_ability.animation, true);
-			_user.model.SetAnimSpeed(1f + _user.stats.attackSpeed/100f);
+			_user.model.SetAnimSpeed((float)(_user.GetStat(AOC2Values.UnitStat.ATTACK_SPEED))/100f);
 			canBeInterrupt = false;
 		}
 		
@@ -63,7 +65,7 @@ public class AOC2LogicUseAbility : AOC2LogicState {
 	
 	public override void OnAbilityUseFrame ()
 	{
-		_ability.Use(_user, _user.aPos.position, _user.targetPos.position);
+		_ability.Use(_user, _user.aPos.position, _user.targetPos.position, true);
 		base.OnAbilityUseFrame();
 	}
 	
@@ -92,7 +94,8 @@ public class AOC2LogicUseAbility : AOC2LogicState {
 				//Wait for the cast time if there is one
 				if (_ability.castTime > 0)
 				{
-					yield return new WaitForSeconds(_ability.castTime * AOC2Math.AttackSpeedMod(_user.stats.attackSpeed));
+					yield return new WaitForSeconds(_ability.castTime * 
+						AOC2Math.AttackSpeedMod(_user.GetStat(AOC2Values.UnitStat.ATTACK_SPEED)));
 				}
 				
 				while(!_ability.Use(_user, _user.aPos.position, _user.targetPos.position))

@@ -1,6 +1,6 @@
 using UnityEngine;
 using System.Collections;
-using com.lvl6.aoc2.proto;
+using proto;
 
 public class AOC2GridManager : MonoBehaviour {
 	

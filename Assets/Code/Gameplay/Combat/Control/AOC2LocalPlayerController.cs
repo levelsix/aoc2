@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using com.lvl6.aoc2.proto;
+using proto;
 
 /// <summary>
 /// @author Rob Giusti
@@ -28,7 +28,7 @@ public class AOC2LocalPlayerController : MonoBehaviour {
 	
 	public Transform moveCursor;
 	
-	const int QUEUE_MAX = 5;
+	const int QUEUE_MAX = 16;
 	
 	[SerializeField]
 	List<AOC2Unit> targetQueue = new List<AOC2Unit>(QUEUE_MAX);
@@ -48,7 +48,7 @@ public class AOC2LocalPlayerController : MonoBehaviour {
 	/// </summary>
 	protected void Start ()
 	{
-		AOC2EventManager.Combat.OnPlayerHealthChange(unit);
+		AOC2EventManager.Combat.OnPlayerHealthChange(unit, 0);
 		AOC2EventManager.Combat.OnPlayerManaChange(unit);
 		targetter.localPlayerController = this;
 	}
@@ -91,7 +91,7 @@ public class AOC2LocalPlayerController : MonoBehaviour {
 	{
 		if (AOC2EventManager.Combat.OnPlayerHealthChange != null)
 		{
-			AOC2EventManager.Combat.OnPlayerHealthChange(unit);
+			AOC2EventManager.Combat.OnPlayerHealthChange(unit, -amount);
 		}
 		
 		if (AOC2EventManager.NetCombat.OnLocalPlayerTakeDamage != null)
@@ -190,6 +190,7 @@ public class AOC2LocalPlayerController : MonoBehaviour {
 	
 	public void EnqueueTarget(AOC2Unit target)
 	{
+		moveCursor.gameObject.SetActive(false);
 		if (player.attackTarget == null)
 		{
 			player.TargetEnemy(target);
@@ -206,11 +207,11 @@ public class AOC2LocalPlayerController : MonoBehaviour {
 		{
 			player.TargetEnemy(targetQueue[0]);
 			targetQueue.RemoveAt(0);
-			moveCursor.gameObject.SetActive(false);
 		}
 		else
 		{
 			ClearTargets();
+			unit.targetPos = new AOC2Position(unit.aPos.position);
 		}
 	}
 	

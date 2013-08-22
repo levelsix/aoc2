@@ -41,9 +41,13 @@ public class AOC2LogicHighStateAbility : AOC2HFSMLogic {
 		
 	}
 	
+	public override void OnExitState ()
+	{
+		base.OnExitState ();
+	}
+	
 	public override void Init ()
 	{
-		_useAbility.Complete = false;
 		_user.currentLogicState = "LogicHighState";
 		base.Init ();
 	}

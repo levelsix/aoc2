@@ -71,6 +71,13 @@ public class AOC2PoolManager : MonoBehaviour {
 		//Disable the poolable
 		pooled.gameObject.SetActive(false);
 		
+		//Short the function if this object isn't set up to pool; we'll just
+		//leave it disabled until the scene change
+		if (pooled.prefab == null)
+		{
+			return;
+		}
+		
 		//If no pool, make a new pool
 		if (!pools.ContainsKey(pooled.prefab))
 		{
@@ -82,4 +89,34 @@ public class AOC2PoolManager : MonoBehaviour {
 		pooled.transform.parent = transform;
 	}
 	
+	/// <summary>
+	/// "Warm" the specified poolable by creating it
+	/// and immediately pooling it, insuring that it will
+	/// be around for later use.
+	/// </summary>
+	/// <param name='poolable'>
+	/// Poolable.
+	/// </param>
+	public void Warm(AOC2Poolable poolable)
+	{
+		AOC2Poolable obj = poolable.Make(Vector3.zero);
+		Pool(obj);
+	}
+	
+	/// <summary>
+	/// Warm the specified poolable the specified number of times.
+	/// </summary>
+	/// <param name='poolable'>
+	/// Poolable prefab to be warmed.
+	/// </param>
+	/// <param name='count'>
+	/// Count.
+	/// </param>
+	public void Warm(AOC2Poolable poolable, int count)
+	{
+		for (int i = 0; i < count; i++) 
+		{
+			Warm (poolable);
+		}
+	}
 }

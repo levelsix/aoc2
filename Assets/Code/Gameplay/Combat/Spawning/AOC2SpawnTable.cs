@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System;
+using System.Collections.Generic;
 
 public class AOC2SpawnTable : AOC2Spawnable {
 	
@@ -49,5 +50,15 @@ public class AOC2SpawnTable : AOC2Spawnable {
 			}
 			num -= chances[i];
 		}
+	}
+	
+	public override Dictionary<AOC2Spawnable, int> GetCounts ()
+	{
+		Dictionary<AOC2Spawnable, int> spawns = new Dictionary<AOC2Spawnable, int>();
+		foreach (AOC2Spawnable item in contents) 
+		{
+			AOC2Math.MergeDicts<AOC2Spawnable>(spawns, item.GetCounts());
+		}
+		return spawns;
 	}
 }

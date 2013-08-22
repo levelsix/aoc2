@@ -1,10 +1,12 @@
 
-package com.lvl6.aoc2.proto;
+package proto;
 
+option java_package = "com.lvl6.aoc2.noneventprotos";
 option java_outer_classname = "UserConsumable";
 
 message UserConsumablesProto {
-	optional int32 userID = 1;
-	optional int32 consumeableID = 2;
-	optional int32 quantity = 3;
+	optional string id = 1;
+	optional string userID = 2;
+	optional string name = 3;
+	optional int32 quantity = 4;
 }

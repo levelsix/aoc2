@@ -19,7 +19,6 @@ public class AOC2Targetter : MonoBehaviour {
 	}
 	
 	Camera cam;
-	Transform camTrans;
 	
 	void Awake()
 	{
@@ -30,7 +29,6 @@ public class AOC2Targetter : MonoBehaviour {
 	void Start()
 	{
 		cam = Camera.main;
-		camTrans = cam.transform;
 	}
 	
 	void OnEnable()

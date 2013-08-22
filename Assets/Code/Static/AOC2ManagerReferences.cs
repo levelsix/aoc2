@@ -19,6 +19,7 @@ public static class AOC2ManagerReferences {
 	public static AOC2CameraManager cameraManager;
 	public static AOC2GameUIManager gameUIManager;
 	
+	public static AOC2AbilityLists abilityList;
 	public static AOC2DeliveryList deliveryList;
 	
 	public static AOC2CombatPrefabs combatPrefabs;

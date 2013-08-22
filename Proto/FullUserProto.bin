@@ -1,6 +1,6 @@
 
-©
-FullUserProto.protocom.lvl6.aoc2.protoClassType.proto"ﬂ
+Å
+FullUserProto.protoprotoClassType.proto"—
 FullUserProto
 userID (
 level (
@@ -8,8 +8,8 @@
 exp (
 gold (
 tonic (
-gems (1
-	classType (2.com.lvl6.aoc2.proto.ClassType
+gems (#
+	classType (2.proto.ClassType
 
 lastHealth	 (
 	maxHealth
@@ -20,5 +20,10 @@ lastHealth	 (
 lastManaRecovery (
 gameCenterID (
 dateCreated (
-clanID (B
-BFullUser
+clanID ("T
+MinimumUserProto
+userID (	
+gameCenterId (	
+udid (	
+name (	B(
+com.lvl6.aoc2.noneventprotosBFullUser

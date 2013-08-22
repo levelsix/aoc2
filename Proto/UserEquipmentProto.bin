@@ -1,10 +1,15 @@
 
-µ
-UserEquipmentProto.protocom.lvl6.aoc2.proto"s
-UserEquipmentProto
-userID (
-equipID (
+º
+UserEquipmentProto.protoproto"ç
+UserEquipmentProto
+userEquipID (	
+userID (	
+equipID (	
 
-equipLevel (
-currDurability (
-equipped (BBUserEquipment
+equipLevel (
+currDurability (
+equipped (
+timeAcquired (
+levelOfUserWhenAcquired (&
+dungeonRoomOrChestAcquiredFrom	 (	B-
+com.lvl6.aoc2.noneventprotosBUserEquipment

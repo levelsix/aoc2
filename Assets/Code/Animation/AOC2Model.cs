@@ -1,11 +1,11 @@
 using UnityEngine;
 using System.Collections;
-using com.lvl6.aoc2.proto;
+using proto;
 
 public class AOC2Model : MonoBehaviour {
 	
 	[SerializeField]
-	MeshFilter[] models;
+	SkinnedMeshRenderer[] models;
 	
 	public Animation anima;
 
@@ -34,6 +34,18 @@ public class AOC2Model : MonoBehaviour {
 	{
 		_unit.OnActivate -= OnActivate;
 		_unit.OnDeactivate -= OnDeactivate;
+	}
+	
+	public void StopAnimation(AOC2Values.Animations.Anim animationType)
+	{
+		if (anima != null)
+		{
+			string animName = AOC2Values.Animations.anims[modelType][animationType];
+			if (anima.IsPlaying(animName))
+			{
+				anima.Stop(animName);
+			}
+		}
 	}
 	
 	public void Animate(AOC2Values.Animations.Anim animationType)
@@ -77,6 +89,10 @@ public class AOC2Model : MonoBehaviour {
 			{
 				Animate(animationType);
 			}
+			else
+			{
+				StopAnimation(animationType);
+			}
 		}
 		else
 		{
@@ -87,13 +103,22 @@ public class AOC2Model : MonoBehaviour {
 	public void Tint(Color color)
 	{
 		Mesh mesh;
-		foreach (MeshFilter item in models) {
-			mesh = item.mesh;
+		foreach (SkinnedMeshRenderer item in models) 
+		{
+			//Debug.Log("Tinting model: " + item.name);
+			/*
+			foreach (Material mat in item.materials) 
+			{
+				mat.color = color;
+			}
+			*/
+			mesh = item.sharedMesh;
 			Color[] colorArr = new Color[mesh.vertices.Length];
 			for (int i = 0; i < mesh.vertices.Length; i++) {
 				colorArr[i] = color;
 			}
 			mesh.colors = colorArr;
+			
 		}
 	}
 	

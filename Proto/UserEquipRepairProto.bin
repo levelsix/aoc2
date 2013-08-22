@@ -1,0 +1,18 @@
+
+Á
+UserEquipRepairProto.protoproto"ê
+UserEquipRepairProto
+userEquipRepairID (	
+userID (	
+equipID (	
+
+equipLevel (
+
+durability (
+expectedStartMillis (
+queuedTimeMillis (
+timeAcquired (
+levelOfUserWhenAcquired	 (&
+dungeonRoomOrChestAcquiredFrom
+ (	B/
+com.lvl6.aoc2.noneventprotosBUserEquipRepair

@@ -71,15 +71,6 @@ public class AOC2PointCamera : MonoBehaviour {
 	{
 		float currTime = 0f;
 		Vector3 startPos = _tran.position;
-		Vector3 startTarg;
-		if (target == null)
-		{
-			startTarg = loc.hitArea.position;
-		}
-		else
-		{
-			startTarg = target.position;
-		}
 		_loc = loc;
 		target = _loc.hitArea;
 		

@@ -1,6 +1,6 @@
 using UnityEngine;
 using System.Collections;
-using com.lvl6.aoc2.proto;
+using proto;
 
 /// <summary>
 /// @author Rob Giusti
@@ -93,9 +93,43 @@ public class AOC2Player : AOC2UnitLogic {
 		unit = GetComponent<AOC2Unit>();
 		local = GetComponent<AOC2LocalPlayerController>();
 		abilities = new AOC2Ability[3];
-		abilities[0] = new AOC2AttackAbility(AOC2AbilityLists.Warrior.cleaveAbility);
-		abilities[1] = new AOC2BuffAbility(AOC2AbilityLists.Warrior.ironWillAbility);
-		abilities[2] = new AOC2AttackAbility(AOC2AbilityLists.Warrior.powerAttackAbility);
+		
+		switch(AOC2Whiteboard.playerClass)
+		{
+		case ClassType.WIZARD:
+			abilities[0] = new AOC2Ability(AOC2AbilityLists.Wizard.propulsionProto);
+			abilities[1] = new AOC2Ability(AOC2AbilityLists.Wizard.iceArmorProto);
+			abilities[2] = new AOC2Ability(AOC2AbilityLists.Wizard.lightningStrikeProto);
+			unit.stats.strength = 120;
+			unit.stats.defense = 120;
+			unit.stats.attackSpeed = 100;
+			unit.stats.maxMana = 500;
+			unit.stats.maxHealth = 1500;
+			unit.ranged = true;
+			break;
+		case ClassType.WARRIOR:
+			abilities[0] = new AOC2Ability(AOC2AbilityLists.Warrior.cleaveProto);
+			abilities[1] = new AOC2Ability(AOC2AbilityLists.Warrior.ironWillProto);
+			abilities[2] = new AOC2Ability(AOC2AbilityLists.Warrior.powerAttackProto);
+			unit.stats.strength = 100;
+			unit.stats.defense = 130;
+			unit.stats.attackSpeed = 100;
+			unit.stats.maxMana = 250;
+			unit.stats.maxHealth = 2000;
+			unit.ranged = false;
+			break;
+		case ClassType.ARCHER:
+			abilities[0] = new AOC2Ability(AOC2AbilityLists.Archer.fanShotProto);
+			abilities[1] = new AOC2Ability(AOC2AbilityLists.Archer.marksmanProto);
+			abilities[2] = new AOC2Ability(AOC2AbilityLists.Archer.powerShotProto);
+			unit.stats.strength = 140;
+			unit.stats.defense = 120;
+			unit.stats.attackSpeed = 120;
+			unit.stats.maxMana = 300;
+			unit.stats.maxHealth = 1500;
+			unit.ranged = true;
+			break;
+		}
 	}
 	
 	void Start()
@@ -140,6 +174,7 @@ public class AOC2Player : AOC2UnitLogic {
 		*/
 		
 		moveLogic.AddExit(new AOC2ExitWhenComplete(moveLogic, doNothing));
+        moveLogic.AddExit(new AOC2ExitPlayerHasTarget(this, basicAttackLogic));
 		
 		//sprintLogic = new AOC2LogicSprint(unit);
 		//sprintLogic.AddExit(new AOC2ExitTargetInRange(doNothing, unit, MIN_MOVE_DIST));
@@ -185,9 +220,16 @@ public class AOC2Player : AOC2UnitLogic {
 	/// </param>
 	public void UseAbility(int index)
 	{
-		if (abilities[index].targetType == AOC2Values.Abilities.TargetType.SELF)
+		//Short here if we don't actually have the mana for the ability
+		if (unit.mana < abilities[index].manaCost)
+		{
+			return;
+		}
+		
+		if (abilities[index].spellProto.targetType == SpellProto.SpellTargetType.SELF)
 		{
 			unit.targetPos = unit.aPos;
+			attackTarget = unit;
 		}
 		else if (attackTarget != null)
 		{
@@ -198,6 +240,7 @@ public class AOC2Player : AOC2UnitLogic {
 			AOC2Unit closeEn = AOC2ManagerReferences.combatManager.GetClosestEnemy(unit);
 			if (closeEn != null)
 			{
+				TargetEnemy(closeEn);
 				unit.targetPos = closeEn.aPos;
 			}
 		}
@@ -209,12 +252,12 @@ public class AOC2Player : AOC2UnitLogic {
 	/// Whenever an enemy dies, check to see if it was our current target,
 	/// in which case we need to null out the target
 	/// </summary>
-	/// <param name='unit'>
+	/// <param name='enemy'>
 	/// The enemy that died
 	/// </param>
-	void OnEnemyDeath(AOC2Unit unit)
+	void OnEnemyDeath(AOC2Unit enemy)
 	{
-		if (unit == attackTarget)
+		if (enemy == attackTarget)
 		{
 			if (local != null)
 			{

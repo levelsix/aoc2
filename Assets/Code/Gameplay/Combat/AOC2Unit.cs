@@ -1,7 +1,7 @@
 using UnityEngine;
 using System;
 using System.Collections;
-using com.lvl6.aoc2.proto;
+using proto;
 
 /// <summary>
 /// @author Rob Giusti
@@ -33,32 +33,7 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 	/// The Health Bar Offset, multiplied by size
 	/// </summary>
 	public Vector3 healthBarOffset;
-	
-	/// <summary>
-	/// Gets the full power of this unit,
-	/// for attacks.
-	/// Strength + Weapon Power
-	/// TODO: Add weapon power
-	/// </summary>
-	public int power{
-		get
-		{
-			return stats.strength;
-		}
-	}
-	
-	/// <summary>
-	/// Gets the full defense of this unit
-	/// Defense + Weapon Defense
-	/// TODO: Add weapon defense
-	/// </summary>
-	public int defense{
-		get
-		{
-			return stats.defense;
-		}
-	}
-	
+
 	/// <summary>
 	/// The mass of this unit.
 	/// Affects knockback from attacks.
@@ -211,8 +186,6 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 			}
 		}
 	}
-	
-	public AOC2MoveAbility basicMove;
     
     public int id;
     
@@ -241,6 +214,8 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 	/// The logic for this unit.
 	/// </summary>
 	private AOC2UnitLogic _logic;
+	
+	public AOC2UnitEquipment equipment;
     
     public Transform trans;
 	
@@ -294,6 +269,7 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 		AOC2Unit unit = Instantiate(this, origin, Quaternion.identity) as AOC2Unit;
 		unit.prefab = this;
         unit.id = nextID++;
+		unit.DebugTint(tint);
 		return unit;
 	}
 	
@@ -312,11 +288,12 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 		{
 			model = GetComponent<AOC2Model>();
 		}
+		equipment = GetComponent<AOC2UnitEquipment>();
 	}
 	
 	void Start()
 	{
-		nav.speed = stats.moveSpeed;
+		nav.speed = GetStat(AOC2Values.UnitStat.MOVE_SPEED);
 	}
 	
 	void Update()
@@ -335,21 +312,19 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 	public void Init()
 	{
 		targetPos = new AOC2Position(aPos.position);
-		
-        DebugTint(tint);
         
         if (ranged)
         {
-            basicAttackAbility = new AOC2AttackAbility(AOC2AbilityLists.Generic.baseRangeAttackAbility);
+            basicAttackAbility = new AOC2Ability(AOC2AbilityLists.Generic.baseRangeAttackProto);
         }
         else
         {
-            basicAttackAbility = new AOC2AttackAbility(AOC2AbilityLists.Generic.baseMeleeAttackAbility);   
+            basicAttackAbility = new AOC2Ability(AOC2AbilityLists.Generic.baseMeleeAttackProto);   
         }
         
-		health = stats.maxHealth;
+		health = GetStat(AOC2Values.UnitStat.HEALTH);
 		
-		mana = stats.maxMana;
+		mana = GetStat(AOC2Values.UnitStat.MANA);
 		
 		if (_logic != null)
 		{
@@ -414,7 +389,7 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 	/// </param>
 	public void TakeDamage(AOC2Delivery deliv)
 	{
-		int damage = (int) (((deliv.damage) - (defense * BASE_DEFENSE_MOD)) * AOC2Math.ResistanceMod(stats.resistance));
+		int damage = (int) (((deliv.power) - (GetStat(AOC2Values.UnitStat.DEFENSE) * BASE_DEFENSE_MOD)) * AOC2Math.ResistanceMod(GetStat(AOC2Values.UnitStat.RESISTANCE)));
 		if (damage > 0){
 			health -= damage;
 			
@@ -462,7 +437,7 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 			healthBar.Init();
 			healthBar.OnPool += OnHealthBarPool;
 		}
-		healthBar.SetAmounts((health+amount)/stats.maxHealth, ((float)health)/stats.maxHealth);
+		healthBar.SetAmounts((health+amount)/GetStat(AOC2Values.UnitStat.HEALTH), ((float)health)/GetStat(AOC2Values.UnitStat.HEALTH));
 	}
 	
 	void OnHealthBarPool()
@@ -474,7 +449,7 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 	public void Knockback(AOC2Delivery delivery)
 	{
 		//Debug.Log("Knockback");
-		float force = delivery.force - mass;
+		float force = delivery.spellProto.force - mass;
 		
 		if (force > 0)
 		{
@@ -484,7 +459,7 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 				knockbackDir = (aPos.position - delivery.transform.position).normalized;
 			}
 			
-			AOC2LogicState knockbackLogic = new AOC2LogicKnockedBack(this, delivery.force, knockbackDir);
+			AOC2LogicState knockbackLogic = new AOC2LogicKnockedBack(this, force, knockbackDir);
 			knockbackLogic.AddExit(new AOC2ExitWhenComplete(knockbackLogic, _logic.logic.current));
 			
 			_logic.SetLogic(knockbackLogic);
@@ -565,7 +540,7 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 	/// </param>
 	public bool Move(Vector3 direction)
 	{
-		return Move(direction, stats.moveSpeed);
+		return Move(direction, GetStat(AOC2Values.UnitStat.MOVE_SPEED));
 	}
 	
 	/// <summary>
@@ -576,7 +551,7 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 	/// </param>
 	public bool Sprint(Vector3 direction)
 	{
-		return Move(direction, sprintMod * stats.moveSpeed);
+		return Move(direction, sprintMod * GetStat(AOC2Values.UnitStat.MOVE_SPEED));
 	}
 	
 	public void Activate()
@@ -598,4 +573,26 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 	#endregion
 	
 	#endregion
+	
+	public int GetStat(SpellProto.UnitStat stat)
+	{
+		return GetStat((AOC2Values.UnitStat) stat);
+	}
+	
+	public int GetStat(AOC2Values.UnitStat stat)
+	{
+		if (equipment != null)
+		{
+			return stats[stat] + equipment[stat];
+		}
+		else
+		{
+			return stats[stat];
+		}
+	}
+	
+	public override System.Collections.Generic.Dictionary<AOC2Spawnable, int> GetCounts ()
+	{
+		return new System.Collections.Generic.Dictionary<AOC2Spawnable, int>() {{this, 1}};
+	}
 }

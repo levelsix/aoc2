@@ -45,7 +45,7 @@ public class AOC2ManaBar : MonoBehaviour {
 	/// </param>
 	void OnPlayerManaChange(AOC2Unit player)
 	{
-		bar.fillAmount = (float)player.mana / player.stats.maxMana;
-		label.text = player.mana + "/" + player.stats.maxMana;
+		bar.fillAmount = (float)player.mana / player.GetStat(AOC2Values.UnitStat.MANA);
+		label.text = player.mana + "/" + player.GetStat(AOC2Values.UnitStat.MANA);
 	}
 }

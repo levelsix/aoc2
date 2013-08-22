@@ -1,16 +1,17 @@
 
-Ô
-MonsterProto.protocom.lvl6.aoc2.protoMonsterType.protoColorProto.proto"ø
+È
+MonsterProto.protoprotoMonsterType.protoColorProto.proto"Ü
 MonsterProto
 	monsterID (
 	maxHealth (
 maxMana (
 attack (
-defense (.
-type (2 .com.lvl6.aoc2.proto.MonsterType.
-color (2.com.lvl6.aoc2.proto.ColorProto
+defense ( 
+type (2.proto.MonsterType 
+color (2.proto.ColorProto
 size (
 
 experience	 (
 isBoss
- (B	BMonster
+ (B'
+com.lvl6.aoc2.noneventprotosBMonster

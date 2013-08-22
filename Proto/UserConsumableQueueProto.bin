@@ -1,0 +1,12 @@
+
+›
+UserConsumableQueueProto.protoproto"¼
+UserConsumableQueueProto
+userConsumableQueueID (	
+userID (	
+name (	
+quantity (
+expectedStartMillis (
+queuedTimeMillis (
+isFinishedBuilding (B3
+com.lvl6.aoc2.noneventprotosBUserConsumableQueue
