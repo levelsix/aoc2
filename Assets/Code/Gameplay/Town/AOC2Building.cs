@@ -170,6 +170,8 @@ public class AOC2Building : MonoBehaviour, AOC2Placeable
 		_box = GetComponent<BoxCollider>();
 
         trans = transform;
+		
+		DebugSetup();
     }
 	
 	
@@ -181,6 +183,8 @@ public class AOC2Building : MonoBehaviour, AOC2Placeable
 	/// </param>
 	public void Init(StructureProto proto)
 	{
+		structProto = proto;
+		
 		name = proto.name;
 		
 		//TODO: Assign correct image
@@ -198,6 +202,8 @@ public class AOC2Building : MonoBehaviour, AOC2Placeable
     /// </summary>
     void Start()
     {
+		Init (smallProto);
+		
 		_box.size = new Vector3(width * AOC2ManagerReferences.gridManager.spaceSize, 1, 
 			length * AOC2ManagerReferences.gridManager.spaceSize);
 		
@@ -359,7 +365,36 @@ public class AOC2Building : MonoBehaviour, AOC2Placeable
 	
 	#endregion
 	
+	#region Debug
 	
+	static StructureProto smallProto = new StructureProto();
+	
+	static bool defined = false;
+	
+	void DebugSetup()
+	{
+		if (!defined)
+		{
+			
+			smallProto.name = "Small Building";
+			smallProto.buildCost = 1000;
+			smallProto.buildTime = 60;
+			smallProto.structureID = 0;
+			smallProto.id = "DebugSmall";
+			smallProto.functionValue = 1000;
+			smallProto.level = 1;
+			
+			smallProto.buildResource = ResourceType.GOLD;
+			smallProto.upgradeTownHallLevel = 0;
+			smallProto.size = new CoordinateProto();
+			smallProto.size.x = 2;
+			smallProto.size.y = 2;
+			
+			defined = true;
+		}
+	}
+	
+	#endregion
 	
 	#endregion
 }

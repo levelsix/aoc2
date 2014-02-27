@@ -7,25 +7,18 @@ using System;
 /// @author Rob Giusti
 /// Unit spawner
 /// </summary>
+[RequireComponent (typeof (AOC2Objective))]
 public class AOC2UnitSpawner : MonoBehaviour {
 	
 	public float range = 15;
 	
-	public List<AOC2Spawnable> spawns;
+	public AOC2SpawnGroup spawns = new AOC2SpawnGroup();
 	
-	public List<AOC2Unit> currSpawns = new List<AOC2Unit>();
+	private List<AOC2Unit> _currSpawns = new List<AOC2Unit>();
 	
 	public Color debugColor = Color.blue;
 	
-	/// <summary>
-	/// The spawner that must spawn before this spawner.
-	/// Used to prevent Update from doing distance calculations
-	/// for every unspawned spawn point every step.
-	/// Set in editor.
-	/// </summary>
-	public AOC2UnitSpawner prev;
-	
-	private Transform _trans;
+	public Transform trans;
 	
 	public bool hasSpawned = false;
 	
@@ -33,56 +26,52 @@ public class AOC2UnitSpawner : MonoBehaviour {
 	
 	public Action OnDefeat;
 	
+	public AOC2Objective objective;
+	
+	public int index = 0;
+	
 	void Awake()
 	{
-		_trans = transform;
+		trans = transform;
+		objective = GetComponent<AOC2Objective>();
+		if (AOC2Whiteboard.dungeonData.spawns.ContainsKey(index))
+		{
+			foreach (var item in AOC2Whiteboard.dungeonData.spawns[index]) 
+			{
+				for (int i = 0; i < item.Value; i++) {
+					spawns.contents.Add(AOC2Whiteboard.dungeonData.monsterTable[item.Key]);
+				}
+			}
+		}
 	}
 	
 	void OnEnable()
 	{
 		AOC2EventManager.Combat.OnEnemyDeath += OnEnemyDeath;
-		if (prev != null)
-		{
-			prev.OnDefeat += Spawn;
-		}
 	}
 	
 	void OnDisable()
 	{
 		AOC2EventManager.Combat.OnEnemyDeath -= OnEnemyDeath;
-		if (prev != null)
-		{
-			prev.OnDefeat -= Spawn;
-		}
-	}
-	
-	public void SpawnWave(int wave)
-	{
-		if (spawns.Count > wave)
-		{
-			spawns[wave].Spawn(_trans.position);
-		}
 	}
 	
 	public void Spawn()
 	{
 		if (!hasSpawned)
 		{
-			foreach (AOC2Spawnable item in spawns) 
-			{
-				item.Spawn(_trans.position, _trans);
-			}
+			spawns.Spawn(trans.position, this);
 			hasSpawned = true;
 		}
-		foreach (AOC2Unit item in GetComponentsInChildren<AOC2Unit>()) 
-		{
-			currSpawns.Add(item);
-		}
+	}
+	
+	public void AddUnit(AOC2Unit unit)
+	{
+		_currSpawns.Add(unit);
 	}
 	
 	void Update()
 	{
-		if (!hasSpawned && (prev == null || prev.defeated) && PlayerInRange())
+		if (!hasSpawned && PlayerInRange())
 		{
 			Spawn();
 		}
@@ -90,7 +79,7 @@ public class AOC2UnitSpawner : MonoBehaviour {
 	
 	bool PlayerInRange()
 	{
-		return AOC2ManagerReferences.combatManager.GetClosestPlayerInRange(_trans.position, range) != null;
+		return AOC2ManagerReferences.combatManager.GetClosestPlayerInRange(trans.position, range) != null;
 	}
 	
 	void OnDrawGizmos()
@@ -111,27 +100,32 @@ public class AOC2UnitSpawner : MonoBehaviour {
 	{
 		if (hasSpawned)
 		{
-			currSpawns.Remove(enemy);
-			if (currSpawns.Count == 0)
+			_currSpawns.Remove(enemy);
+			if (_currSpawns.Count == 0)
 			{
-				defeated = true;
-				if (OnDefeat != null)
-				{
-					OnDefeat();
-				}
-				gameObject.SetActive(false);
+				Defeat();
 			}
 		}
 	}
 	
-	public Dictionary<AOC2Spawnable, int> GetSpawnDict()
+	void Defeat()
 	{
-		Dictionary<AOC2Spawnable, int> dict = new Dictionary<AOC2Spawnable, int>();
-		foreach (AOC2Spawnable item in spawns) 
+		defeated = true;
+		
+		objective.Complete();
+		
+		//AOC2EventManager.Combat.OnObjectiveComplete(this);
+		
+		if (OnDefeat != null)
 		{
-			AOC2Math.MergeDicts<AOC2Spawnable>(dict, item.GetCounts());
+			OnDefeat();
 		}
-		return dict;
+		gameObject.SetActive(false);
+	}
+	
+	public Dictionary<AOC2Unit, int> GetSpawnDict()
+	{
+		return spawns.GetCounts();
 	}
 	
 }

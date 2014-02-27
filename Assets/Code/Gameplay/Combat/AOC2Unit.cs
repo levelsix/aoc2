@@ -9,12 +9,16 @@ using proto;
 /// Ties together movement, spawning, dieing, pooling, and logic
 /// </summary>
 [RequireComponent (typeof (BoxCollider))]
-public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
+public class AOC2Unit : MonoBehaviour, AOC2Poolable {
 	
 	#region Members
 	
 	#region Public
 	
+	/// <summary>
+	/// Debug string that reflects the current logic state that this
+	/// unit is in.
+	/// </summary>
 	public string currentLogicState = "";
 
 	/// <summary>
@@ -22,10 +26,26 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 	/// </summary>
 	public AOC2UnitStats stats;
 	
+	/// <summary>
+	/// The nav mesh agent component.
+	/// Character speed is passed to this to make sure
+	/// that the unit moves at the proper speed.
+	/// </summary>
 	public NavMeshAgent nav;
 	
+	/// <summary>
+	/// The Prefab for this unit's health bar.
+	/// Useful for if we want different units to display different
+	/// health bars.
+	/// If this prefab is null, the unit will not display a health bar
+	/// when damaged.
+	/// </summary>
 	public AOC2DoubleLerpBar healthBarPrefab;
 	
+	/// <summary>
+	/// The game UI health bar that this unit is currently using
+	/// to display its health. 
+	/// </summary>
 	[HideInInspector]
 	public AOC2DoubleLerpBar healthBar;
 	
@@ -88,10 +108,20 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
     [HideInInspector]
     public AOC2Ability basicAttackAbility;
     
+	/// <summary>
+	/// Whether this unit is ranged or not
+	/// </summary>
     public bool ranged;
 	
+	/// <summary>
+	/// Whether or not this unit is currently active
+	/// </summary>
 	public bool _activated = false;
 	
+	/// <summary>
+	/// If the unit is within this distance from its movement target,
+	/// it will snap to its target. Prevents stuttering around a target point.
+	/// </summary>
 	public const float MIN_MOVE_DIST = .1f;
 	
 	#region Action Delegates
@@ -118,8 +148,6 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 	/// </summary>
 	public Action OnAnimationEnd;
 	
-	public Action OnPathfind;
-	
 	/// <summary>
 	/// The activation event, used to turn on animations and AI logic
 	/// for this unit
@@ -138,11 +166,15 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 	/// themselves.
 	/// </summary>
 	public Action OnInit;
+	/// <summary>
+	/// The monster proto, if this unit is a monster
+	/// </summary>
+	public MonsterProto monsterProto;
 	
 	#endregion
 	
 	/// <summary>
-	/// Gets or sets the prefab of this unit
+	/// Gets or sets the prefab of this unit.
 	/// Only sets if the prefab is not set
 	/// </summary>
 	/// <value>
@@ -158,13 +190,19 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 			//Nothing should be able to change this once its set
 			if (_prefab == null)
 			{
-				_prefab = value;
+				_prefab = value as AOC2Poolable;
 			}
 		}
 	}
 	
-	public bool activated
-	{
+	/// <summary>
+	/// Gets or sets a value indicating whether this <see cref="AOC2Unit"/> is activated.
+	/// When set, also triggers the OnActivate or OnDeactivate event
+	/// </summary>
+	/// <value>
+	/// <c>true</c> if activated; otherwise, <c>false</c>.
+	/// </value>
+	public bool activated{
 		get
 		{
 			return _activated;
@@ -187,8 +225,16 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 		}
 	}
     
+	/// <summary>
+	/// This unit's unique ID number.
+	/// Used for debug purposes.
+	/// </summary>
     public int id;
     
+	/// <summary>
+	/// Static ticker for the next ID to assign to a unit.
+	/// Incremented every time we assign an ID.
+	/// </summary>
     private static int nextID = 0;
 	
 	#endregion
@@ -215,16 +261,40 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 	/// </summary>
 	private AOC2UnitLogic _logic;
 	
+	/// <summary>
+	/// The equipment component.
+	/// Used to look up stats.
+	/// TODO: Determine Unit stats at Init-time to already be a combination of equipment
+	/// and character stats. NOTE: Keep in mind the effects of durability mid-combat.
+	/// </summary>
 	public AOC2UnitEquipment equipment;
     
+	/// <summary>
+	/// The transform component.
+	/// Reference is stored here so that we can easily move and turn the unit
+	/// without needing to call GetComponent every time.
+	/// </summary>
     public Transform trans;
 	
+	/// <summary>
+	/// The game object.
+	/// Reference is stored here so that activation/deactivation can be
+	/// done without needing to call GetComponent every time.
+	/// </summary>
+	public GameObject gameObj;
+	
+	/// <summary>
+	/// Reference to the model component.
+	/// </summary>
 	public AOC2Model model;
 	
 	/// <summary>
-	/// The local controller.
-	/// Mainly, just check != null to see if certain events should
-	/// be triggered
+	/// The local controller component. Null if this unit is not the
+	/// local player's character.
+	/// Mainly, only used to check != null to see if certain events should
+	/// be triggered.
+	/// TODO: Clean up code so that we don't need a pointer to this
+	/// If certain events should be tied to this, they should happen in this.
 	/// </summary>
 	public AOC2LocalPlayerController localController;
 	
@@ -232,7 +302,49 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 	
 	#region Constants
 	
+	/// <summary>
+	/// The modifier used against the unit's defense stat to determine how much damage
+	/// is actually blocked.
+	/// Can also be determined as the amount of damage that one point of defense stops.
+	/// </summary>
 	const float BASE_DEFENSE_MOD = .25f;
+	
+	#endregion
+	
+	#region Properties
+	
+	/// <summary>
+	/// Poolable's getter for transform that defers to
+	/// the internally kept trans reference. Using monobehaviour's
+	/// built-in transform property does a GetComponent call every
+	/// time we check it, which gets very inefficient very quickly.
+	/// </summary>
+	/// <value>
+	/// A reference to the transform component of this object.
+	/// </value>
+	public Transform transf{
+		get
+		{
+			return trans;
+		}
+	}
+	
+	/// <summary>
+	/// Poolable's getter for gameObject that defers to the
+	/// internally kept gameObj reference. Using monobehaviour's
+	/// built-in transform property does a GetComponent call
+	/// every time we check it, which gets very inefficient very
+	/// quickly.
+	/// </summary>
+	/// <value>
+	/// A reference to the gameObject component of this object.
+	/// </value>
+	public GameObject gObj{
+		get
+		{
+			return gameObj;
+		}
+	}
 	
 	#endregion
 	
@@ -248,13 +360,14 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 	/// <param name='origin'>
 	/// Position to spawn at
 	/// </param>
-	override public void Spawn(Vector3 origin, Transform parent = null)
+	public void Spawn(Vector3 origin, AOC2UnitSpawner parent)
 	{
 		AOC2Unit unit = AOC2ManagerReferences.poolManager.Get(this, origin) as AOC2Unit;
 		unit.Init();
 		if (parent != null)
 		{
-			unit.trans.parent = parent;
+			parent.AddUnit(unit);
+			unit.trans.parent = parent.trans;
 		}
 	}
 	
@@ -267,9 +380,9 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 	public AOC2Poolable Make(Vector3 origin)
 	{
 		AOC2Unit unit = Instantiate(this, origin, Quaternion.identity) as AOC2Unit;
-		unit.prefab = this;
+		//unit.prefab = this;
         unit.id = nextID++;
-		unit.DebugTint(tint);
+		//unit.TintModel(tint);
 		return unit;
 	}
 	
@@ -281,6 +394,7 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 	{
 		_logic = GetComponent<AOC2UnitLogic>();
         trans = transform;
+		gameObj = gameObject;
 		aPos = new AOC2Position(trans);
         nav = GetComponent<NavMeshAgent>();
 		localController = GetComponent<AOC2LocalPlayerController>();
@@ -291,17 +405,38 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 		equipment = GetComponent<AOC2UnitEquipment>();
 	}
 	
-	void Start()
-	{
-		nav.speed = GetStat(AOC2Values.UnitStat.MOVE_SPEED);
-	}
+	#endregion
 	
+	/// <summary>
+	/// Update this instance.
+	/// If there is a health bar attached to this unit, move it appropriately
+	/// </summary>
 	void Update()
 	{
 		if (healthBar != null)
 		{
 			healthBar.trans.position = trans.position + healthBarOffset;
 		}
+	}
+	
+	//Need an Init with Player Stats!
+	
+	public void Init(MonsterProto proto)
+	{
+		targetPos = new AOC2Position(aPos.position);
+		
+		stats.strength = proto.attack;
+		stats.defense = proto.defense;
+		stats.maxHealth = proto.maxHealth;
+		stats.maxMana = proto.maxMana;
+		
+		tint = new Color(proto.color.r/255f, proto.color.g/255f, proto.color.b/255f);
+		
+		monsterProto = proto;
+		
+		TintModel(tint);
+		
+		Init ();
 	}
 	
 	/// <summary>
@@ -312,7 +447,9 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 	public void Init()
 	{
 		targetPos = new AOC2Position(aPos.position);
-        
+		
+		nav.speed = GetStat(AOC2Values.UnitStat.MOVE_SPEED);
+		
         if (ranged)
         {
             basicAttackAbility = new AOC2Ability(AOC2AbilityLists.Generic.baseRangeAttackProto);
@@ -334,15 +471,13 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 		if (isEnemy)
 		{
 			AOC2EventManager.Combat.OnSpawnEnemy(this);
-			gameObject.layer = AOC2Values.Layers.ENEMY;
+			gameObj.layer = AOC2Values.Layers.ENEMY;
 		}
 		else
 		{
 			AOC2EventManager.Combat.OnSpawnPlayer(this);
-			gameObject.layer = AOC2Values.Layers.PLAYER;
+			gameObj.layer = AOC2Values.Layers.PLAYER;
 		}
-		
-		//_trans.Translate(0, _trans.localScale.y / 2, 0);
 	}
 	
 	/// <summary>
@@ -351,14 +486,25 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 	/// <param name='color'>
 	/// Color to tint
 	/// </param>
-	public void DebugTint(Color color)
+	public void TintModel(Color color)
 	{
+		tint = color;
 		if (model != null)
 		{
 			model.Tint(color);
 		}
 	}
 	
+	/// <summary>
+	/// Attempts to use the unit's mana.
+	/// Fails if there is not enough mana
+	/// </summary>
+	/// <returns>
+	/// Whether there was enough mana to be used
+	/// </returns>
+	/// <param name='amount'>
+	/// The amount of mana to be spent
+	/// </param>
 	public bool UseMana(int amount)
 	{
 		if (mana < amount)
@@ -377,8 +523,6 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 		return true;
 	}
 	
-	#endregion
-	
 	#region Death Logic
 	
 	/// <summary>
@@ -390,7 +534,7 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 	public void TakeDamage(AOC2Delivery deliv)
 	{
 		int damage = (int) (((deliv.power) - (GetStat(AOC2Values.UnitStat.DEFENSE) * BASE_DEFENSE_MOD)) * AOC2Math.ResistanceMod(GetStat(AOC2Values.UnitStat.RESISTANCE)));
-		if (damage > 0){
+		if (health > 0 && damage > 0){
 			health -= damage;
 			
 			DamageTextPopup(damage);
@@ -416,12 +560,14 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 				}
 			}
 		}
-		else
-		{
-			//Debug.Log("High defense, attack blocked!");
-		}
 	}
 	
+	/// <summary>
+	/// Creates the damage text popup.
+	/// </summary>
+	/// <param name='amount'>
+	/// Amount of damage taken
+	/// </param>
 	void DamageTextPopup(float amount)
 	{
 		AOC2DamageText text = AOC2ManagerReferences.gameUIManager.GrabUIRef(AOC2ManagerReferences.combatPrefabs.damageText, trans.position) 
@@ -429,6 +575,12 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 		text.Init(this, amount);
 	}
 	
+	/// <summary>
+	/// Sets the health bar up to this unit with the proper scaling
+	/// </summary>
+	/// <param name='amount'>
+	/// Amount that health has changed by
+	/// </param>
 	void ManageHealthBar(float amount)
 	{
 		if (healthBar == null)
@@ -440,15 +592,23 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 		healthBar.SetAmounts((health+amount)/GetStat(AOC2Values.UnitStat.HEALTH), ((float)health)/GetStat(AOC2Values.UnitStat.HEALTH));
 	}
 	
+	/// <summary>
+	/// When the health bar pools, releases pointer to health bar
+	/// </summary>
 	void OnHealthBarPool()
 	{
 		healthBar.OnPool -= OnHealthBarPool;
 		healthBar = null;
 	}
 	
+	/// <summary>
+	/// Determines and applies knockback force, overriding the current logic if
+	/// </summary>
+	/// <param name='delivery'>
+	/// Delivery.
+	/// </param>
 	public void Knockback(AOC2Delivery delivery)
 	{
-		//Debug.Log("Knockback");
 		float force = delivery.spellProto.force - mass;
 		
 		if (force > 0)
@@ -467,14 +627,19 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 	}
 	
 	/// <summary>
-	/// Kill this instance.
+	/// Kill and pool this instance.
 	/// </summary>
 	public IEnumerator Die()
 	{
-		//TODO: Play death animation
-		yield return null;
-		if (gameObject.activeSelf){
-	        Pool();
+		
+		_logic.logic.OnExitState();
+		_logic.SetLogic(new AOC2LogicDoNothing(this));
+		
+		model.SetAnimation(AOC2Values.Animations.Anim.DEATH, true);
+		
+		IEnumerator waitUntilAnimated = model.WaitUntilAnimationComplete(AOC2Values.Animations.Anim.DEATH);
+		
+		if (gameObj.activeSelf){
 			
 	        if (OnDeath != null)
 	        {
@@ -490,7 +655,16 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 				AOC2EventManager.Combat.OnPlayerDeath(this);
 			}
 			
+		}		
+		
+		while(waitUntilAnimated.MoveNext())
+		{
+			yield return waitUntilAnimated.Current;
 		}
+		
+		model.SetAnimation(AOC2Values.Animations.Anim.DEATH, false);
+		
+		Pool();
 	}
 	
 	/// <summary>
@@ -554,11 +728,19 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 		return Move(direction, sprintMod * GetStat(AOC2Values.UnitStat.MOVE_SPEED));
 	}
 	
+	#endregion
+	
+	/// <summary>
+	/// Activate this instance.
+	/// </summary>
 	public void Activate()
 	{
 		activated = true;
 	}
 	
+	/// <summary>
+	/// Deactivate this instance.
+	/// </summary>
 	public void Deactivate()
 	{
 		activated = false;
@@ -566,19 +748,29 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 	
 	#endregion
 	
-	#region Collision [Empty]
-	
-
-
-	#endregion
-	
-	#endregion
-	
+	/// <summary>
+	/// Gets the specified stat.
+	/// </summary>
+	/// <returns>
+	/// The value of stat
+	/// </returns>
+	/// <param name='stat'>
+	/// The UnitStat enum 
+	/// </param>
 	public int GetStat(SpellProto.UnitStat stat)
 	{
 		return GetStat((AOC2Values.UnitStat) stat);
 	}
 	
+	/// <summary>
+	/// Gets the specified stat.
+	/// </summary>
+	/// <returns>
+	/// The value of stat
+	/// </returns>
+	/// <param name='stat'>
+	/// The UnitStat enum 
+	/// </param>
 	public int GetStat(AOC2Values.UnitStat stat)
 	{
 		if (equipment != null)
@@ -591,8 +783,19 @@ public class AOC2Unit : AOC2Spawnable, AOC2Poolable {
 		}
 	}
 	
-	public override System.Collections.Generic.Dictionary<AOC2Spawnable, int> GetCounts ()
+	/*
+	/// <summary>
+	/// Gets a dictionary containing a reference to this with a single counter.
+	/// When the spawners check for counts, this will add an entry for this enemy through
+	/// the dictionary merging process.
+	/// </summary>
+	/// <returns>
+	/// A dictionary containing a reference to this unit with a single count
+	/// </returns>
+	public System.Collections.Generic.Dictionary<AOC2Spawnable, int> GetCounts ()
 	{
 		return new System.Collections.Generic.Dictionary<AOC2Spawnable, int>() {{this, 1}};
 	}
+	*/
+
 }

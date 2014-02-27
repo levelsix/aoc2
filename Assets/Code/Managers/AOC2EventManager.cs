@@ -63,10 +63,12 @@ public static class AOC2EventManager
 		public static Action<AOC2Unit, int> OnPlayerHealthChange;
 		public static Action<AOC2Unit> OnPlayerManaChange;
 		
-		public static Action OnEnemiesClear;
 		public static Action OnPlayerVictory;
 		
-		public static Action<int> SetPlayerAttack;
+		public static Action<int> SetPlayerAbility;
+		public static Action UseQueuedPlayerAbility;
+		
+		public static Action<AOC2Objective> OnObjectiveComplete;
 		
 		/// <summary>
 		/// The on ability cooldown.

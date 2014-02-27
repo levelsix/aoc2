@@ -17,9 +17,9 @@ namespace proto
     public SelectUserClassTypeRequestProto() {}
     
 
-    private proto.ClassType _classType = proto.ClassType.NOOB;
+    private proto.ClassType _classType = proto.ClassType.ALL;
     [global::ProtoBuf.ProtoMember(2, IsRequired = false, Name=@"classType", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
-    [global::System.ComponentModel.DefaultValue(proto.ClassType.NOOB)]
+    [global::System.ComponentModel.DefaultValue(proto.ClassType.ALL)]
     public proto.ClassType classType
     {
       get { return _classType; }

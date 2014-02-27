@@ -48,9 +48,9 @@ public static class AOC2Values
 			{Scenes.DUNGEON_TEST_SCENE, "DungeonTestScene"}
         };
         
-        public static void ChangeScene(Scenes scene)
+        public static AsyncOperation ChangeScene(Scenes scene)
         {
-            UnityEngine.Application.LoadLevel(sceneDict[scene]);
+            return UnityEngine.Application.LoadLevelAsync(sceneDict[scene]);
         }
     }
 	

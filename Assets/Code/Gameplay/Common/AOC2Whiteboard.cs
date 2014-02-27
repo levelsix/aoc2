@@ -6,4 +6,6 @@ public static class AOC2Whiteboard {
 
 	public static ClassType playerClass;
 	
+	public static AOC2DungeonData dungeonData;
+	
 }

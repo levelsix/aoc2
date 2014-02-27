@@ -23,16 +23,18 @@ public class AOC2AbilityLists : MonoBehaviour{
 			
 	}
 	
-	void Awake()
+	void Start()
 	{
 		AOC2ManagerReferences.abilityList = this;
 		
 		if (!defined)
 		{
+			#region Ability Declarations
 			
 			#region Generic
 			
 			#region Basic Melee
+			Generic.baseMeleeAttackProto.spellID = 0;
 			Generic.baseMeleeAttackProto.name = "Basic Melee Attack";
 			Generic.baseMeleeAttackProto.classType = ClassType.ALL;
 			Generic.baseMeleeAttackProto.function = SpellProto.SpellFunctionType.ATTACK;
@@ -54,6 +56,7 @@ public class AOC2AbilityLists : MonoBehaviour{
 			Generic.baseMeleeAttackProto.stat = SpellProto.UnitStat.STRENGTH;
 			#endregion
 			#region Basic Range
+			Generic.baseMeleeAttackProto.spellID = 1;
 			Generic.baseRangeAttackProto.name = "Basic Range Attack";
 			Generic.baseRangeAttackProto.classType = ClassType.ALL;
 			Generic.baseRangeAttackProto.function = SpellProto.SpellFunctionType.ATTACK;
@@ -80,6 +83,7 @@ public class AOC2AbilityLists : MonoBehaviour{
 			#region Warrior
 			
 			#region Power Attack
+			Warrior.powerAttackProto.spellID = 2;
 			Warrior.powerAttackProto.name = "Power Attack";
 			Warrior.powerAttackProto.classType = ClassType.WARRIOR;
 			Warrior.powerAttackProto.function = SpellProto.SpellFunctionType.ATTACK;
@@ -99,8 +103,10 @@ public class AOC2AbilityLists : MonoBehaviour{
 			Warrior.powerAttackProto.castTime = 0.3f;
 			Warrior.powerAttackProto.coolDown = 5f;
 			Warrior.powerAttackProto.stat = SpellProto.UnitStat.STRENGTH;
+			Warrior.powerAttackProto.range = 5f;
 			#endregion
 			#region Iron Will
+			Warrior.ironWillProto.spellID = 3;
 			Warrior.ironWillProto.name = "Iron Will";
 			Warrior.ironWillProto.classType = ClassType.WARRIOR;
 			Warrior.ironWillProto.function = SpellProto.SpellFunctionType.BUFF;
@@ -115,13 +121,14 @@ public class AOC2AbilityLists : MonoBehaviour{
 			Warrior.ironWillProto.particleDuration = 0.3f;
 			Warrior.ironWillProto.hitsPerParticle = 1;
 			Warrior.ironWillProto.deliverySpeed = 0;
-			Warrior.ironWillProto.targetted = true;
+			Warrior.ironWillProto.targetted = false;
 			Warrior.ironWillProto.size = 1f;
 			Warrior.ironWillProto.castTime = 0.5f;
 			Warrior.ironWillProto.coolDown = 20f;
 			Warrior.ironWillProto.stat = SpellProto.UnitStat.RESISTANCE;
 			#endregion
 			#region Cleave
+			Warrior.cleaveProto.spellID = 4;
 			Warrior.cleaveProto.name = "Cleave";
 			Warrior.cleaveProto.classType = ClassType.WARRIOR;
 			Warrior.cleaveProto.function = SpellProto.SpellFunctionType.ATTACK;
@@ -149,6 +156,7 @@ public class AOC2AbilityLists : MonoBehaviour{
 			#region Archer
 			
 			#region Power Shot
+			Archer.powerShotProto.spellID = 5;
 			Archer.powerShotProto.name = "Power Shot";
 			Archer.powerShotProto.stat = SpellProto.UnitStat.STRENGTH;
 			Archer.powerShotProto.function = SpellProto.SpellFunctionType.ATTACK;
@@ -168,6 +176,7 @@ public class AOC2AbilityLists : MonoBehaviour{
 			Archer.powerShotProto.targetted = true;
 			#endregion
 			#region Marksman
+			Archer.marksmanProto.spellID = 6;
 			Archer.marksmanProto.name = "Marksman";
 			Archer.marksmanProto.stat = SpellProto.UnitStat.ATTACK_SPEED;
 			Archer.marksmanProto.function = SpellProto.SpellFunctionType.BUFF;
@@ -182,9 +191,10 @@ public class AOC2AbilityLists : MonoBehaviour{
 			Archer.marksmanProto.size = .1f;
 			Archer.marksmanProto.castTime = .5f;
 			Archer.marksmanProto.coolDown = 20f;
-			Archer.marksmanProto.targetted = true;
+			Archer.marksmanProto.targetted = false;
 			#endregion
 			#region Fan Shot
+			Archer.fanShotProto.spellID = 7;
 			Archer.fanShotProto.name = "Fan of Arrows";
 			Archer.fanShotProto.stat = SpellProto.UnitStat.STRENGTH;
 			Archer.fanShotProto.function = SpellProto.SpellFunctionType.ATTACK;
@@ -205,6 +215,7 @@ public class AOC2AbilityLists : MonoBehaviour{
 			Archer.fanShotProto.hitsPerParticle = 1;
 			#endregion
 			#region Arrow Rain
+			Archer.arrowRainProto.spellID = 8;
 			Archer.arrowRainProto.name = "Rain of Arrows";
 			Archer.arrowRainProto.stat = SpellProto.UnitStat.STRENGTH;
 			Archer.arrowRainProto.function = SpellProto.SpellFunctionType.ATTACK;
@@ -216,7 +227,7 @@ public class AOC2AbilityLists : MonoBehaviour{
 			Archer.arrowRainProto.deliveryDuration = 1;
 			Archer.arrowRainProto.particleDuration = .2f;
 			Archer.arrowRainProto.numberParticles = 20;
-			Archer.arrowRainProto.size = .2f;
+			Archer.arrowRainProto.size = 1f;
 			Archer.arrowRainProto.area = 5;
 			Archer.arrowRainProto.castTime = .5f;
 			Archer.arrowRainProto.coolDown = 10;
@@ -228,6 +239,7 @@ public class AOC2AbilityLists : MonoBehaviour{
 			#region Wizard
 			
 			#region Lightning Strike
+			Wizard.lightningStrikeProto.spellID = 9;
 			Wizard.lightningStrikeProto.name = "Lightning Strike";
 			Wizard.lightningStrikeProto.stat = SpellProto.UnitStat.STRENGTH;
 			Wizard.lightningStrikeProto.function = SpellProto.SpellFunctionType.ATTACK;
@@ -238,18 +250,21 @@ public class AOC2AbilityLists : MonoBehaviour{
 			Wizard.lightningStrikeProto.force = 1.5f;
 			Wizard.lightningStrikeProto.particleDuration = 0.3f;
 			Wizard.lightningStrikeProto.numberParticles = 1;
+			Wizard.lightningStrikeProto.hitsPerParticle = 2;
 			Wizard.lightningStrikeProto.size = 1;
 			Wizard.lightningStrikeProto.castTime = .3f;
 			Wizard.lightningStrikeProto.coolDown = 4;
 			Wizard.lightningStrikeProto.range = 5;
+			Wizard.lightningStrikeProto.retargetTime = 1f;
 			Wizard.lightningStrikeProto.particleType = SpellProto.SpellParticleType.LIGHTNING;
 			#endregion
 			#region Ice Armor
+			Wizard.iceArmorProto.spellID = 10;
 			Wizard.iceArmorProto.name = "Ice Armor";
 			Wizard.iceArmorProto.stat = SpellProto.UnitStat.DEFENSE;
 			Wizard.iceArmorProto.function = SpellProto.SpellFunctionType.BUFF;
 			Wizard.iceArmorProto.targetType = SpellProto.SpellTargetType.SELF;
-			Wizard.iceArmorProto.targetted = true;
+			Wizard.iceArmorProto.targetted = false;
 			Wizard.iceArmorProto.strength = 40;
 			Wizard.iceArmorProto.manaCost = 30;
 			Wizard.iceArmorProto.deliveryDuration = 10;
@@ -260,6 +275,7 @@ public class AOC2AbilityLists : MonoBehaviour{
 			Wizard.iceArmorProto.coolDown = 20;
 			#endregion
 			#region Propulsion
+			Wizard.propulsionProto.spellID = 11;
 			Wizard.propulsionProto.name = "Propulsion";
 			Wizard.propulsionProto.stat = SpellProto.UnitStat.STRENGTH;
 			Wizard.propulsionProto.function = SpellProto.SpellFunctionType.ATTACK;
@@ -268,7 +284,7 @@ public class AOC2AbilityLists : MonoBehaviour{
 			Wizard.propulsionProto.directionType = SpellProto.SpellDirectionType.STRAIGHT;
 			Wizard.propulsionProto.strength = 1.6f;
 			Wizard.propulsionProto.manaCost = 50;
-			Wizard.propulsionProto.force = 4;
+			Wizard.propulsionProto.force = 8;
 			Wizard.propulsionProto.deliveryDuration = .5f;
 			Wizard.propulsionProto.deliverySpeed = 15;
 			Wizard.propulsionProto.particleDuration = .3f;
@@ -280,13 +296,14 @@ public class AOC2AbilityLists : MonoBehaviour{
 			Wizard.propulsionProto.particleType = SpellProto.SpellParticleType.STARFALL;
 			#endregion
 			#region Ball Lightning
+			Wizard.ballLightningProto.spellID = 12;
 			Wizard.ballLightningProto.name = "Ball Lightning";
 			Wizard.ballLightningProto.stat = SpellProto.UnitStat.STRENGTH;
 			Wizard.ballLightningProto.function = SpellProto.SpellFunctionType.ATTACK;
 			Wizard.ballLightningProto.targetted = false;
 			Wizard.ballLightningProto.targetType = SpellProto.SpellTargetType.PERSONAL;
 			Wizard.ballLightningProto.directionType = SpellProto.SpellDirectionType.SCATTERED;
-			Wizard.ballLightningProto.strength = 1.2f;
+			Wizard.ballLightningProto.strength = .8f;
 			Wizard.ballLightningProto.manaCost = 30;
 			Wizard.ballLightningProto.force = 1;
 			Wizard.ballLightningProto.deliveryDuration = 1;
@@ -298,12 +315,35 @@ public class AOC2AbilityLists : MonoBehaviour{
 			Wizard.ballLightningProto.castTime = .3f;
 			Wizard.ballLightningProto.coolDown = 8;
 			Wizard.ballLightningProto.hitsPerParticle = 1;
+			Wizard.ballLightningProto.particleType = SpellProto.SpellParticleType.SHOCK;
+			
 			#endregion
 			
 			#endregion
+			
+			#endregion
+			
+			Load(Generic.baseMeleeAttackProto);
+			Load(Generic.baseRangeAttackProto);
+			Load(Warrior.powerAttackProto);
+			Load(Warrior.ironWillProto);
+			Load(Warrior.cleaveProto);
+			Load(Archer.powerShotProto);
+			Load(Archer.marksmanProto);
+			Load(Archer.fanShotProto);
+			Load(Archer.arrowRainProto);
+			Load(Wizard.lightningStrikeProto);
+			Load(Wizard.iceArmorProto);
+			Load(Wizard.propulsionProto);
+			Load(Wizard.ballLightningProto);
 			
 			defined = true;
 		}
+	}
+	
+	void Load(SpellProto proto)
+	{
+		AOC2ManagerReferences.dataManager.Load(proto, proto.spellID);
 	}
     
 	public static class Warrior

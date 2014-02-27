@@ -40,6 +40,13 @@ namespace proto
       get { return _monsters; }
     }
   
+    private readonly global::System.Collections.Generic.List<int> _spawnPoint = new global::System.Collections.Generic.List<int>();
+    [global::ProtoBuf.ProtoMember(4, Name=@"spawnPoint", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
+    public global::System.Collections.Generic.List<int> spawnPoint
+    {
+      get { return _spawnPoint; }
+    }
+  
     private global::ProtoBuf.IExtension extensionObject;
     global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
       { return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing); }

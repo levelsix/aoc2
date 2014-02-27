@@ -8,6 +8,9 @@ using System.Collections;
 /// </summary>
 public abstract class AOC2UnitLogic : MonoBehaviour {
 	
+	/// <summary>
+	/// The heirarchical FSM at the top of this unit's logic
+	/// </summary>
 	public AOC2HFSMLogic logic;
 	
 	/// <summary>
@@ -20,6 +23,13 @@ public abstract class AOC2UnitLogic : MonoBehaviour {
 		StartCoroutine(logic.Logic());
 	}
 	
+	/// <summary>
+	/// Sets the current logic to a different state, initializing that state.
+	/// Checks if the current state can be changed to that state.
+	/// </summary>
+	/// <param name='state'>
+	/// State to change current logic to
+	/// </param>
 	virtual public void SetLogic(AOC2LogicState state)
 	{
 		if (logic.current == null)
@@ -34,53 +44,5 @@ public abstract class AOC2UnitLogic : MonoBehaviour {
 			logic.current = state;
 		}
 	}
-	
-	/*
-	/// <summary>
-	/// Runs the logic.
-	/// </summary>
-	/// <returns>
-	/// The logic.
-	/// </returns>
-	virtual public IEnumerator Logic() 
-	{
-		while(true)
-		{
-			if (_current != null)
-			{
-				//First, check for exits
-				AOC2LogicState change = _current.GetExit();
-				while (change != null)
-				{
-					//Set up the returned state for the next frame
-					_current = change;
-					_current.Init();
-					
-					//Keep checking if we need to immediately change
-					//state
-					change = _current.GetExit();
-				}
-				
-				if (_current.logic.MoveNext())
-				{
-					//Then, do current state logic
-					object step = _current.logic.Current;
-				
-					//Yield whatever wait the current state had
-					yield return step;
-				}
-				else
-				{
-					yield return null;
-				}
-			}
-			else
-			{
-				//Fallback: return to base state if state is lost
-				_current = _baseState;
-				yield return null;
-			}
-		}
-	}
-	*/
+
 }

@@ -31,8 +31,17 @@ public class AOC2SetAbilityButton : MonoBehaviour {
 	
 	void OnClick()
 	{
-		if (overlay.fillAmount <= .1f && AOC2EventManager.Combat.SetPlayerAttack != null){
-			AOC2EventManager.Combat.SetPlayerAttack(abilityIndex);
+		if (overlay.fillAmount <= .1f && AOC2EventManager.Combat.SetPlayerAbility != null)
+		{
+			AOC2EventManager.Combat.UseQueuedPlayerAbility();
+		}
+	}
+	
+	void OnPress(bool isDown)
+	{
+		if (isDown)
+		{
+			AOC2EventManager.Combat.SetPlayerAbility(abilityIndex);
 		}
 	}
 	

@@ -9,18 +9,18 @@ option java_outer_classname = "Spell";
 
 message SpellProto {
 	optional int32 spellID = 1;
-	required ClassType classType = 2;
+	required ClassType classType = 2 [default = ALL];
 	optional string name = 3;
 
-	optional SpellFunctionType function = 4;
+	optional SpellFunctionType function = 4 [default = ATTACK];
 
-	optional SpellTargetType targetType = 5;
+	optional SpellTargetType targetType = 5 [default = PERSONAL];
 
-	optional SpellDirectionType directionType = 7;
+	optional SpellDirectionType directionType = 7 [default = STRAIGHT];
 
 	optional float strength = 8;
 
-	optional float force = 9; //Physics knockback. Negative force will "pull"
+	optional float force = 9 [default = 1]; //Physics knockback. Negative force will "pull"
 
 	optional int32 manaCost = 10;
 
@@ -30,12 +30,12 @@ message SpellProto {
 	optional float deliveryDuration = 11;
 
 	//The number of attack particles (i.e. Hitboxes) created in one attack
-	optional int32 numberParticles = 12;
+	optional int32 numberParticles = 12 [default = 1];
 
 	//The speed of each particle. 
 	optional float particleSpeed = 13;
 
-	optional float particleDuration = 14;
+	optional float particleDuration = 14 [default = .1];
 
 	//The number of targets that a single delivery particle can make 
 	//contact with.
@@ -43,8 +43,8 @@ message SpellProto {
 
 	optional float deliverySpeed = 16;
 
-	optional bool targetted = 17;
-	optional float size = 18;
+	optional bool targetted = 17 [default = false];
+	optional float size = 18 [default = 1];
 	optional float castTime = 19;
 	optional float coolDown = 20;
 
@@ -96,6 +96,14 @@ message SpellProto {
 		SPHERE = 0;
 		LIGHTNING = 1;
 		STARFALL = 2;
+		SHOCK = 3;
+		DUST = 4;
+		ICICLE = 5;
+		FUTURE1 = 6;
+		FUTURE2 = 7;
+		FUTURE3 = 8;
+		FUTURE4 = 9;
+		FUTURE5 = 10;
 	}
 
 	enum UnitStat {

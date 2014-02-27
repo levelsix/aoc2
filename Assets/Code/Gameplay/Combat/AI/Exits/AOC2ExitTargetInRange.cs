@@ -50,6 +50,12 @@ public class AOC2ExitTargetInRange : AOC2ExitLogicState {
 		return false;
 	}
 	
+	/// <summary>
+	/// Test the specified position
+	/// </summary>
+	/// <param name='pos'>
+	/// The position to test if within range
+	/// </param>
 	public bool Test(Vector3 pos)
 	{
 		return AOC2Math.GroundDistanceSqr(_thisUnit.aPos.position, pos) < _rangeSqr;

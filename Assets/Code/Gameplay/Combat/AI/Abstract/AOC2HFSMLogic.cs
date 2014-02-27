@@ -96,7 +96,7 @@ public class AOC2HFSMLogic : AOC2LogicState {
 			else
 			{
 				//Fallback: return to base state if state is lost
-				current = _baseState;
+				//current = _baseState;
 				yield return null;
 			}
 		}

@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class AOC2GameUIManager : MonoBehaviour {
@@ -35,7 +35,7 @@ public class AOC2GameUIManager : MonoBehaviour {
 	public AOC2Poolable GrabUIRef(AOC2Poolable prefab, Vector3 origin)
 	{
 		AOC2Poolable item = AOC2ManagerReferences.poolManager.Get(prefab, origin);
-		item.transform.parent = trans;
+		item.transf.parent = trans;
 		return item;
 	}
 	

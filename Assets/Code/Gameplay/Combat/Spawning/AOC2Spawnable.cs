@@ -7,12 +7,12 @@ using System.Collections.Generic;
 /// Can also be a group or table that propigate
 /// the spawn call
 /// </summary>
-public abstract class AOC2Spawnable : MonoBehaviour {
+public interface AOC2Spawnable {
 
 	/// <summary>
 	/// Return a spawnable instance
 	/// </summary>
-	abstract public void Spawn(Vector3 origin, Transform parent = null);
+	void Spawn(Vector3 origin, AOC2UnitSpawner parent);
 	
-	abstract public Dictionary<AOC2Spawnable, int> GetCounts();
+	Dictionary<AOC2Unit, int> GetCounts();
 }

@@ -46,7 +46,19 @@ public class AOC2Ability {
 		}
 	}
 		
+	/// <summary>
+	/// Specified by the proto, the distance from the target
+	/// that this ability locks in and starts being used
+	/// </summary>
 	public float range;
+	
+	/// <summary>
+	/// The distance that this attack will actually travel
+	/// during its lifetime. If this is a smaller distance than
+	/// range, the unit using this ability will sprint into 
+	/// attack distance one it is in range.
+	/// </summary>
+	public float attackDistance;
 	
 	public AOC2Ability(string abName, float cast, float cool, int mana, AOC2Values.Abilities.TargetType target,
 		AOC2Values.Animations.Anim anim = AOC2Values.Animations.Anim.ATTACK)
@@ -71,6 +83,16 @@ public class AOC2Ability {
 	
 	public AOC2Ability(SpellProto proto)
 	{
+		InitFromProto (proto);
+	}
+	
+	public AOC2Ability(int spellID)
+	{
+		InitFromProto(AOC2ManagerReferences.dataManager.Get(typeof(SpellProto), spellID) as SpellProto);
+	}
+
+	void InitFromProto (SpellProto proto)
+	{
 		spellProto = proto;
 		
 		name = proto.name;
@@ -79,7 +101,9 @@ public class AOC2Ability {
 		manaCost = proto.manaCost;
 		animation = AOC2Values.Animations.Anim.ATTACK;
 		
-		range = CalculateRange(proto);
+		range = proto.range;
+		
+		attackDistance = CalculateRange(proto);
 	}
 	
 	public float CalculateRange(SpellProto proto)
@@ -90,7 +114,7 @@ public class AOC2Ability {
 		case SpellProto.SpellTargetType.SELF:
 			return 0.5f; //Just to account for small error in floating point math
 		case SpellProto.SpellTargetType.PERSONAL:
-			float delivDist = spellProto.size/2 + spellProto.deliverySpeed * spellProto.deliveryDuration;
+			float delivDist = spellProto.size + spellProto.deliverySpeed * spellProto.deliveryDuration;
 			if (proto.directionType != SpellProto.SpellDirectionType.SCATTERED)
 			{
 				delivDist += spellProto.particleDuration * spellProto.particleSpeed;
@@ -115,7 +139,6 @@ public class AOC2Ability {
 		yield return new WaitForSeconds(coolTime);
 		_onCool = false;
 	}
-
 	
 	/// <summary>
 	/// Use the attack ability. Returns true if the ability was used, false if the ability
@@ -138,33 +161,34 @@ public class AOC2Ability {
 	{
 		if ((ignoreCooldown || !_onCool) && user.UseMana(manaCost))
 		{
+			Vector3 spellOrigin;
+			Vector3 dir;
 			
-			//Future code, for deriving attack data from SpellProto
-			if (spellProto != null)
-			{
-				Vector3 spellOrigin;
-				Vector3 dir;
-				
-				switch (spellProto.targetType) {
-					case SpellProto.SpellTargetType.SELF:
-						spellOrigin = origin;
-						dir = Vector3.zero;
-						break;
-					case SpellProto.SpellTargetType.TARGETTED:
-						spellOrigin = target;
-						dir = Vector3.zero;
-						break;
-					default:
-						spellOrigin = origin;
-						dir = (target - origin).normalized;
-						break;
-				}
-				
-				AOC2Delivery deliv = AOC2ManagerReferences.poolManager.Get (AOC2ManagerReferences.deliveryList.baseDelivery,
-					spellOrigin + dir * user.trans.localScale.x / 2) as AOC2Delivery;
-				
-				InitDelivery(deliv, user, dir);
+			switch (spellProto.targetType) {
+				case SpellProto.SpellTargetType.SELF:
+					spellOrigin = origin;
+					dir = Vector3.zero;
+					break;
+				case SpellProto.SpellTargetType.TARGETTED:
+					spellOrigin = target;
+					dir = Vector3.zero;
+					break;
+				default:
+					spellOrigin = origin;
+					dir = (target - origin).normalized;
+					break;
 			}
+			
+			AOC2Delivery deliv = AOC2ManagerReferences.poolManager.Get (AOC2ManagerReferences.deliveryList.baseDelivery,
+				spellOrigin + dir * user.trans.localScale.x / 2) as AOC2Delivery;
+			
+			InitDelivery(deliv, user, dir);
+			
+			if (spellProto.targetType == SpellProto.SpellTargetType.SELF)
+			{
+				
+			}
+			
 			AOC2ManagerReferences.combatManager.CoolAbility(this, user);
 			return true;
 		}
@@ -203,7 +227,7 @@ public class AOC2Ability {
 			}
 		}
 		
-		deliv.trans.parent = user.trans.parent;
+		deliv.trans.parent = null;
 		
 		deliv.Init(spellProto, (int)(spellProto.strength * user.GetStat(AOC2Values.UnitStat.STRENGTH)), dir);
         
@@ -214,4 +238,5 @@ public class AOC2Ability {
 		
 		deliv.trans.localScale = new Vector3(spellProto.size, spellProto.size, spellProto.size);
 	}
+
 }

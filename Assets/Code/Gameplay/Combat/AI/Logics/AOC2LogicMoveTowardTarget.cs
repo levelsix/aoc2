@@ -25,9 +25,12 @@ public class AOC2LogicMoveTowardTarget : AOC2LogicState {
 	{
 	}
 	
+	/// <summary>
+	/// Stops the animation when leaving the state
+	/// </summary>
 	public override void OnExitState()
 	{
-		_user.model.SetAnimationFlag(AOC2Values.Animations.Anim.WALK, false);
+		_user.model.SetAnimation(AOC2Values.Animations.Anim.WALK, false);
 	}
 
 	/// <summary>
@@ -35,7 +38,7 @@ public class AOC2LogicMoveTowardTarget : AOC2LogicState {
 	/// </summary>
 	public override IEnumerator Logic ()
 	{
-		_user.model.SetAnimationFlag(AOC2Values.Animations.Anim.WALK, true);
+		_user.model.SetAnimation(AOC2Values.Animations.Anim.WALK, true);
 		while (true)
 		{
 			_user.Move(_user.targetPos.position - _user.aPos.position);

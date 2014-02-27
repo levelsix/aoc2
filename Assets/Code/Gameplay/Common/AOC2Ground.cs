@@ -43,7 +43,7 @@ public class AOC2Ground : MonoBehaviour {
 	/// </summary>
 	void Start ()
 	{
-		//transform.rotation = Camera.main.transform.rotation;
+		transform.rotation = Camera.main.transform.rotation;
 		
 		float halfWidth = AOC2ManagerReferences.gridManager.worldSize / 2;
 		

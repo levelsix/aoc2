@@ -26,6 +26,15 @@ public class AOC2LocalPlayerController : MonoBehaviour {
 	/// </summary>
 	public AOC2Player player;
 	
+	private int queuedAbilityIndex = -1;
+	
+	private bool queuedAbility{
+		get
+		{
+			return queuedAbilityIndex >= 0;
+		}
+	}
+	
 	public Transform moveCursor;
 	
 	const int QUEUE_MAX = 16;
@@ -61,7 +70,9 @@ public class AOC2LocalPlayerController : MonoBehaviour {
 	{
 		AOC2EventManager.Controls.OnTap[0] += OnTap;
 		AOC2EventManager.Controls.OnDoubleTap[0] += OnDoubleTap;
-		AOC2EventManager.Combat.SetPlayerAttack += SetPlayerAttack;
+		AOC2EventManager.Controls.OnStartHold[0] += OnStartHoldOne;
+		AOC2EventManager.Combat.SetPlayerAbility += SetPlayerAttack;
+		AOC2EventManager.Combat.UseQueuedPlayerAbility += UseQueuedAbility;
 		AOC2EventManager.Combat.OnEnemyDeath += OnEnemyDeath;
 		unit.OnDamage += OnDamage;
 		//unit.OnAnimationEnd += OnAnimationEnd;
@@ -75,7 +86,9 @@ public class AOC2LocalPlayerController : MonoBehaviour {
 	{
 		AOC2EventManager.Controls.OnTap[0] -= OnTap;
 		AOC2EventManager.Controls.OnDoubleTap[0] -= OnDoubleTap;
-		AOC2EventManager.Combat.SetPlayerAttack -= SetPlayerAttack;
+		AOC2EventManager.Controls.OnStartHold[0] -= OnStartHoldOne;
+		AOC2EventManager.Combat.SetPlayerAbility -= SetPlayerAttack;
+		AOC2EventManager.Combat.UseQueuedPlayerAbility -= UseQueuedAbility;
 		AOC2EventManager.Combat.OnEnemyDeath -= OnEnemyDeath;
 		unit.OnDamage -= OnDamage;
 		//unit.OnAnimationEnd -= OnAnimationEnd;
@@ -108,7 +121,22 @@ public class AOC2LocalPlayerController : MonoBehaviour {
 	/// </param>
 	void SetPlayerAttack(int index)
 	{
-		player.UseAbility(index);
+		//player.UseAbility(index);
+		queuedAbilityIndex = index;
+	}
+	
+	void UseQueuedAbility()
+	{
+		UseQueuedAbility(false);
+	}
+	
+	void UseQueuedAbility(bool quick)
+	{
+		if (queuedAbility)
+		{
+			player.UseAbility(queuedAbilityIndex, quick);
+			queuedAbilityIndex = -1;
+		}
 	}
 	
 	/// <summary>
@@ -134,14 +162,22 @@ public class AOC2LocalPlayerController : MonoBehaviour {
 	/// </param>
 	void OnTap(AOC2TouchData data)
 	{
-		AOC2Unit enemyTarget = TryTargetEnemy(data.pos);
-		if (enemyTarget != null)
+		if (queuedAbility)
 		{
-			player.TargetEnemy(enemyTarget);
+			SetGroundTarget(data.pos);
+			UseQueuedAbility(true);
 		}
 		else
 		{
-			SetGroundTarget(data.pos);
+			AOC2Unit enemyTarget = TryTargetEnemy(data.pos);
+			if (enemyTarget != null)
+			{
+				player.TargetEnemy(enemyTarget);
+			}
+			else
+			{
+				SetGroundTarget(data.pos);
+			}
 		}
 	}
 	
@@ -163,7 +199,7 @@ public class AOC2LocalPlayerController : MonoBehaviour {
 	
 	void ClearTargets()
 	{
-		player.attackTarget = null;
+		player.unit.targetUnit = null;
 		targetQueue.Clear();
 		AOC2ManagerReferences.combatManager.TargetNone();
 	}
@@ -191,7 +227,7 @@ public class AOC2LocalPlayerController : MonoBehaviour {
 	public void EnqueueTarget(AOC2Unit target)
 	{
 		moveCursor.gameObject.SetActive(false);
-		if (player.attackTarget == null)
+		if (player.unit.targetUnit == null)
 		{
 			player.TargetEnemy(target);
 		}
@@ -213,6 +249,17 @@ public class AOC2LocalPlayerController : MonoBehaviour {
 			ClearTargets();
 			unit.targetPos = new AOC2Position(unit.aPos.position);
 		}
+	}
+	
+	public void OnStartHoldOne(AOC2TouchData data)
+	{
+		SetGroundTarget(data.pos);
+		SetPlayerAttack(0);
+	}
+	
+	public void OnStartHoldTwo(AOC2TouchData data)
+	{
+		
 	}
 	
 	public void OnAnimationEnd()

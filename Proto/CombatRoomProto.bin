@@ -1,9 +1,11 @@
 
-ê
-CombatRoomProto.protoproto"D
+§
+CombatRoomProto.protoproto"X
 CombatRoomProto
 roomID (
 dungeon (
-monsters (B*
+monsters (
+
+spawnPoint (B*
 com.lvl6.aoc2.noneventprotosB
 CombatRoom

@@ -11,6 +11,6 @@ public class AOC2PrototypeChooseClassButton : MonoBehaviour {
 	{
 		AOC2Whiteboard.playerClass = classType;
 		
-		AOC2Values.Scene.ChangeScene(AOC2Values.Scene.Scenes.DUNGEON_TEST_SCENE);
+		AOC2ManagerReferences.dataManager.LoadLevel(AOC2MonsterList.roomA);
 	}
 }

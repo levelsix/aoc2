@@ -104,10 +104,10 @@ public class AOC2Sprite : MonoBehaviour {
 	public void MakeGroundMesh(float halfWidth)
 	{
 		Vector3[] vertices = {
-			new Vector3(-halfWidth, 0, -halfWidth),
-			new Vector3(-halfWidth, 0, halfWidth),
-			new Vector3(halfWidth, 0, halfWidth),
-			new Vector3(halfWidth, 0, -halfWidth)
+			new Vector3(-halfWidth, -halfWidth),
+			new Vector3(-halfWidth, halfWidth),
+			new Vector3(halfWidth, halfWidth),
+			new Vector3(halfWidth, -halfWidth)
 		};
 		
 		MakeSpriteMesh(vertices);
@@ -122,7 +122,7 @@ public class AOC2Sprite : MonoBehaviour {
 	public void MakeSpriteMesh(Vector3[] vertices)
 	{
 		_mesh = new Mesh();
-		_filter.sharedMesh = _mesh;
+		_filter.mesh = _mesh;
 		
 		int[] triangles = { 0, 1, 2, 2, 3, 0 };
 		
@@ -154,8 +154,8 @@ public class AOC2Sprite : MonoBehaviour {
 	/// </param>
 	public void SetColor(Color color)
 	{
-		//Color[] colors = {color, color, color, color};
-		//_mesh.colors = colors;
+		Color[] colors = {color, color, color, color};
+		_mesh.colors = colors;
 	}
 	
 	#endregion

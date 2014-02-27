@@ -25,6 +25,9 @@ public class AOC2UnitLogicHuntTargets : AOC2UnitLogic {
 		_unit = GetComponent<AOC2Unit>();
 	}
 	
+	/// <summary>
+	/// Start this instance.
+	/// </summary>
 	void Start()
 	{
 		_unit.Deactivate();
@@ -42,9 +45,9 @@ public class AOC2UnitLogicHuntTargets : AOC2UnitLogic {
 		doNothing.AddExit(new AOC2ExitPlayerInRange(chase, _unit, range));
 		
 		chase.AddExit(new AOC2ExitNoPlayerWithinRange(doNothing, _unit, range));
-		chase.AddExit(new AOC2ExitTargetInRange(basicAttack, _unit, _unit.basicAttackAbility.range));
+		chase.AddExit(new AOC2ExitTargetInRange(basicAttack, _unit, _unit.basicAttackAbility.attackDistance));
 		
-		basicAttack.AddExit(new AOC2ExitNoPlayerWithinRange(chase, _unit, _unit.basicAttackAbility.range));
+		basicAttack.AddExit(new AOC2ExitNoPlayerWithinRange(chase, _unit, _unit.basicAttackAbility.attackDistance));
 		
 		logic = new AOC2HFSMLogic(doNothing, _unit);
 		

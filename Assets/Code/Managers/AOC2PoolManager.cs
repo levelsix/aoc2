@@ -22,6 +22,7 @@ public class AOC2PoolManager : MonoBehaviour {
 	{
 		pools = new Dictionary<AOC2Poolable, List<AOC2Poolable>>();
 		AOC2ManagerReferences.poolManager = this;
+		DontDestroyOnLoad(gameObject);
 	}
 	
 	/// <summary>
@@ -44,7 +45,7 @@ public class AOC2PoolManager : MonoBehaviour {
 			pooled = pools[prefab][0];
 			pools[prefab].RemoveAt(0);
 			
-			pooled.transform.position = pos;
+			pooled.transf.position = pos;
 		}
 		else
 		{
@@ -53,8 +54,8 @@ public class AOC2PoolManager : MonoBehaviour {
 		}
 		
 		//Set it back up.
-		pooled.transform.parent = null;
-		pooled.gameObject.SetActive(true);
+		pooled.transf.parent = null;
+		pooled.gObj.SetActive(true);
 		
 		return pooled;
 		
@@ -69,7 +70,7 @@ public class AOC2PoolManager : MonoBehaviour {
 	public void Pool(AOC2Poolable pooled)
 	{
 		//Disable the poolable
-		pooled.gameObject.SetActive(false);
+		pooled.gObj.SetActive(false);
 		
 		//Short the function if this object isn't set up to pool; we'll just
 		//leave it disabled until the scene change
@@ -86,7 +87,7 @@ public class AOC2PoolManager : MonoBehaviour {
 		
 		//Add it to the pool
 		pools[pooled.prefab].Add(pooled);
-		pooled.transform.parent = transform;
+		pooled.transf.parent = transform;
 	}
 	
 	/// <summary>
@@ -117,6 +118,32 @@ public class AOC2PoolManager : MonoBehaviour {
 		for (int i = 0; i < count; i++) 
 		{
 			Warm (poolable);
+		}
+	}
+	
+	/// <summary>
+	/// Clean all of the pools
+	/// </summary>
+	public void Clean()
+	{
+		foreach (AOC2Poolable item in pools.Keys) 
+		{
+			Clean(item);
+		}
+	}
+	
+	/// <summary>
+	/// Clean the specified prefab from the pool by deleting all
+	/// references to pooled instances of it.
+	/// </summary>
+	/// <param name='prefab'>
+	/// Prefab to clean.
+	/// </param>
+	public void Clean(AOC2Poolable prefab)
+	{
+		foreach (AOC2Poolable item in pools[prefab])
+		{
+			Destroy(item.gObj);
 		}
 	}
 }

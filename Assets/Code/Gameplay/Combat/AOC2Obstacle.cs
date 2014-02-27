@@ -9,9 +9,17 @@ using System.Collections;
 /// </summary>
 public class AOC2Obstacle : MonoBehaviour {
 	
+	/// <summary>
+	/// The spawn point that must be completed to remove this
+	/// obstacle
+	/// </summary>
 	[SerializeField]
 	AOC2UnitSpawner spawnerTrigger;
 	
+	/// <summary>
+	/// Raises the enable event.
+	/// Registers event delegates, insuring that a spawn trigger is assigned
+	/// </summary>
 	void OnEnable()
 	{
 		if (spawnerTrigger == null)
@@ -24,14 +32,17 @@ public class AOC2Obstacle : MonoBehaviour {
 		}
 	}
 	
+	/// <summary>
+	/// Releases event delegates
+	/// </summary>
 	void OnDisable()
 	{
-		if (spawnerTrigger != null)
-		{
-			spawnerTrigger.OnDefeat -= OnTrigger;
-		}
+		spawnerTrigger.OnDefeat -= OnTrigger;
 	}
 	
+	/// <summary>
+	/// When triggered by a spawn point's completion, disables itself
+	/// </summary>
 	void OnTrigger()
 	{
 		gameObject.SetActive(false);

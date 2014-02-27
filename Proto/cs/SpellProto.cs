@@ -52,9 +52,9 @@ namespace proto
       set { _function = value; }
     }
 
-    private proto.SpellProto.SpellTargetType _targetType = proto.SpellProto.SpellTargetType.SELF;
+    private proto.SpellProto.SpellTargetType _targetType = proto.SpellProto.SpellTargetType.PERSONAL;
     [global::ProtoBuf.ProtoMember(5, IsRequired = false, Name=@"targetType", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
-    [global::System.ComponentModel.DefaultValue(proto.SpellProto.SpellTargetType.SELF)]
+    [global::System.ComponentModel.DefaultValue(proto.SpellProto.SpellTargetType.PERSONAL)]
     public proto.SpellProto.SpellTargetType targetType
     {
       get { return _targetType; }
@@ -79,9 +79,9 @@ namespace proto
       set { _strength = value; }
     }
 
-    private float _force = default(float);
+    private float _force = (float)1;
     [global::ProtoBuf.ProtoMember(9, IsRequired = false, Name=@"force", DataFormat = global::ProtoBuf.DataFormat.FixedSize)]
-    [global::System.ComponentModel.DefaultValue(default(float))]
+    [global::System.ComponentModel.DefaultValue((float)1)]
     public float force
     {
       get { return _force; }
@@ -106,9 +106,9 @@ namespace proto
       set { _deliveryDuration = value; }
     }
 
-    private int _numberParticles = default(int);
+    private int _numberParticles = (int)1;
     [global::ProtoBuf.ProtoMember(12, IsRequired = false, Name=@"numberParticles", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
-    [global::System.ComponentModel.DefaultValue(default(int))]
+    [global::System.ComponentModel.DefaultValue((int)1)]
     public int numberParticles
     {
       get { return _numberParticles; }
@@ -124,9 +124,9 @@ namespace proto
       set { _particleSpeed = value; }
     }
 
-    private float _particleDuration = default(float);
+    private float _particleDuration = (float)0.1;
     [global::ProtoBuf.ProtoMember(14, IsRequired = false, Name=@"particleDuration", DataFormat = global::ProtoBuf.DataFormat.FixedSize)]
-    [global::System.ComponentModel.DefaultValue(default(float))]
+    [global::System.ComponentModel.DefaultValue((float)0.1)]
     public float particleDuration
     {
       get { return _particleDuration; }
@@ -151,18 +151,18 @@ namespace proto
       set { _deliverySpeed = value; }
     }
 
-    private bool _targetted = default(bool);
+    private bool _targetted = (bool)false;
     [global::ProtoBuf.ProtoMember(17, IsRequired = false, Name=@"targetted", DataFormat = global::ProtoBuf.DataFormat.Default)]
-    [global::System.ComponentModel.DefaultValue(default(bool))]
+    [global::System.ComponentModel.DefaultValue((bool)false)]
     public bool targetted
     {
       get { return _targetted; }
       set { _targetted = value; }
     }
 
-    private float _size = default(float);
+    private float _size = (float)1;
     [global::ProtoBuf.ProtoMember(18, IsRequired = false, Name=@"size", DataFormat = global::ProtoBuf.DataFormat.FixedSize)]
-    [global::System.ComponentModel.DefaultValue(default(float))]
+    [global::System.ComponentModel.DefaultValue((float)1)]
     public float size
     {
       get { return _size; }
@@ -336,7 +336,31 @@ namespace proto
       LIGHTNING = 1,
             
       [global::ProtoBuf.ProtoEnum(Name=@"STARFALL", Value=2)]
-      STARFALL = 2
+      STARFALL = 2,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"SHOCK", Value=3)]
+      SHOCK = 3,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"DUST", Value=4)]
+      DUST = 4,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"ICICLE", Value=5)]
+      ICICLE = 5,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"FUTURE1", Value=6)]
+      FUTURE1 = 6,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"FUTURE2", Value=7)]
+      FUTURE2 = 7,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"FUTURE3", Value=8)]
+      FUTURE3 = 8,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"FUTURE4", Value=9)]
+      FUTURE4 = 9,
+            
+      [global::ProtoBuf.ProtoEnum(Name=@"FUTURE5", Value=10)]
+      FUTURE5 = 10
     }
   
     [global::ProtoBuf.ProtoContract(Name=@"UnitStat")]

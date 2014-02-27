@@ -68,6 +68,9 @@ public class AOC2TouchData
 	/// </summary>
 	public int count = 1;
 	
+	/// <summary>
+	/// The identifier.
+	/// </summary>
 	public int id;
 	
 	/// <summary>
@@ -114,8 +117,7 @@ public class AOC2TouchData
 	/// <value>
 	/// The movement.
 	/// </value>
-	public Vector2 Movement
-	{
+	public Vector2 Movement{
 		get
 		{
 			return pos - _initialPos;
@@ -126,8 +128,7 @@ public class AOC2TouchData
 	/// Gets the square distance between the initial
 	/// touch and the current position.
 	/// </summary>
-	public float SqrDist
-	{
+	public float SqrDist{
 		get
 		{
 			float dy = _initialPos.y - pos.y;
@@ -155,6 +156,12 @@ public class AOC2TouchData
 		init(_pos);
 	}
 	
+	/// <summary>
+	/// Init this touch data at the specified position
+	/// </summary>
+	/// <param name='_pos'>
+	/// Starting position for this touch
+	/// </param>
 	public void init(Vector2 _pos)
 	{
 		_initialPos = _pos;
@@ -166,6 +173,12 @@ public class AOC2TouchData
 	
 	#endregion
 	
+	/// <summary>
+	/// Update this touch data with time and state
+	/// </summary>
+	/// <param name='time'>
+	/// Time since last frame.
+	/// </param>
 	public void Update(float time)
 	{
 		_lifetime += time;

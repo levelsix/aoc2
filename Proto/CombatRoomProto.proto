@@ -8,4 +8,5 @@ message CombatRoomProto {
 	optional int32 roomID = 1;
 	optional int32 dungeon = 2;
 	repeated int32 monsters = 3;
+	repeated int32 spawnPoint = 4;
 }

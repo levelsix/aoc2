@@ -10,14 +10,29 @@ using System.Collections.Generic;
 /// </summary>
 public class AOC2LogicFollowPath : AOC2LogicState {
 	
+	/// <summary>
+	/// The path of grid nodes
+	/// </summary>
 	Stack<AOC2GridNode> path;
 	
+	/// <summary>
+	/// The logic for moving towards the next target position
+	/// </summary>
 	AOC2LogicMoveTowardTarget followLogic;
 	
+	/// <summary>
+	/// An exit state set up to check when to grab the next node
+	/// </summary>
 	AOC2ExitTargetInRange newNodeLogic;
 	
-	AOC2Position destination;
-	
+	/// <summary>
+	/// Gets the next node position, popping the list in the process.
+	/// If there isn't another node, sets the state to complete and sets the final
+	/// target position
+	/// </summary>
+	/// <value>
+	/// The next node position.
+	/// </value>
 	Vector3 nextNodePos{
 		get
 		{
@@ -33,6 +48,12 @@ public class AOC2LogicFollowPath : AOC2LogicState {
 		}
 	}
 	
+	/// <summary>
+	/// Initializes a new instance of the <see cref="AOC2LogicFollowPath"/> class.
+	/// </summary>
+	/// <param name='thisUnit'>
+	/// This unit.
+	/// </param>
 	public AOC2LogicFollowPath(AOC2Unit thisUnit)
 		: base(thisUnit)
 	{
@@ -40,14 +61,14 @@ public class AOC2LogicFollowPath : AOC2LogicState {
 		newNodeLogic = new AOC2ExitTargetInRange(null, _user, AOC2ManagerReferences.gridManager.spaceSize / 2);
 	}
 	
+	/// <summary>
+	/// Initilzie this instance by calling the Pathfinder function to generate the path
+	/// </summary>
 	public override void Init ()
 	{
 		base.Init();
 		
 		_user.currentLogicState = "Path";
-		
-		//Store target position for when we exit
-		destination = _user.targetPos;
 		
 		path = AOC2Pathfind.aStar(
 		 	new AOC2GridNode(AOC2ManagerReferences.gridManager.PointToGridCoords(_user.aPos.position)),
@@ -57,18 +78,15 @@ public class AOC2LogicFollowPath : AOC2LogicState {
 		_user.targetPos = new AOC2Position(nextNodePos); //Need a new pos to make sure we aren't messing with an old transform
 	}
 	
-	public override void OnExitState ()
-	{
-		base.OnExitState();
-		
-		//_user.targetPos = destination; 
-	}
-	
+	/// <summary>
+	/// Logic this instance.
+	/// Moves towards the next node in succession
+	/// </summary>
 	public override IEnumerator Logic ()
 	{
 		while(true)
 		{
-			if (newNodeLogic.Test())
+			if (newNodeLogic.Test()) //If we need a new node
 			{
 				_user.targetPos.position = nextNodePos;
 				followLogic.Init();
@@ -81,7 +99,6 @@ public class AOC2LogicFollowPath : AOC2LogicState {
 				yield return null;
 			}
 		}
-		//Debug.Log("Wha?");
 	}
 	
 }

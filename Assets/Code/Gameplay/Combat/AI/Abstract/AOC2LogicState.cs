@@ -8,6 +8,11 @@ using System.Collections.Generic;
 /// </summary>
 public abstract class AOC2LogicState {
 	
+	/// <summary>
+	/// Flag for whether this state can currently be interrupted.
+	/// Manipulated within a state. Can be overridden by states
+	/// with a higher priority value.
+	/// </summary>
 	public bool canBeInterrupt = true;
 	
 	/// <summary>
@@ -21,6 +26,9 @@ public abstract class AOC2LogicState {
 	/// </summary>
 	protected bool _complete;
 	
+	/// <summary>
+	/// The Unit which is using this logic state.
+	/// </summary>
 	protected AOC2Unit _user;
 	
 	/// <summary>
@@ -30,8 +38,14 @@ public abstract class AOC2LogicState {
 	/// </summary>
 	public int priority = 0;
 	
-	virtual public bool Complete
-	{
+	/// <summary>
+	/// Gets or sets a value indicating whether this <see cref="AOC2LogicState"/> is complete.
+	/// Logic for this can be overridden in children.
+	/// </summary>
+	/// <value>
+	/// <c>true</c> if complete; otherwise, <c>false</c>.
+	/// </value>
+	virtual public bool Complete{
 		get
 		{
 			return _complete;

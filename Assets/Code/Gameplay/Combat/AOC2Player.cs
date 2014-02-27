@@ -11,7 +11,15 @@ using proto;
 [RequireComponent (typeof(AOC2Unit))]
 public class AOC2Player : AOC2UnitLogic {
 	
+	/// <summary>
+	/// The distance the player will move upon using the
+	/// travel ability
+	/// </summary>
 	public float rollDist = 3;
+	
+	/// <summary>
+	/// The speed of the travel ability
+	/// </summary>
 	public float rollSpeed = 12;
 	
 	/// <summary>
@@ -20,12 +28,6 @@ public class AOC2Player : AOC2UnitLogic {
 	/// it should not move.
 	/// </summary>
 	public float MIN_MOVE_DIST = .2f;
-	
-	/// <summary>
-	/// Constant for AB testing.
-	/// Flip to change test.
-	/// </summary>
-	public bool A = true;
 	
 	/// <summary>
 	/// DEBUG
@@ -54,25 +56,13 @@ public class AOC2Player : AOC2UnitLogic {
 	public AOC2Ability[] abilities;
 	
 	/// <summary>
-	/// The attack target.
-	/// </summary>
-	public AOC2Unit attackTarget
-	{
-		get
-		{
-			return unit.targetUnit;
-		}
-		set
-		{
-			unit.targetUnit = value;
-		}
-	}
-	
-	/// <summary>
 	/// The unit component
 	/// </summary>
 	public AOC2Unit unit;
 	
+	/// <summary>
+	/// The local player controller component.
+	/// </summary>
 	public AOC2LocalPlayerController local;
 	
 	/// <summary>
@@ -87,22 +77,40 @@ public class AOC2Player : AOC2UnitLogic {
 	
 	/// <summary>
 	/// Awake this instance.
+	/// Set up internal components.
+	/// DEBUG: Set class abilities and stats
+	/// TODO: Load this data from server and initialize from protos
 	/// </summary>
 	void Awake () 
 	{
 		unit = GetComponent<AOC2Unit>();
 		local = GetComponent<AOC2LocalPlayerController>();
-		abilities = new AOC2Ability[3];
+		abilities = new AOC2Ability[4];
 		
+	}
+	
+	/// <summary>
+	/// Start this instance by initializing the Unit component
+	/// </summary>
+	void Start()
+	{
+		unit.Activate();
+		SetUpClassFeatures ();
+		unit.Init();
+	}
+
+	void SetUpClassFeatures ()
+	{
 		switch(AOC2Whiteboard.playerClass)
 		{
 		case ClassType.WIZARD:
-			abilities[0] = new AOC2Ability(AOC2AbilityLists.Wizard.propulsionProto);
-			abilities[1] = new AOC2Ability(AOC2AbilityLists.Wizard.iceArmorProto);
-			abilities[2] = new AOC2Ability(AOC2AbilityLists.Wizard.lightningStrikeProto);
+			abilities[0] = new AOC2Ability(11);
+			abilities[1] = new AOC2Ability(10);
+			abilities[2] = new AOC2Ability(9);
+			abilities[3] = new AOC2Ability(12);
 			unit.stats.strength = 120;
 			unit.stats.defense = 120;
-			unit.stats.attackSpeed = 100;
+			unit.stats.attackSpeed = 200;
 			unit.stats.maxMana = 500;
 			unit.stats.maxHealth = 1500;
 			unit.ranged = true;
@@ -111,20 +119,23 @@ public class AOC2Player : AOC2UnitLogic {
 			abilities[0] = new AOC2Ability(AOC2AbilityLists.Warrior.cleaveProto);
 			abilities[1] = new AOC2Ability(AOC2AbilityLists.Warrior.ironWillProto);
 			abilities[2] = new AOC2Ability(AOC2AbilityLists.Warrior.powerAttackProto);
+			abilities[3] = new AOC2Ability(AOC2AbilityLists.Warrior.powerAttackProto);
 			unit.stats.strength = 100;
 			unit.stats.defense = 130;
-			unit.stats.attackSpeed = 100;
+			unit.stats.attackSpeed = 200;
 			unit.stats.maxMana = 250;
 			unit.stats.maxHealth = 2000;
 			unit.ranged = false;
+			unit.basicAttackAbility.range = 5;
 			break;
 		case ClassType.ARCHER:
 			abilities[0] = new AOC2Ability(AOC2AbilityLists.Archer.fanShotProto);
 			abilities[1] = new AOC2Ability(AOC2AbilityLists.Archer.marksmanProto);
 			abilities[2] = new AOC2Ability(AOC2AbilityLists.Archer.powerShotProto);
+			abilities[3] = new AOC2Ability(AOC2AbilityLists.Archer.arrowRainProto);
 			unit.stats.strength = 140;
 			unit.stats.defense = 120;
-			unit.stats.attackSpeed = 120;
+			unit.stats.attackSpeed = 250;
 			unit.stats.maxMana = 300;
 			unit.stats.maxHealth = 1500;
 			unit.ranged = true;
@@ -132,15 +143,9 @@ public class AOC2Player : AOC2UnitLogic {
 		}
 	}
 	
-	void Start()
-	{
-		unit.Init();
-		unit.Activate();
-	}
-	
 	/// <summary>
 	/// Start this instance.
-	/// Set up logic
+	/// Sets up logic state machine.
 	/// </summary>
 	public override void Init ()
 	{
@@ -148,33 +153,21 @@ public class AOC2Player : AOC2UnitLogic {
 		AOC2LogicState doNothing = new AOC2LogicDoNothing(unit);
 		moveLogic = new AOC2LogicNavigateTowardTarget(unit);
 		
-        //AOC2LogicState useBaseAttack = new AOC2LogicUseAbility(unit, unit.basicAttackAbility);
-        //basicAttackMoveLogic = new AOC2LogicNavigateTowardTarget(unit);
-		
 		AOC2LogicState basicAttackLogic = new AOC2LogicHighStateAbility(unit, unit.basicAttackAbility);
 		
 		sprintLogic = new AOC2LogicCombatRoll(unit, rollDist, .3f, rollSpeed);
 		abilityLogics = new AOC2LogicState[abilities.Length];
 		
-        AOC2ExitLogicState noTarget = new AOC2ExitNotOther(new AOC2ExitPlayerHasTarget(this, null), doNothing);
+        AOC2ExitLogicState noTarget = new AOC2ExitNotOther(new AOC2ExitPlayerHasTarget(unit, null), doNothing);
         
-        doNothing.AddExit(new AOC2ExitPlayerHasTarget(this, basicAttackLogic));
+        doNothing.AddExit(new AOC2ExitPlayerHasTarget(unit, basicAttackLogic));
 		doNothing.AddExit(new AOC2ExitNotOther(new AOC2ExitTargetInRange(moveLogic, unit, MIN_MOVE_DIST), moveLogic));
         
 		basicAttackLogic.AddExit(noTarget);
 		basicAttackLogic.AddExit(new AOC2ExitWhenComplete(basicAttackLogic, basicAttackLogic));
 		
-		/*
-        basicAttackMoveLogic.AddExit(new AOC2ExitTargetInRange(useBaseAttack, unit, unit.basicAttackAbility.range));
-        basicAttackMoveLogic.AddExit(noTarget);
-        
-        useBaseAttack.AddExit(new AOC2ExitNotOther(new AOC2ExitTargetInRange(null, unit, unit.basicAttackAbility.range), basicAttackMoveLogic));
-        useBaseAttack.AddExit(noTarget);
-		useBaseAttack.AddExit(new AOC2ExitWhenComplete(useBaseAttack, useBaseAttack)); //Loop autoattack once animation hits
-		*/
-		
 		moveLogic.AddExit(new AOC2ExitWhenComplete(moveLogic, doNothing));
-        moveLogic.AddExit(new AOC2ExitPlayerHasTarget(this, basicAttackLogic));
+        moveLogic.AddExit(new AOC2ExitPlayerHasTarget(unit, basicAttackLogic));
 		
 		//sprintLogic = new AOC2LogicSprint(unit);
 		//sprintLogic.AddExit(new AOC2ExitTargetInRange(doNothing, unit, MIN_MOVE_DIST));
@@ -218,10 +211,10 @@ public class AOC2Player : AOC2UnitLogic {
 	/// <param name='index'>
 	/// Ability Index.
 	/// </param>
-	public void UseAbility(int index)
+	public void UseAbility(int index, bool quick = false)
 	{
 		//Short here if we don't actually have the mana for the ability
-		if (unit.mana < abilities[index].manaCost)
+		if (unit.mana < abilities[index].manaCost || abilities[index].onCool)
 		{
 			return;
 		}
@@ -229,13 +222,13 @@ public class AOC2Player : AOC2UnitLogic {
 		if (abilities[index].spellProto.targetType == SpellProto.SpellTargetType.SELF)
 		{
 			unit.targetPos = unit.aPos;
-			attackTarget = unit;
+			unit.targetUnit = unit;
 		}
-		else if (attackTarget != null)
+		else if (unit.targetUnit != null)
 		{
-			unit.targetPos = attackTarget.aPos;
+			unit.targetPos = unit.targetUnit.aPos;
 		}
-		else //If no target, target the closest enemy
+		else if (!quick) //If no target, target the closest enemy
 		{
 			AOC2Unit closeEn = AOC2ManagerReferences.combatManager.GetClosestEnemy(unit);
 			if (closeEn != null)
@@ -257,7 +250,7 @@ public class AOC2Player : AOC2UnitLogic {
 	/// </param>
 	void OnEnemyDeath(AOC2Unit enemy)
 	{
-		if (enemy == attackTarget)
+		if (enemy == unit.targetUnit)
 		{
 			if (local != null)
 			{
@@ -265,7 +258,7 @@ public class AOC2Player : AOC2UnitLogic {
 			}
 			else
 			{
-				attackTarget = null;
+				unit.targetUnit = null;
 				AOC2ManagerReferences.combatManager.TargetNone();
 			}
 		}
@@ -276,41 +269,33 @@ public class AOC2Player : AOC2UnitLogic {
 	/// Also, sets the player to use their auto-attack on the
 	/// target
 	/// </summary>
-	/// <param name='unit'>
+	/// <param name='enemy'>
 	/// Unit that was just targetted
 	/// </param>
-	public void TargetEnemy(AOC2Unit unit)
+	public void TargetEnemy(AOC2Unit enemy)
 	{
-		AOC2ManagerReferences.combatManager.TargetUnit(unit);
+		AOC2ManagerReferences.combatManager.TargetUnit(enemy);
 		
-		attackTarget = unit;
-
-		//unit.targetPos = attackTarget.aPos;
-
-		//SetLogic(basicAttackMoveLogic);
+		unit.targetUnit = enemy;
 	}
 	
+	/// <summary>
+	/// Sets the target position to a grid point on the ground
+	/// </summary>
+	/// <param name='pos'>
+	/// Grid position to set the target to
+	/// </param>
 	public void TargetGround(AOC2GridNode pos)
 	{
 		unit.targetPos = new AOC2Position(pos);
-		
-		//SetLogic(moveLogic);
 	}
 	
+	/// <summary>
+	/// Uses the travel ability.
+	/// TODO: Make logics for the other travel abilities
+	/// </summary>
 	public void UseTravelAbility()
 	{
 		SetLogic(sprintLogic);
-	}
-	
-	void OnGizmoDraw()
-	{
-		Gizmos.color = Color.green;
-		Gizmos.DrawSphere(unit.targetPos.position, 1f);
-	}
-	
-	public override void SetLogic (AOC2LogicState state)
-	{
-		//Debug.Log("Setting player logic to " + state.GetType().Name);
-		base.SetLogic (state);
 	}
 }

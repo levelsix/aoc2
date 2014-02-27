@@ -23,6 +23,7 @@ public class AOC2SpawnerMenu : MonoBehaviour {
 		Selection.activeGameObject = spawner;
 	}
 	
+	/*
 	/// <summary>
 	/// Creates a spawn table and puts it in the scene
 	/// </summary>
@@ -48,4 +49,5 @@ public class AOC2SpawnerMenu : MonoBehaviour {
 		
 		Selection.activeGameObject = spGroup;
 	}
+	*/
 }

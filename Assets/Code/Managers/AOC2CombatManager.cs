@@ -29,12 +29,7 @@ public class AOC2CombatManager : MonoBehaviour {
 	[SerializeField]
 	Transform targetMarker;
 	
-	private int _currWave = 0;
-	
-	/// <summary>
-	/// The number of waves in this combat
-	/// </summary>
-	private int waves = 0;
+	public AOC2Objective currObjective;
 	
 	/// <summary>
 	/// Awake this instance.
@@ -49,48 +44,9 @@ public class AOC2CombatManager : MonoBehaviour {
 	
 	void Start()
 	{
-		BuildSpawners();
-		WarmPools();
+		//BuildSpawners();
+		//SetObjective(currObjective);
 		//SpawnNewWave(0);
-	}
-	
-	/// <summary>
-	/// Figures out how many of each unit we're going to need, then pre-warms
-	/// the pools
-	/// </summary>
-	void WarmPools()
-	{
-		Dictionary<AOC2Spawnable, int> spawns = new Dictionary<AOC2Spawnable, int>();
-		foreach (AOC2UnitSpawner item in _spawners) 
-		{
-			AOC2Math.MergeDicts<AOC2Spawnable>(spawns, item.GetSpawnDict());
-		}
-		
-		foreach (KeyValuePair<AOC2Spawnable, int> item in spawns) 
-		{
-			AOC2ManagerReferences.poolManager.Warm(item.Key as AOC2Poolable, item.Value);
-		}
-	}
-	
-	/// <summary>
-	/// Finds all of the spawners in the scene, and sets waves
-	/// to the value of the greatest spawner size
-	/// </summary>
-	void BuildSpawners()
-	{
-		
-		Object[] objs = FindObjectsOfType(typeof(AOC2UnitSpawner));
-		_spawners = new AOC2UnitSpawner[objs.Length];
-		for (int i = 0; i < objs.Length; i++) 
-		{
-			_spawners[i] = objs[i] as AOC2UnitSpawner;
-			
-			//If this has the most waves so far, set waves to it
-			if (_spawners[i].spawns.Count > waves)
-			{
-				waves = _spawners[i].spawns.Count;
-			}
-		}
 	}
 	
 	/// <summary>
@@ -101,9 +57,9 @@ public class AOC2CombatManager : MonoBehaviour {
 		AOC2EventManager.Combat.OnSpawnEnemy += OnSpawnEnemy;
 		AOC2EventManager.Combat.OnSpawnPlayer += OnSpawnPlayer;
 		AOC2EventManager.Combat.OnEnemyDeath += OnEnemyDeath;
-		AOC2EventManager.Combat.OnEnemiesClear += OnEnemiesCleared;
 		AOC2EventManager.Combat.OnPlayerVictory += OnPlayerVictory;
 		AOC2EventManager.Combat.OnPlayerDeath += OnPlayerDeath;
+		AOC2EventManager.Combat.OnObjectiveComplete += SetObjective;
 	}
 	
 	/// <summary>
@@ -114,9 +70,9 @@ public class AOC2CombatManager : MonoBehaviour {
 		AOC2EventManager.Combat.OnSpawnEnemy -= OnSpawnEnemy;
 		AOC2EventManager.Combat.OnSpawnPlayer -= OnSpawnPlayer;
 		AOC2EventManager.Combat.OnEnemyDeath -= OnEnemyDeath;
-		AOC2EventManager.Combat.OnEnemiesClear -= OnEnemiesCleared;
 		AOC2EventManager.Combat.OnPlayerVictory -= OnPlayerVictory;
 		AOC2EventManager.Combat.OnPlayerDeath -= OnPlayerDeath;
+		AOC2EventManager.Combat.OnObjectiveComplete -= SetObjective;
 	}
 	
 	#region Delegates
@@ -154,10 +110,6 @@ public class AOC2CombatManager : MonoBehaviour {
 	void OnEnemyDeath(AOC2Unit unit)
 	{
 		_enemies.Remove(unit);
-		if (_enemies.Count == 0)
-		{
-			//AOC2EventManager.Combat.OnEnemiesClear();
-		}
 	}
 	
 	/// <summary>
@@ -169,27 +121,6 @@ public class AOC2CombatManager : MonoBehaviour {
 	void OnPlayerDeath(AOC2Unit unit)
 	{
 		
-	}
-	
-	/// <summary>
-	/// Raises the enemies cleared event.
-	/// Spawns the next wave. If no more waves,
-	/// triggers player victory
-	/// </summary>
-	void OnEnemiesCleared()
-	{
-			if (++_currWave < waves)
-			{
-				SpawnNewWave(_currWave);
-			}
-			else
-			{
-				if (AOC2EventManager.Combat.OnPlayerVictory != null)
-				{
-					AOC2EventManager.Combat.OnPlayerVictory();
-				}
-			}
-	
 	}
 	
 	/// <summary>
@@ -315,12 +246,31 @@ public class AOC2CombatManager : MonoBehaviour {
 		StartCoroutine(ability.Cool(user));
 	}
 	
-	void SpawnNewWave(int wave)
+	#region Objectives & Compass
+	
+	public void SetObjective(AOC2Objective objective)
 	{
-		for (int i = 0; i < _spawners.Length; i++) 
+		if (currObjective != null)
 		{
-			//_spawners[i].SpawnWave(wave);
+			currObjective.gameObject.SetActive(false);
+		}
+		
+		currObjective = objective.next;
+		
+		if (currObjective != null)
+		{
+			currObjective.gameObject.SetActive(true);
+			if (currObjective.OnSetObjective != null)
+			{
+				currObjective.OnSetObjective();
+			}
+		}
+		else
+		{
+			AOC2EventManager.Combat.OnPlayerVictory();
 		}
 	}
+	
+	#endregion
 	
 }

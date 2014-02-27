@@ -8,11 +8,11 @@ using System.Collections.Generic;
 /// </summary>
 public class AOC2SynchMultiManager : MonoBehaviour {
 	
-	Dictionary<uint, AOC2Unit> players;
+	//Dictionary<uint, AOC2Unit> players = new Dictionary<uint, AOC2Unit>();
 	
 	void Awake() 
 	{
-		players = new Dictionary<uint, AOC2Unit>();
+		
 	}
 	
 	void OnEnable()

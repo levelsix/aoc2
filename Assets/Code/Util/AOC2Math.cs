@@ -101,6 +101,11 @@ public static class AOC2Math {
         return (100f - (resistance - 100f)) / 100f;
     }
 	
+	public static int GlobalRoomID(CombatRoomProto room)
+	{
+		return room.dungeon * 1000 + room.roomID;
+	}
+	
 	/// <summary>
 	/// Merges a pair of dictionaries.
 	/// Whatever values in the target that are greater than the destination

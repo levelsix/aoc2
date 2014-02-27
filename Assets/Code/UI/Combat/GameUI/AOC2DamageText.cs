@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 [RequireComponent (typeof(UILabel))]
@@ -19,9 +19,23 @@ public class AOC2DamageText : MonoBehaviour, AOC2Poolable {
 	
 	UILabel label;
 	
-	AOC2Unit curUnit;
+	public Transform trans;
 	
-	Transform trans;
+	public GameObject gameObj;
+	
+	public Transform transf{
+		get
+		{
+			return trans;
+		}
+	}
+	
+	public GameObject gObj{
+		get
+		{
+			return gameObj;
+		}
+	}
 	
 	public AOC2Poolable prefab{
 		get
@@ -45,6 +59,7 @@ public class AOC2DamageText : MonoBehaviour, AOC2Poolable {
 	{
 		label = GetComponent<UILabel>();
 		trans = transform;
+		gameObj = gameObject;
 	}
 	
 	public void Init(AOC2Unit unit, float damage)
@@ -54,7 +69,7 @@ public class AOC2DamageText : MonoBehaviour, AOC2Poolable {
 		
 		currLife = 0f;
 		
-		curUnit = unit;
+		//curUnit = unit;
 		//curUnit.OnDeath += RemoveFromParent;
 		
 		StartCoroutine(MoveAndFade());

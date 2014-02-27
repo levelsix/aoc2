@@ -13,8 +13,6 @@ public class AOC2LogicUseAbility : AOC2LogicState {
 	/// </summary>
 	private AOC2Ability _ability;
 	
-	AOC2LogicState moveLogic;
-	
 	/// <summary>
 	/// Initializes a new instance of the <see cref="AOC2LogicUseAbility"/> class.
 	/// </summary>
@@ -32,23 +30,30 @@ public class AOC2LogicUseAbility : AOC2LogicState {
 	{
 		_ability = abil;
 	}
-
+	
+	/// <summary>
+	/// Stops the animation when leaving the state
+	/// </summary>
 	public override void OnExitState()
 	{
-		_user.model.SetAnimationFlag(_ability.animation, false);
+		_user.model.SetAnimation(_ability.animation, false);
 		
 		_complete = false;
 		
 		base.OnExitState();
 	}
 	
+	/// <summary>
+	/// Initilzing this instance.
+	/// Starts the animation and orients the user appropriately
+	/// </summary>
 	public override void Init ()
 	{
 		_user.currentLogicState = _ability.name;
 		
 		if (_user.model.usesTriggers)
 		{
-			_user.model.SetAnimationFlag(_ability.animation, true);
+			_user.model.SetAnimation(_ability.animation, true);
 			_user.model.SetAnimSpeed((float)(_user.GetStat(AOC2Values.UnitStat.ATTACK_SPEED))/100f);
 			canBeInterrupt = false;
 		}
@@ -63,12 +68,18 @@ public class AOC2LogicUseAbility : AOC2LogicState {
 		base.Init();
 	}
 	
+	/// <summary>
+	/// Uses the ability when the proper frame is triggered
+	/// </summary>
 	public override void OnAbilityUseFrame ()
 	{
 		_ability.Use(_user, _user.aPos.position, _user.targetPos.position, true);
 		base.OnAbilityUseFrame();
 	}
 	
+	/// <summary>
+	/// Completes the logic
+	/// </summary>
 	public override void OnAnimationEnd ()
 	{
 		_complete = true;

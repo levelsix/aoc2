@@ -12,12 +12,6 @@ using System.Collections.Generic;
 public class AOC2PointCamera : MonoBehaviour {
 	
 	/// <summary>
-	/// The target that this camera will be following.
-	/// Specific to each camera location
-	/// </summary>
-	Transform target;
-	
-	/// <summary>
 	/// The transform of this camera, so that we can move and turn it
 	/// manually.
 	/// </summary>
@@ -62,7 +56,6 @@ public class AOC2PointCamera : MonoBehaviour {
 	void Update () {
 #if DEBUG
 		_tran.position = _loc.cameraPoint.position;	
-		//_tran.LookAt(target);
 #endif
 		
 	}
@@ -72,7 +65,6 @@ public class AOC2PointCamera : MonoBehaviour {
 		float currTime = 0f;
 		Vector3 startPos = _tran.position;
 		_loc = loc;
-		target = _loc.hitArea;
 		
 		while(currTime < LERP_TIME)
 		{

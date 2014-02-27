@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System;
 
@@ -35,6 +35,8 @@ public class AOC2DoubleLerpBar : MonoBehaviour, AOC2Poolable {
 	
 	public Transform trans;
 	
+	public GameObject gameObj;
+	
 	private AOC2DoubleLerpBar _prefab;
 	
 	public AOC2Poolable prefab
@@ -46,6 +48,20 @@ public class AOC2DoubleLerpBar : MonoBehaviour, AOC2Poolable {
 		set
 		{
 			_prefab = value as AOC2DoubleLerpBar;
+		}
+	}
+	
+	public Transform transf{
+		get
+		{
+			return trans;
+		}
+	}
+	
+	public GameObject gObj{
+		get
+		{
+			return gameObj;
 		}
 	}
 	
@@ -134,6 +150,7 @@ public class AOC2DoubleLerpBar : MonoBehaviour, AOC2Poolable {
 	void Awake()
 	{
 		trans = transform;
+		gameObj = gameObject;
 	}
 	
 	// Use this for initialization

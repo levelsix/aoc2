@@ -3,15 +3,20 @@ using System.Collections;
 using System;
 using proto;
 
-///<summary>
-///@author Rob Giusti
-///Rewrite of PrefabGenerator.js from the Dynamic Elements Effects package
-///Rewritten in C# using coroutines for efficiency and for ability to use
-///alongside our other gameplay code without having to make cross-language
-///calls. 
-///</summary>
+/// <summary>
+/// @author Rob Giusti
+/// Based on PrefabGenerator.js from the Dynamic Elements Effects package
+/// Rewritten in C# using coroutines for efficiency and for ability to use
+/// alongside our other gameplay code without having to make cross-language
+/// calls. Derives its data from an ability, and makes particles that connect
+/// to the generator's Delivery component
+/// </summary>
+[RequireComponent (typeof (AOC2Delivery))]
 public class AOC2DeliveryParticleGenerator : MonoBehaviour {
 	
+	/// <summary>
+	/// The spell proto.
+	/// </summary>
 	SpellProto spellProto;	
 	
 	/// <summary>
@@ -48,6 +53,11 @@ public class AOC2DeliveryParticleGenerator : MonoBehaviour {
 	public int thisManyTimes = 3;
 	
 	/// <summary>
+	/// The number of particles generated so far
+	/// </summary>
+	public int particlesGenerated = 0;
+	
+	/// <summary>
 	/// The time that it will generate particles over
 	/// </summary>
 	public float overThisTime = 1.0f;
@@ -79,6 +89,9 @@ public class AOC2DeliveryParticleGenerator : MonoBehaviour {
 	/// </summary>
 	private float rotCur;
 	
+	/// <summary>
+	/// The List of active particles.
+	/// </summary>
 	private BetterList<AOC2Particle> activeParticles = new BetterList<AOC2Particle>();
 	
 	/// <summary>
@@ -86,20 +99,27 @@ public class AOC2DeliveryParticleGenerator : MonoBehaviour {
 	/// </summary>
 	public Transform trans;
 	
+	/// <summary>
+	/// The delivery component of this object
+	/// </summary>
 	AOC2Delivery delivery;
 	
+	/// <summary>
+	/// Reference to the gameObject component, so that we don't have to call GetComponent
+	/// when changing layers
+	/// </summary>
 	GameObject gameObj;
 	
 	/// <summary>
 	/// The on generation begin event.
 	/// If there is a delay, this is fired afterwards.
 	/// </summary>
-	Action OnGenerationBegin;
+	public Action OnGenerationBegin;
 	
 	/// <summary>
 	/// The on generation complete event.
 	/// </summary>
-	Action OnGenerationComplete;
+	public Action OnGenerationComplete;
 	
 	/// <summary>
 	/// Awake this instance.
@@ -112,6 +132,12 @@ public class AOC2DeliveryParticleGenerator : MonoBehaviour {
 		delivery = GetComponent<AOC2Delivery>();
 	}
 	
+	/// <summary>
+	/// Initialize the generator from the given proto
+	/// </summary>
+	/// <param name='proto'>
+	/// Proto to derive values from
+	/// </param>
 	public void Init(SpellProto proto)
 	{
 		spellProto = proto;
@@ -120,16 +146,26 @@ public class AOC2DeliveryParticleGenerator : MonoBehaviour {
 		
 		overThisTime = spellProto.deliveryDuration;
 		
+		area = spellProto.area;
+		
 		Init ();
 	}
-
+	
+	/// <summary>
+	/// Initialize this instance, starting the generator function
+	/// </summary>
 	public void Init()
 	{
 		activeParticles.Clear();
 		
+		particlesGenerated = 0;
+		
 		StartCoroutine(RunGenerator());
 	}
 	
+	/// <summary>
+	/// Runs the generator, creating particles periodically
+	/// </summary>
 	public virtual IEnumerator RunGenerator () 
 	{
 		AOC2Particle particle;
@@ -141,24 +177,11 @@ public class AOC2DeliveryParticleGenerator : MonoBehaviour {
 			x_dev = trans.position.x + (UnityEngine.Random.value * area) - (area * 0.5f);
 			z_dev = trans.position.z + (UnityEngine.Random.value * area) - (area * 0.5f);
 			
-			switch (spellProto.directionType) {
-				case SpellProto.SpellDirectionType.ARC:
-					angle = minAngle + i * spellProto.angle * Mathf.Deg2Rad / thisManyTimes;
-					dir = new Vector3(Mathf.Cos (angle), 0, Mathf.Sin (angle));
-					break;
-				case SpellProto.SpellDirectionType.SCATTERED:
-					angle = UnityEngine.Random.value * 360;
-					dir = new Vector3(Mathf.Cos (angle), 0, Mathf.Sin (angle));
-					break;
-				default:
-					break;
-			}
+			DetermineDirection (ref dir, ref angle, minAngle, i);
 			
 			particle = AOC2ManagerReferences.poolManager.Get(prefab, new Vector3(x_dev, trans.position.y, z_dev)) as AOC2Particle;
 			particle.GetComponent<AOC2DeliveryParticle>().Init(spellProto.particleDuration, spellProto.particleSpeed, 
 				dir, spellProto.hitsPerParticle, delivery);
-			
-			//particle.Init(spellProto.particleDuration, delivery.direction, spellProto.particleSpeed);
 			
 			particle.trans.parent = trans;
 			particle.trans.localScale = Vector3.one;
@@ -174,28 +197,54 @@ public class AOC2DeliveryParticleGenerator : MonoBehaviour {
 			}
 		}
 	}
-	
-	float DetermineDirection(int shotNum)
+
+	/// <summary>
+	/// Determines the Direction.
+	/// </summary>
+	/// <param name='dir'>
+	/// Dir.
+	/// </param>
+	/// <param name='angle'>
+	/// Angle.
+	/// </param>
+	/// <param name='minAngle'>
+	/// Minimum angle.
+	/// </param>
+	/// <param name='i'>
+	/// Particle number
+	/// </param>
+	void DetermineDirection (ref Vector3 dir, ref float angle, float minAngle, int i)
 	{
-		switch (rotType) {
-			case RotationType.ARC:
-				return 0;
-		
+		switch (spellProto.directionType) {
+			case SpellProto.SpellDirectionType.ARC:
+				angle = minAngle + i * spellProto.angle * Mathf.Deg2Rad / thisManyTimes;
+				dir = new Vector3(Mathf.Cos (angle), 0, Mathf.Sin (angle));
+				break;
+			case SpellProto.SpellDirectionType.SCATTERED:
+				angle = UnityEngine.Random.value * 360;
+				dir = new Vector3(Mathf.Cos (angle), 0, Mathf.Sin (angle));
+				break;
 			default:
-				return 0;
+				break;
 		}
 	}
 	
-	Vector3 DetermineOffset()
-	{
-		return Vector3.zero;
-	}
-	
+	/// <summary>
+	/// When a particle dissolves, removes it from the list.
+	/// Fires the GenerationComplete event when all particles have been removed.
+	/// Note that we use particles generated in case the lifetime of a particle
+	/// happens to be shorter than the time it takes to generate another, which
+	/// would lead to generation complete being fired before all of the particles
+	/// have been generated
+	/// </summary>
+	/// <param name='particle'>
+	/// Particle which has dissolved
+	/// </param>
 	void OnParticleDissolve(AOC2Particle particle)
 	{
 		activeParticles.Remove(particle);
 		particle.OnDissolve -= OnParticleDissolve;
-		if (activeParticles.size == 0)
+		if (++particlesGenerated == thisManyTimes)
 		{
 			if (OnGenerationComplete != null)
 			{
